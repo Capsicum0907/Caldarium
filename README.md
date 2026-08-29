@@ -30,10 +30,12 @@ They ship together because a battery on its own has nothing to fill it. Everythi
 else in this set is one thing; this is one thing that needs more than one block to
 be a thing at all.
 
-**Generators come in types, batteries and chargers in tiers.** A type is what a
+**Generators come in types; everything else comes in tiers.** A type is what a
 generator burns — each one has its own idea of fuel, and the fuel is part of the
-type rather than a rule shared by all of them. A tier is how much and how fast.
-Both are rows in one table, so a new type or a new tier is a row and not a class.
+type rather than a rule shared by all of them. A tier is how much and how fast, and
+a kind is what the thing does with what it holds: a battery hands it on, a charger
+puts it into what is in its slots. One kind at one tier is one block, so a kind or
+a tier added later is a row and not a class.
 
 **No network.** Energy is not routed, planned or cabled. Each block, on its tick,
 offers what it has to the six blocks touching it, and that is the entire transport
@@ -94,7 +96,7 @@ gradlew runData           # regenerate models, recipes and language
 - [x] **1** — one generator type and one battery tier, as the first rows of the
   table, pushing to whatever touches them
 - [x] **2** — the screen: fuel, progress and level, the way a furnace shows them
-- [ ] **3** — charging: a slot on the battery, and a charger block that is the same
+- [x] **3** — charging: a slot on the battery, and a charger block that is the same
   idea with more slots
 - [ ] **4** — the rest of the types and tiers, as rows
 - [ ] **5** — cables: a cable, an importer and an exporter, in tiers

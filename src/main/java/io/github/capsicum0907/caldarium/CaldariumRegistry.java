@@ -1,7 +1,10 @@
 package io.github.capsicum0907.caldarium;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.registries.Registries;
@@ -19,15 +22,16 @@ import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Registration, one block and one item per row of {@link Generator} and {@link Tier}.
+ * Registration, one block and one item per row of {@link Generator} and per
+ * {@link Kind} at each {@link Tier}.
  *
  * <p>There is no list of blocks here. The loops below are the only place blocks are
  * created, and what they walk is the tables; a row added there arrives in the game,
  * in the creative tab and in every generated file without anything else being edited.
  *
- * <p>One block entity type covers every generator and one covers every battery: what
- * a machine is differs by its row, and a row is something the block already knows.
- * A type per block would be the same class registered once for each set of numbers.
+ * <p>One block entity type covers every generator and one covers every kind: what a
+ * machine is differs by its row, and a row is something the block already knows. A
+ * type per block would be the same class registered once for each set of numbers.
  */
 public final class CaldariumRegistry {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Caldarium.MODID);
@@ -41,10 +45,11 @@ public final class CaldariumRegistry {
     public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU =
             MENUS.register("machine", () -> IMenuTypeExtension.create(MachineMenu::new));
 
-    private static final Map<Generator, DeferredBlock<GeneratorBlock>> GENERATORS = new LinkedHashMap<>();
-    private static final Map<Generator, DeferredItem<BlockItem>> GENERATOR_ITEMS = new LinkedHashMap<>();
-    private static final Map<Tier, DeferredBlock<BatteryBlock>> BATTERIES = new LinkedHashMap<>();
-    private static final Map<Tier, DeferredItem<BlockItem>> BATTERY_ITEMS = new LinkedHashMap<>();
+    private static final Map<Generator, DeferredBlock<GeneratorBlock>> GENERATORS =
+            new LinkedHashMap<>();
+    private static final Map<Kind, Map<Tier, DeferredBlock<KindBlock>>> KINDS =
+            new EnumMap<>(Kind.class);
+    private static final List<DeferredItem<BlockItem>> ITEM_ORDER = new ArrayList<>();
 
     static {
         for (Generator generator : Generator.all()) {
@@ -52,25 +57,28 @@ public final class CaldariumRegistry {
                     properties -> new GeneratorBlock(generator, properties), metal()
                             .lightLevel(state -> state.getValue(GeneratorBlock.LIT) ? 13 : 0));
             GENERATORS.put(generator, block);
-            GENERATOR_ITEMS.put(generator, ITEMS.registerSimpleBlockItem(block));
+            ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
         }
-        for (Tier tier : Tier.values()) {
-            DeferredBlock<BatteryBlock> block = BLOCKS.registerBlock(tier.batteryId(),
-                    properties -> new BatteryBlock(tier, properties), metal());
-            BATTERIES.put(tier, block);
-            BATTERY_ITEMS.put(tier, ITEMS.registerSimpleBlockItem(block));
+        for (Kind kind : Kind.values()) {
+            Map<Tier, DeferredBlock<KindBlock>> tiers = new LinkedHashMap<>();
+            for (Tier tier : Tier.values()) {
+                DeferredBlock<KindBlock> block = BLOCKS.registerBlock(kind.id(tier),
+                        properties -> new KindBlock(kind, tier, properties), metal());
+                tiers.put(tier, block);
+                ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
+            }
+            KINDS.put(kind, tiers);
         }
     }
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorBlockEntity>>
             GENERATOR_ENTITY = BLOCK_ENTITIES.register("generator",
-                    () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new, blocks(GENERATORS.values()))
-                            .build(null));
+                    () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new,
+                            blocks(GENERATORS.values())).build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<BatteryBlockEntity>>
-            BATTERY_ENTITY = BLOCK_ENTITIES.register("battery",
-                    () -> BlockEntityType.Builder.of(BatteryBlockEntity::new, blocks(BATTERIES.values()))
-                            .build(null));
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KindBlockEntity>>
+            KIND_ENTITY = BLOCK_ENTITIES.register("kind",
+                    () -> BlockEntityType.Builder.of(KindBlockEntity::new, kindBlocks()).build(null));
 
     /**
      * ⚠ A fresh Properties every time. They are mutable and carry the whole of a
@@ -92,18 +100,23 @@ public final class CaldariumRegistry {
         return registered.stream().map(DeferredBlock::get).toArray(Block[]::new);
     }
 
+    private static Block[] kindBlocks() {
+        List<DeferredBlock<KindBlock>> all = new ArrayList<>();
+        KINDS.values().forEach(tiers -> all.addAll(tiers.values()));
+        return blocks(all);
+    }
+
     public static Map<Generator, DeferredBlock<GeneratorBlock>> generators() {
         return GENERATORS;
     }
 
-    public static Map<Tier, DeferredBlock<BatteryBlock>> batteries() {
-        return BATTERIES;
+    public static DeferredBlock<KindBlock> block(Kind kind, Tier tier) {
+        return KINDS.get(kind).get(tier);
     }
 
-    public static Collection<DeferredItem<BlockItem>> items() {
-        return java.util.stream.Stream
-                .concat(GENERATOR_ITEMS.values().stream(), BATTERY_ITEMS.values().stream())
-                .toList();
+    /** Everything with an item, in the order it was registered. */
+    public static List<DeferredItem<BlockItem>> items() {
+        return ITEM_ORDER;
     }
 
     private CaldariumRegistry() {

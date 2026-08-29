@@ -6,7 +6,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -15,39 +14,43 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.SlotItemHandler;
 
 /**
- * One menu for every machine in the mod. What differs between them is whether there
- * is a slot to put something in, and that is a question the block entity answers.
+ * One menu for every machine in the mod. What differs between them is how many slots
+ * there are and whether something is burning, and both are questions the block
+ * entity answers through {@link Machine}.
  *
- * <p>A menu per block would be the same class registered once per set of numbers —
- * the same reason there is one block entity type for every generator.
+ * <p>A menu per block would be the same class registered once per set of numbers -
+ * the same reason there is one block entity type for every kind.
  */
 public class MachineMenu extends AbstractContainerMenu {
-    /** Where the machine is, so the screen can name it and the game can close it. */
     private final ContainerLevelAccess access;
     private final ContainerData data;
     private final boolean burns;
+    private final int machineSlots;
 
-    /** The client's side: the slot count arrives in the buffer, the numbers follow. */
+    /** The client's side: what the screen has to know arrives in the buffer. */
     public MachineMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
         this(id, inventory, ContainerLevelAccess.NULL, buffer.readBoolean(),
-                new ItemStackHandler(1), new SimpleContainerData(MachineData.SIZE));
+                new ItemStackHandler(buffer.readByte()),
+                new SimpleContainerData(MachineData.SIZE));
     }
 
     public MachineMenu(int id, Inventory inventory, ContainerLevelAccess access, boolean burns,
-            IItemHandler fuel, ContainerData data) {
+            IItemHandler machine, ContainerData data) {
         super(CaldariumRegistry.MACHINE_MENU.get(), id);
         this.access = access;
         this.data = data;
         this.burns = burns;
+        this.machineSlots = machine.getSlots();
 
-        if (burns) {
-            addSlot(new SlotItemHandler(fuel, 0, Skins.FUEL_SLOT_X, Skins.FUEL_SLOT_Y));
+        for (int slot = 0; slot < machineSlots; slot++) {
+            addSlot(new SlotItemHandler(machine, slot,
+                    Skins.slotX(slot, machineSlots), Skins.SLOT_ROW_Y));
         }
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
@@ -66,6 +69,10 @@ public class MachineMenu extends AbstractContainerMenu {
 
     public boolean burns() {
         return burns;
+    }
+
+    public int machineSlots() {
+        return machineSlots;
     }
 
     public int energy() {
@@ -88,7 +95,7 @@ public class MachineMenu extends AbstractContainerMenu {
     }
 
     /**
-     * Shift-clicking. The machine's own slot is offered first when something comes
+     * Shift-clicking. The machine's own slots are offered first when something comes
      * from the inventory, and the inventory when something comes out of the machine.
      */
     @Override
@@ -99,7 +106,6 @@ public class MachineMenu extends AbstractContainerMenu {
         }
         ItemStack inSlot = slot.getItem();
         ItemStack before = inSlot.copy();
-        int machineSlots = burns ? 1 : 0;
 
         if (index < machineSlots) {
             if (!moveItemStackTo(inSlot, machineSlots, slots.size(), true)) {
@@ -129,33 +135,31 @@ public class MachineMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return access.evaluate(
-                (level, pos) -> isMachine(level.getBlockEntity(pos))
-                        && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5) <= 64.0,
+                (level, pos) -> level.getBlockEntity(pos) instanceof Machine
+                        && player.distanceToSqr(pos.getX() + 0.5, pos.getY() + 0.5,
+                                pos.getZ() + 0.5) <= 64.0,
                 true);
     }
 
-    private static boolean isMachine(BlockEntity entity) {
-        return entity instanceof GeneratorBlockEntity || entity instanceof BatteryBlockEntity;
-    }
-
     /**
-     * Opening one. Both blocks do exactly this, so it is written once here rather
-     * than twice in two blocks that would then be free to drift apart.
-     *
-     * <p>Whether there is a slot travels in the buffer: the client builds its own
-     * copy of the menu before it has seen the block entity, so it has to be told.
+     * Opening one. Every block does exactly this, so it is written once here rather
+     * than once per block in files that would then be free to drift apart.
      */
-    public static InteractionResult open(Level level, BlockPos pos, Player player, boolean burns) {
+    public static InteractionResult open(Level level, BlockPos pos, Player player) {
         if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
-        if (level.getBlockEntity(pos) instanceof MenuProvider provider) {
-            player.openMenu(provider, buffer -> buffer.writeBoolean(burns));
+        if (level.getBlockEntity(pos) instanceof MenuProvider provider
+                && provider instanceof Machine machine) {
+            player.openMenu(provider, buffer -> {
+                buffer.writeBoolean(machine.burns());
+                buffer.writeByte(machine.machineSlots().getSlots());
+            });
         }
         return InteractionResult.CONSUME;
     }
 
-    /** Where the block is, for the screen's title. Absent on the client's copy. */
+    /** Where the block is, for anything that has to know. Absent on the client. */
     public BlockPos where() {
         return access.evaluate((level, pos) -> pos, BlockPos.ZERO);
     }

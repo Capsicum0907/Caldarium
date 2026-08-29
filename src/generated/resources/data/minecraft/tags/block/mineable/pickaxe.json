@@ -1,6 +1,7 @@
 {
   "values": [
     "caldarium:burner",
-    "caldarium:iron_battery"
+    "caldarium:iron_battery",
+    "caldarium:iron_charger"
   ]
 }

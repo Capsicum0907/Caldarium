@@ -24,7 +24,7 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  * side: a hopper, a dropper and every mod's pipes ask a block for exactly that and
  * for nothing else, so a generator can be fed before it has a screen of its own.
  */
-public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
+public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, Machine {
     private final Generator row;
     private final CaldariumConfig.Rates rates;
     private final Store store;
@@ -78,6 +78,16 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
 
     public Store store() {
         return store;
+    }
+
+    @Override
+    public boolean burns() {
+        return true;
+    }
+
+    @Override
+    public ItemStackHandler machineSlots() {
+        return fuel;
     }
 
     @Override

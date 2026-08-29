@@ -13,6 +13,7 @@ import com.google.common.hash.Hashing;
 import io.github.capsicum0907.caldarium.Caldarium;
 import io.github.capsicum0907.caldarium.CaldariumRegistry;
 import io.github.capsicum0907.caldarium.Generator;
+import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.GeneratorBlock;
 import io.github.capsicum0907.caldarium.Tier;
 
@@ -106,8 +107,10 @@ public final class CaldariumDataGen {
                     draw(output, writing, Skins.generatorSkin(lit), Skins.generator(generator, lit));
                 }
             }
-            for (Tier tier : Tier.values()) {
-                draw(output, writing, Skins.batterySkin(tier), Skins.battery(tier));
+            for (Kind kind : Kind.values()) {
+                for (Tier tier : Tier.values()) {
+                    draw(output, writing, Skins.kindSkin(kind, tier), Skins.kind(kind, tier));
+                }
             }
             Path panel = screens.file(
                     ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, Skins.GUI), "png");
@@ -159,11 +162,13 @@ public final class CaldariumDataGen {
                 // The item is the cold one: a generator in a hand is not burning.
                 itemModels().withExistingParent(cold, modLoc("block/" + cold));
             }
-            for (Tier tier : Tier.values()) {
-                String name = Skins.battery(tier);
-                simpleBlock(CaldariumRegistry.batteries().get(tier).get(),
-                        models().cubeAll(name, modLoc("block/" + name)));
-                itemModels().withExistingParent(name, modLoc("block/" + name));
+            for (Kind kind : Kind.values()) {
+                for (Tier tier : Tier.values()) {
+                    String name = Skins.kind(kind, tier);
+                    simpleBlock(CaldariumRegistry.block(kind, tier).get(),
+                            models().cubeAll(name, modLoc("block/" + name)));
+                    itemModels().withExistingParent(name, modLoc("block/" + name));
+                }
             }
         }
     }
@@ -176,7 +181,12 @@ public final class CaldariumDataGen {
         @Override
         protected void addTranslations() {
             add(CaldariumRegistry.generators().get(Generator.BURNER).get(), "Burner");
-            add(CaldariumRegistry.batteries().get(Tier.IRON).get(), "Iron Battery");
+            for (Kind kind : Kind.values()) {
+                for (Tier tier : Tier.values()) {
+                    add(CaldariumRegistry.block(kind, tier).get(),
+                            titled(tier.id()) + " " + titled(kind.getSerializedName()));
+                }
+            }
             add("gui.caldarium.stored", "%s / %s FE");
         }
     }
@@ -212,8 +222,17 @@ public final class CaldariumDataGen {
     private static List<Block> ours() {
         List<Block> blocks = new ArrayList<>();
         CaldariumRegistry.generators().values().forEach(block -> blocks.add(block.get()));
-        CaldariumRegistry.batteries().values().forEach(block -> blocks.add(block.get()));
+        for (Kind kind : Kind.values()) {
+            for (Tier tier : Tier.values()) {
+                blocks.add(CaldariumRegistry.block(kind, tier).get());
+            }
+        }
         return blocks;
+    }
+
+    /** An id, as a name. The ids are English words, so this is the whole of it. */
+    private static String titled(String id) {
+        return Character.toUpperCase(id.charAt(0)) + id.substring(1);
     }
 
     /**
@@ -261,8 +280,21 @@ public final class CaldariumDataGen {
                     .save(output);
 
             ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.batteries().get(Tier.IRON).get())
+                            CaldariumRegistry.block(Kind.BATTERY, Tier.IRON).get())
                     .pattern("IRI")
+                    .pattern("RBR")
+                    .pattern("IRI")
+                    .define('I', Items.IRON_INGOT)
+                    .define('R', Items.REDSTONE)
+                    .define('B', Blocks.REDSTONE_BLOCK)
+                    .unlockedBy("has_redstone_block", has(Blocks.REDSTONE_BLOCK))
+                    .save(output);
+
+            // The same frame with its top open: a charger is a battery you can reach
+            // into, and it should read as the one that costs slightly less.
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                            CaldariumRegistry.block(Kind.CHARGER, Tier.IRON).get())
+                    .pattern("I I")
                     .pattern("RBR")
                     .pattern("IRI")
                     .define('I', Items.IRON_INGOT)

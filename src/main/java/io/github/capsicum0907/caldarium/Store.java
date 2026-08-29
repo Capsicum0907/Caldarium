@@ -21,7 +21,16 @@ public final class Store implements IEnergyStorage {
         /** Makes energy. Never accepts any: something that did would be a battery. */
         SOURCE,
         /** Holds energy on its way somewhere. */
-        BUFFER
+        BUFFER,
+        /**
+         * Spends energy on something other than passing it on.
+         *
+         * <p>⚠ This exists because of the downhill rule in {@link Pushing}, which only
+         * holds between two buffers. A charger counted as a buffer would be starved by
+         * the battery beside it the moment it was the fuller of the two by share — the
+         * same trap as a running machine from another mod, and for the same reason.
+         */
+        SINK
     }
 
     private final Role role;
@@ -59,12 +68,13 @@ public final class Store implements IEnergyStorage {
 
     @Override
     public boolean canReceive() {
-        return role == Role.BUFFER;
+        return role != Role.SOURCE;
     }
 
+    /** Nothing comes back out of a sink: what went in was spent on what it holds. */
     @Override
     public boolean canExtract() {
-        return true;
+        return role != Role.SINK;
     }
 
     /**
@@ -93,6 +103,9 @@ public final class Store implements IEnergyStorage {
 
     @Override
     public int extractEnergy(int wanted, boolean simulate) {
+        if (!canExtract()) {
+            return 0;
+        }
         int given = Math.min(Math.min(wanted, transferRate()), stored);
         if (given > 0 && !simulate) {
             stored -= given;
@@ -112,6 +125,20 @@ public final class Store implements IEnergyStorage {
             changed.run();
         }
         return Math.max(0, made);
+    }
+
+    /**
+     * What a machine spends on itself. The counterpart of {@link #generate}: it goes
+     * around {@link #canExtract}, which is there to stop <em>other</em> blocks
+     * draining a sink rather than to stop the sink doing its job.
+     */
+    public int spend(int amount) {
+        int spent = Math.min(amount, stored);
+        if (spent > 0) {
+            stored -= spent;
+            changed.run();
+        }
+        return Math.max(0, spent);
     }
 
     public boolean isEmpty() {

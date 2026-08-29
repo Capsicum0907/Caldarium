@@ -55,7 +55,7 @@ public class GeneratorBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        return MachineMenu.open(level, pos, player, true);
+        return MachineMenu.open(level, pos, player);
     }
 
     @Override

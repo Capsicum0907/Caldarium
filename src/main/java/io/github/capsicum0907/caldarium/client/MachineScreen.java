@@ -40,11 +40,16 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             graphics.blit(SHEET, leftPos + Skins.BAR_X, topPos + Skins.BAR_Y + Skins.BAR_H - charged,
                     Skins.BAR_U, Skins.BAR_V + Skins.BAR_H - charged, Skins.BAR_W, charged);
         }
-        if (menu.burns()) {
-            // The slot and its hollow belong to a machine that burns, so they are put
-            // on the panel here rather than painted into it for both machines.
-            graphics.blit(SHEET, leftPos + Skins.FUEL_SLOT_X - 1, topPos + Skins.FUEL_SLOT_Y - 1,
+        // How many slots there are is the machine's business, so the panel does not
+        // carry them: it is shared, and a battery drawn with a burner's fuel slot was
+        // showing a hollow that took nothing.
+        int count = menu.machineSlots();
+        for (int slot = 0; slot < count; slot++) {
+            graphics.blit(SHEET, leftPos + Skins.slotX(slot, count) - 1,
+                    topPos + Skins.SLOT_ROW_Y - 1,
                     Skins.FUEL_WELL_U, Skins.FUEL_WELL_V, Skins.SLOT, Skins.SLOT);
+        }
+        if (menu.burns()) {
             graphics.blit(SHEET, leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y,
                     Skins.FLAME_WELL_U, Skins.FLAME_WELL_V, Skins.FLAME_W, Skins.FLAME_H);
 

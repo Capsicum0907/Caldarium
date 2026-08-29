@@ -1,5 +1,7 @@
-// 1.21.1	2026-08-30T00:29:33.4576036	Recipes
+// 1.21.1	2026-08-30T03:09:45.6990696	Recipes
 576b34e9b721292355914177dcb6ceedc12083cd data/caldarium/advancement/recipes/redstone/burner.json
 7304e132b6ee1c3f8417ee866401bd66c02c02fb data/caldarium/advancement/recipes/redstone/iron_battery.json
+a8f7641c647b64d09527c107e2ca0be4270dbf3f data/caldarium/advancement/recipes/redstone/iron_charger.json
 947f1d1da8639cb66c64b6aef5adf33b1ea51072 data/caldarium/recipe/burner.json
 36bb47612e4cadb58b0aca1200d8df105d56eb73 data/caldarium/recipe/iron_battery.json
+d940ce42872f34d218589065c84b6cecca5483d5 data/caldarium/recipe/iron_charger.json

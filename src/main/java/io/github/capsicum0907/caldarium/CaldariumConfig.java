@@ -1,5 +1,6 @@
 package io.github.capsicum0907.caldarium;
 
+import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -22,9 +23,17 @@ public final class CaldariumConfig {
      * The proportions the ladder is built from — the only numbers in the mod, and
      * only ever the starting point of a file the player then owns.
      */
-    private static final int FIRST_CAPACITY = 400_000;
-    private static final int FIRST_TRANSFER = 2_000;
     private static final int PER_TIER = 8;
+
+    /** What the first tier of each kind is worth. Every tier above is derived. */
+    private record First(int capacity, int transfer) {
+    }
+
+    private static final Map<Kind, First> FIRST = Map.of(
+            // A battery is capacity; a charger is a doorway, so it is quicker and
+            // holds only enough to keep working while it waits for more.
+            Kind.BATTERY, new First(400_000, 2_000),
+            Kind.CHARGER, new First(100_000, 4_000));
 
     /** A generator holds little: it is a source, not a store. */
     private static final int GENERATOR_CAPACITY = 40_000;
@@ -37,7 +46,12 @@ public final class CaldariumConfig {
     }
 
     public static final Map<Generator, Rates> GENERATORS = new LinkedHashMap<>();
-    public static final Map<Tier, Rates> BATTERIES = new LinkedHashMap<>();
+    private static final Map<Kind, Map<Tier, Rates>> KINDS = new EnumMap<>(Kind.class);
+
+    /** The numbers for one block that is sized by its tier. */
+    public static Rates rates(Kind kind, Tier tier) {
+        return KINDS.get(kind).get(tier);
+    }
 
     public static final ModConfigSpec SPEC;
 
@@ -59,19 +73,27 @@ public final class CaldariumConfig {
         }
         builder.pop();
 
-        builder.comment("Batteries, a section each, in the order the tiers are declared.")
-                .push("battery");
-        for (Tier tier : Tier.values()) {
-            builder.push(tier.id());
-            BATTERIES.put(tier, new Rates(
-                    builder.comment("Forge Energy it holds.")
-                            .defineInRange("capacity", stepped(FIRST_CAPACITY, tier), 1, Integer.MAX_VALUE),
-                    builder.comment("How much crosses its boundary per tick, each way and each side.")
-                            .defineInRange("transferRate", stepped(FIRST_TRANSFER, tier), 1, Integer.MAX_VALUE),
-                    null));
+        for (Kind kind : Kind.values()) {
+            First first = FIRST.get(kind);
+            Map<Tier, Rates> tiers = new LinkedHashMap<>();
+            builder.comment("One section per tier, in the order the tiers are declared.")
+                    .push(kind.getSerializedName());
+            for (Tier tier : Tier.values()) {
+                builder.push(tier.id());
+                tiers.put(tier, new Rates(
+                        builder.comment("Forge Energy it holds.")
+                                .defineInRange("capacity", stepped(first.capacity(), tier),
+                                        1, Integer.MAX_VALUE),
+                        builder.comment("How much crosses its boundary per tick, each way and each side.",
+                                        "Also how fast it fills what is in its slots.")
+                                .defineInRange("transferRate", stepped(first.transfer(), tier),
+                                        1, Integer.MAX_VALUE),
+                        null));
+                builder.pop();
+            }
             builder.pop();
+            KINDS.put(kind, tiers);
         }
-        builder.pop();
 
         SPEC = builder.build();
     }

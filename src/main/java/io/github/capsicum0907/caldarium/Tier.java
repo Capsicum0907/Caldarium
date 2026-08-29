@@ -20,11 +20,10 @@ public enum Tier implements StringRepresentable {
 
     private final String id = name().toLowerCase(Locale.ROOT);
 
-    /** The name in the registry, the model, the recipe and the language file. */
-    public String batteryId() {
-        return id + "_battery";
-    }
-
+    /**
+     * ⚠ A tier does not name anything. How big a thing is and what kind of thing it
+     * is are two questions, and {@link Kind} answers the second one.
+     */
     public String id() {
         return id;
     }

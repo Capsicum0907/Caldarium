@@ -6,7 +6,6 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -14,20 +13,28 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 
-/** One row of {@link Tier}, as a block. */
-public class BatteryBlock extends BaseEntityBlock {
-    public static final MapCodec<BatteryBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
+/** One {@link Kind} at one {@link Tier}, as a block. */
+public class KindBlock extends BaseEntityBlock {
+    public static final MapCodec<KindBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
-                    Tier.CODEC.fieldOf("tier").forGetter(BatteryBlock::tier),
+                    Kind.CODEC.fieldOf("kind").forGetter(KindBlock::kind),
+                    Tier.CODEC.fieldOf("tier").forGetter(KindBlock::tier),
                     propertiesCodec())
-                    .apply(instance, BatteryBlock::new));
+                    .apply(instance, KindBlock::new));
 
+    private final Kind kind;
     private final Tier tier;
 
-    public BatteryBlock(Tier tier, Properties properties) {
+    public KindBlock(Kind kind, Tier tier, Properties properties) {
         super(properties);
+        this.kind = kind;
         this.tier = tier;
+    }
+
+    public Kind kind() {
+        return kind;
     }
 
     public Tier tier() {
@@ -42,12 +49,12 @@ public class BatteryBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        return MachineMenu.open(level, pos, player, false);
+        return MachineMenu.open(level, pos, player);
     }
 
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return new BatteryBlockEntity(pos, state);
+        return new KindBlockEntity(pos, state);
     }
 
     @Override
@@ -59,7 +66,7 @@ public class BatteryBlock extends BaseEntityBlock {
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             BlockEntityType<T> type) {
         return level.isClientSide() ? null
-                : createTickerHelper(type, CaldariumRegistry.BATTERY_ENTITY.get(),
-                        BatteryBlockEntity::serverTick);
+                : createTickerHelper(type, CaldariumRegistry.KIND_ENTITY.get(),
+                        KindBlockEntity::serverTick);
     }
 }

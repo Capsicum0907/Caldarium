@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.capsicum0907.caldarium.Generator;
+import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.Tier;
 
 /**
@@ -43,8 +44,8 @@ public final class Skins {
         return lit ? generator.id() + "_on" : generator.id();
     }
 
-    public static String battery(Tier tier) {
-        return tier.batteryId();
+    public static String kind(Kind kind, Tier tier) {
+        return kind.id(tier);
     }
 
     /**
@@ -58,8 +59,10 @@ public final class Skins {
             names.add(generator(generator, false));
             names.add(generator(generator, true));
         }
-        for (Tier tier : Tier.values()) {
-            names.add(battery(tier));
+        for (Kind kind : Kind.values()) {
+            for (Tier tier : Tier.values()) {
+                names.add(kind(kind, tier));
+            }
         }
         return names;
     }
@@ -80,17 +83,33 @@ public final class Skins {
         return pixels;
     }
 
-    public static int[][] batterySkin(Tier tier) {
+    /**
+     * The same plate for every kind; only what is in the window differs. They are one
+     * machine seen doing different jobs, and the picture should say so.
+     */
+    public static int[][] kindSkin(Kind kind, Tier tier) {
         int colour = CELL[Math.min(tier.ordinal(), CELL.length - 1)];
         int[][] pixels = plate();
         for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
             for (int x = WINDOW_FROM; x < WINDOW_TO; x++) {
-                // Cells stood side by side: every third column is the gap between two.
-                boolean gap = (x - WINDOW_FROM) % 3 == 2;
-                pixels[y][x] = 0xFF000000 | (gap ? EDGE : colour);
+                pixels[y][x] = 0xFF000000 | (marked(kind, x, y) ? colour : EDGE);
             }
         }
         return pixels;
+    }
+
+    /** What the window shows: cells stood side by side, or a socket to plug into. */
+    private static boolean marked(Kind kind, int x, int y) {
+        return switch (kind) {
+            // Every third column is the gap between two cells.
+            case BATTERY -> (x - WINDOW_FROM) % 3 != 2;
+            // A ring one pixel in, and a contact in the middle of it.
+            case CHARGER -> {
+                int in = Math.min(Math.min(x - WINDOW_FROM, y - WINDOW_FROM),
+                        Math.min(WINDOW_TO - 1 - x, WINDOW_TO - 1 - y));
+                yield in == 1 || in == 3;
+            }
+        };
     }
 
     /** Metal with a darker rim and a rivet in each corner. */
@@ -146,10 +165,10 @@ public final class Skins {
     public static final int GUI_WIDTH = 176;
     public static final int GUI_HEIGHT = 166;
 
-    public static final int FUEL_SLOT_X = 80;
-    public static final int FUEL_SLOT_Y = 35;
+    public static final int SLOT = 18;
+    public static final int SLOT_ROW_Y = 35;
 
-    public static final int FLAME_X = 80;
+    public static final int FLAME_X = GUI_WIDTH / 2 - 7;
     public static final int FLAME_Y = 53;
     public static final int FLAME_W = 14;
     public static final int FLAME_H = 14;
@@ -175,7 +194,15 @@ public final class Skins {
     public static final int INVENTORY_X = 8;
     public static final int INVENTORY_Y = 84;
     public static final int HOTBAR_Y = 142;
-    public static final int SLOT = 18;
+
+    /**
+     * Where one of a machine's own slots goes: a row of however many there are,
+     * centred. One rule for a burner's single slot of fuel and for a charger's nine,
+     * so a kind added later has a place to put its slots without a layout of its own.
+     */
+    public static int slotX(int index, int count) {
+        return GUI_WIDTH / 2 - count * SLOT / 2 + index * SLOT + 1;
+    }
 
     public static final String GUI = "machine";
 
