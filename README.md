@@ -5,9 +5,10 @@ Forge Energy: something that makes it, something that keeps it.
 *Caldarium* is the hot room of a Roman bath — the one the fire under the
 floor keeps warm.
 
-> **Status: it makes energy and moves it.** A burner and an iron battery, built,
-> generated and loading. ⚠ Not yet watched in a running game, and there is no
-> screen: fuel goes in through a hopper.
+> **Status: it makes energy and moves it.** A burner and an iron battery, watched
+> working in a running game on 2026-08-30 — the burner runs, the batteries fill and
+> level off against each other, a hopper feeds it and does not empty it, and the
+> level shows in a tooltip. ⚠ There is no screen yet: fuel goes in through a hopper.
 
 ## Target
 
@@ -35,9 +36,22 @@ Both are rows in one table, so a new type or a new tier is a row and not a class
 
 **No network.** Energy is not routed, planned or cabled. Each block, on its tick,
 offers what it has to the six blocks touching it, and that is the entire transport
-layer. A network would be a second system to keep correct, and the mods this is
-meant to sit beside already have one — this mod ships no cable, and a cable mod
-does that job.
+layer. A network would be a second system to keep correct, and nothing here needs
+one: a row of batteries already carries, because energy can only move towards the
+emptier end.
+
+**Cables come later, and they are rows in the same table.** A cable is a battery
+that holds almost nothing and moves a great deal, so carrying over distance needs
+no new mechanism — only a smaller capacity. Three blocks make the boundary
+explicit: a **cable** that speaks only to other Caldarium transport, an **importer**
+that draws out of something else, and an **exporter** that feeds into it. Each has
+tiers.
+
+The reason to build these rather than lean on a cable mod is the handling. **No
+wrench**, because the direction is which of the three blocks was placed. **No
+upgrade to fit**, because the speed is the tier. **No window to open**, because
+there is nothing to configure. A pipe that needs three of those before it moves
+anything is a pipe that is faster to lay by hand.
 
 Pushing has one asymmetry, and it is the whole of the rule:
 
@@ -82,7 +96,8 @@ gradlew runData           # regenerate models, recipes and language
 - [ ] **3** — charging: a slot on the battery, and a charger block that is the same
   idea with more slots
 - [ ] **4** — the rest of the types and tiers, as rows
-- [ ] **5** — checked by game tests rather than by eye
+- [ ] **5** — cables: a cable, an importer and an exporter, in tiers
+- [ ] **6** — checked by game tests rather than by eye
 
 ## Related
 
