@@ -163,6 +163,15 @@ public final class Skins {
     public static final int BAR_U = 176;
     public static final int BAR_V = 16;
 
+    // ⚠ The slot and the recess under it are NOT painted into the panel. A battery
+    // has no fuel, and a panel carrying them showed it an empty slot it would not
+    // accept anything into and a hollow that never lit. They are strips like the
+    // others, drawn only by a screen whose machine burns.
+    public static final int FUEL_WELL_U = 176;
+    public static final int FUEL_WELL_V = 72;
+    public static final int FLAME_WELL_U = 176;
+    public static final int FLAME_WELL_V = 92;
+
     public static final int INVENTORY_X = 8;
     public static final int INVENTORY_Y = 84;
     public static final int HOTBAR_Y = 142;
@@ -187,9 +196,11 @@ public final class Skins {
             }
             well(pixels, INVENTORY_X + x * SLOT, HOTBAR_Y, SLOT, SLOT);
         }
-        well(pixels, FUEL_SLOT_X - 1, FUEL_SLOT_Y - 1, SLOT, SLOT);
         well(pixels, BAR_X - 1, BAR_Y - 1, BAR_W + 2, BAR_H + 2);
-        well(pixels, FLAME_X, FLAME_Y, FLAME_W, FLAME_H);
+
+        // The two the burner adds to the panel it shares with the battery.
+        well(pixels, FUEL_WELL_U, FUEL_WELL_V, SLOT, SLOT);
+        well(pixels, FLAME_WELL_U, FLAME_WELL_V, FLAME_W, FLAME_H);
 
         // The two strips. Both are drawn from the bottom up, so a partly filled bar
         // is the bottom of the strip rather than a scaled copy of the whole of it.

@@ -8,8 +8,8 @@ floor keeps warm.
 > **Status: it makes energy and moves it.** A burner and an iron battery, watched
 > working in a running game on 2026-08-30 — the burner runs, the batteries fill and
 > level off against each other, a hopper feeds it and does not empty it, and the
-> level shows in a tooltip. Both blocks now open a screen — a bar for the charge, a
-> flame for the fuel — which is built but ⚠ not yet watched.
+> level shows in a tooltip. Both blocks open a screen — a bar for the charge, a
+> flame for the fuel, and the exact figures on hover — watched working the same day.
 
 ## Target
 
