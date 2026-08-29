@@ -1,8 +1,9 @@
-# Accumulator
+# Caldarium
 
 Forge Energy: something that makes it, something that keeps it.
 
-*Accumulator* is Latin for a thing that gathers and keeps.
+*Caldarium* is the hot room of a Roman bath — the one the fire under the
+floor keeps warm.
 
 > **Status: scaffold only.** The mod loads and does nothing.
 
@@ -62,7 +63,7 @@ none of the others: [Fodina](https://github.com/Capsicum0907/Fodina),
 [Cella](https://github.com/Capsicum0907/Cella),
 [Acervus](https://github.com/Capsicum0907/Acervus),
 [Fornax](https://github.com/Capsicum0907/Fornax),
-[Accumulator](https://github.com/Capsicum0907/Accumulator).
+[Caldarium](https://github.com/Capsicum0907/Caldarium).
 
 ## License
 
