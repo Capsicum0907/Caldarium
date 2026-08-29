@@ -34,6 +34,7 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
@@ -279,29 +280,56 @@ public final class CaldariumDataGen {
                     .unlockedBy("has_furnace", has(Blocks.FURNACE))
                     .save(output);
 
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.block(Kind.BATTERY, Tier.IRON).get())
-                    .pattern("IRI")
-                    .pattern("RBR")
-                    .pattern("IRI")
-                    .define('I', Items.IRON_INGOT)
-                    .define('R', Items.REDSTONE)
-                    .define('B', Blocks.REDSTONE_BLOCK)
-                    .unlockedBy("has_redstone_block", has(Blocks.REDSTONE_BLOCK))
-                    .save(output);
+            // The first rung is built from parts. Every rung above it is the rung
+            // below in a frame of its own metal, so a tier added to the table brings
+            // its recipe with it and the ladder cannot grow a missing step.
+            for (Kind kind : Kind.values()) {
+                for (Tier tier : Tier.values()) {
+                    if (tier.under() == null) {
+                        first(output, kind, tier);
+                    } else {
+                        upgrade(output, kind, tier);
+                    }
+                }
+            }
+        }
 
-            // The same frame with its top open: a charger is a battery you can reach
-            // into, and it should read as the one that costs slightly less.
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.block(Kind.CHARGER, Tier.IRON).get())
-                    .pattern("I I")
-                    .pattern("RBR")
-                    .pattern("IRI")
-                    .define('I', Items.IRON_INGOT)
+        /** Redstone around the vanilla block that already does the job in miniature. */
+        private void first(RecipeOutput output, Kind kind, Tier tier) {
+            ShapedRecipeBuilder built = ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                    CaldariumRegistry.block(kind, tier).get());
+            // A charger is a battery you can reach into, so its frame is open at the top.
+            built = kind == Kind.CHARGER
+                    ? built.pattern("I I").pattern("RBR").pattern("IRI")
+                    : built.pattern("IRI").pattern("RBR").pattern("IRI");
+            built.define('I', metal(tier))
                     .define('R', Items.REDSTONE)
                     .define('B', Blocks.REDSTONE_BLOCK)
                     .unlockedBy("has_redstone_block", has(Blocks.REDSTONE_BLOCK))
                     .save(output);
+        }
+
+        private void upgrade(RecipeOutput output, Kind kind, Tier tier) {
+            ItemLike under = CaldariumRegistry.block(kind, tier.under()).get();
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                            CaldariumRegistry.block(kind, tier).get())
+                    .pattern(" M ")
+                    .pattern("MPM")
+                    .pattern(" M ")
+                    .define('M', metal(tier))
+                    .define('P', under)
+                    .unlockedBy("has_" + kind.id(tier.under()), has(under))
+                    .save(output);
+        }
+
+        /** What a rung is made of. The ladder is the vanilla one everybody knows. */
+        private static ItemLike metal(Tier tier) {
+            return switch (tier) {
+                case IRON -> Items.IRON_INGOT;
+                case GOLD -> Items.GOLD_INGOT;
+                case DIAMOND -> Items.DIAMOND;
+                case NETHERITE -> Items.NETHERITE_INGOT;
+            };
         }
     }
 }

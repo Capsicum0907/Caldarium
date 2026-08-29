@@ -1,6 +1,12 @@
-// 1.21.1	2026-08-30T03:09:45.6950454	Caldarium textures
+// 1.21.1	2026-08-30T03:31:17.0134605	Caldarium textures
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/burner_on.png
+d544a558a7e7efe4fa09b3e5fb26d6ac892604de assets/caldarium/textures/block/diamond_battery.png
+b3760bfc4a1287b9e7cd6e7412559adaf87ef291 assets/caldarium/textures/block/diamond_charger.png
+d22333fe2e07c6c4493e84fc996dad5415c2081e assets/caldarium/textures/block/gold_battery.png
+ff3a8c2ced71757948723e98c74fa56aa6c2f32d assets/caldarium/textures/block/gold_charger.png
 ed4ce3b4a983c1fa5c2bba492435d069def720a8 assets/caldarium/textures/block/iron_battery.png
 ec3cb5f3ba3c6ae09418e1f0d30560543152ada8 assets/caldarium/textures/block/iron_charger.png
+e81a7111fa4f72421f8d8547539f6676aaee570b assets/caldarium/textures/block/netherite_battery.png
+f8d753bdc0a453be42e1deb55a47c8d8e65e32dd assets/caldarium/textures/block/netherite_charger.png
 f1b9525ca68e00a5e35ef744ab2ea2744fd48ac3 assets/caldarium/textures/gui/machine.png

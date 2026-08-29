@@ -14,7 +14,15 @@ import net.minecraft.util.StringRepresentable;
  * arrives with numbers already in proportion to the ones below it.
  */
 public enum Tier implements StringRepresentable {
-    IRON;
+    IRON,
+    GOLD,
+    DIAMOND,
+    NETHERITE;
+
+    /** The one below, or nothing when this is the first rung. */
+    public Tier under() {
+        return ordinal() == 0 ? null : values()[ordinal() - 1];
+    }
 
     public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 

@@ -30,8 +30,12 @@ public final class Skins {
     private static final int MOUTH_LIT = 0xFF9A2E;
     private static final int EMBER = 0xC8461B;
 
-    /** One per rung of the ladder, taken by ordinal; the last one repeats if it runs out. */
-    private static final int[] CELL = { 0xD5DBE0 };
+    /**
+     * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
+     * out. The metal each tier is made of, so a block says which rung it is on
+     * without anything written on it.
+     */
+    private static final int[] CELL = { 0xD5DBE0, 0xF0C246, 0x5BE0D6, 0x5B4E52 };
 
     private static final int WINDOW_FROM = 4;
     private static final int WINDOW_TO = 12;
@@ -196,12 +200,40 @@ public final class Skins {
     public static final int HOTBAR_Y = 142;
 
     /**
-     * Where one of a machine's own slots goes: a row of however many there are,
-     * centred. One rule for a burner's single slot of fuel and for a charger's nine,
-     * so a kind added later has a place to put its slots without a layout of its own.
+     * How wide a row of a machine's own slots may be.
+     *
+     * <p>⚠ Five, not nine. A row of nine reaches x=169, and the charge bar starts at
+     * x=151: the top tier of charger would have laid its last two slots underneath
+     * it. Wrapping is what keeps the layout a rule rather than a rule with an
+     * exception at the far end of the ladder.
+     */
+    public static final int SLOT_COLUMNS = 5;
+
+    public static int slotColumns(int count) {
+        return Math.min(count, SLOT_COLUMNS);
+    }
+
+    public static int slotRows(int count) {
+        return (count + SLOT_COLUMNS - 1) / SLOT_COLUMNS;
+    }
+
+    /**
+     * Where one of a machine's own slots goes: a grid of however many there are,
+     * centred, and every row centred within it so a short last row does not sit off
+     * to one side. One rule for a burner's single slot of fuel and for a charger's
+     * nine, so a kind added later has a place to put its slots without a layout of
+     * its own.
      */
     public static int slotX(int index, int count) {
-        return GUI_WIDTH / 2 - count * SLOT / 2 + index * SLOT + 1;
+        int columns = slotColumns(count);
+        int row = index / columns;
+        int wide = Math.min(columns, count - row * columns);
+        return GUI_WIDTH / 2 - wide * SLOT / 2 + index % columns * SLOT + 1;
+    }
+
+    public static int slotY(int index, int count) {
+        int row = index / slotColumns(count);
+        return SLOT_ROW_Y - (slotRows(count) - 1) * SLOT / 2 + row * SLOT;
     }
 
     public static final String GUI = "machine";

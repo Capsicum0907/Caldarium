@@ -58,9 +58,13 @@ public enum Kind implements StringRepresentable {
         return pushes;
     }
 
-    /** A row of slots, never wider than the inventory underneath it. */
+    /**
+     * A row of slots, never wider than the inventory underneath it. Two more at
+     * every rung, so each tier is a width of its own rather than two of them
+     * meeting the ceiling together.
+     */
     public int slots(Tier tier) {
-        return widens ? Math.min(MOST_SLOTS, slots * (tier.ordinal() + 1)) : slots;
+        return widens ? Math.min(MOST_SLOTS, slots + 2 * tier.ordinal()) : slots;
     }
 
     @Override

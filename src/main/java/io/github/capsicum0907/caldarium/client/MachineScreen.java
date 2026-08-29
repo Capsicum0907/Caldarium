@@ -46,7 +46,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         int count = menu.machineSlots();
         for (int slot = 0; slot < count; slot++) {
             graphics.blit(SHEET, leftPos + Skins.slotX(slot, count) - 1,
-                    topPos + Skins.SLOT_ROW_Y - 1,
+                    topPos + Skins.slotY(slot, count) - 1,
                     Skins.FUEL_WELL_U, Skins.FUEL_WELL_V, Skins.SLOT, Skins.SLOT);
         }
         if (menu.burns()) {

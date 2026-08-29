@@ -98,7 +98,8 @@ gradlew runData           # regenerate models, recipes and language
 - [x] **2** — the screen: fuel, progress and level, the way a furnace shows them
 - [x] **3** — charging: a slot on the battery, and a charger block that is the same
   idea with more slots
-- [ ] **4** — the rest of the types and tiers, as rows
+- [x] **4** — the rest of the tiers, as rows (⚠ which further generator types
+  there should be is still open)
 - [ ] **5** — cables: a cable, an importer and an exporter, in tiers
 - [ ] **6** — checked by game tests rather than by eye
 

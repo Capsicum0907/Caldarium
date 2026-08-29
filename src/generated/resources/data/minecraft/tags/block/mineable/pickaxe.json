@@ -2,6 +2,12 @@
   "values": [
     "caldarium:burner",
     "caldarium:iron_battery",
-    "caldarium:iron_charger"
+    "caldarium:gold_battery",
+    "caldarium:diamond_battery",
+    "caldarium:netherite_battery",
+    "caldarium:iron_charger",
+    "caldarium:gold_charger",
+    "caldarium:diamond_charger",
+    "caldarium:netherite_charger"
   ]
 }

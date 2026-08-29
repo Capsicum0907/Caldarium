@@ -50,7 +50,7 @@ public class MachineMenu extends AbstractContainerMenu {
 
         for (int slot = 0; slot < machineSlots; slot++) {
             addSlot(new SlotItemHandler(machine, slot,
-                    Skins.slotX(slot, machineSlots), Skins.SLOT_ROW_Y));
+                    Skins.slotX(slot, machineSlots), Skins.slotY(slot, machineSlots)));
         }
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {

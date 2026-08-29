@@ -1,4 +1,10 @@
-// 1.21.1	2026-08-30T03:09:45.6975657	Loot Tables
+// 1.21.1	2026-08-30T03:31:17.0149664	Loot Tables
 2be1d9530a340b9fbd65f3dd4f1344b7d75c7173 data/caldarium/loot_table/blocks/burner.json
+2dbdf81e32cc02935712e01a5f94b3f8931d02da data/caldarium/loot_table/blocks/diamond_battery.json
+4b7d8f4178cb6b44558b916b4790ead723f89d4b data/caldarium/loot_table/blocks/diamond_charger.json
+1c15766eadff67c00c569a48f22741266743eb7b data/caldarium/loot_table/blocks/gold_battery.json
+673bad902f1a3d383f84d84bce9d09722667effb data/caldarium/loot_table/blocks/gold_charger.json
 38ee5a6a8b5e27107aa99434fd544c3575a3fa0b data/caldarium/loot_table/blocks/iron_battery.json
 cf4f4f8acb0edb09a4f61bb070754efcd56dab21 data/caldarium/loot_table/blocks/iron_charger.json
+d915d851052afa2badceef8c55b7ec1bfe2a87b8 data/caldarium/loot_table/blocks/netherite_battery.json
+ee3a59326a88eb8d3fb91f117964c638bed8f228 data/caldarium/loot_table/blocks/netherite_charger.json
