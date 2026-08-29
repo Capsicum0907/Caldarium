@@ -22,6 +22,19 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final ResourceLocation SHEET = ResourceLocation
             .fromNamespaceAndPath(Caldarium.MODID, "textures/gui/" + Skins.GUI + ".png");
 
+    /**
+     * The furnace's own flame, borrowed rather than copied.
+     *
+     * <p>Naming vanilla's sprite ships none of vanilla's art with this mod, and it
+     * follows a resource pack: somebody who has restyled the furnace has restyled
+     * this too, without knowing this mod exists.
+     */
+    private static final ResourceLocation FLAME =
+            ResourceLocation.withDefaultNamespace("container/furnace/lit_progress");
+
+    /** How dark the unlit flame is. Vanilla bakes its own into the furnace image. */
+    private static final float SPENT = 0.28F;
+
     public MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = Skins.GUI_WIDTH;
@@ -61,14 +74,21 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             }
         }
         if (menu.burns()) {
-            graphics.blit(SHEET, leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y,
-                    Skins.FLAME_WELL_U, Skins.FLAME_WELL_V, Skins.FLAME_W, Skins.FLAME_H);
+            // The shape of what is missing is the shape of the flame itself, so the
+            // same sprite is drawn dark underneath rather than a box being drawn
+            // around it. A box never fits a flame.
+            graphics.setColor(SPENT, SPENT, SPENT, 1.0F);
+            graphics.blitSprite(FLAME, Skins.FLAME_W, Skins.FLAME_H, 0, 0,
+                    leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y,
+                    Skins.FLAME_W, Skins.FLAME_H);
+            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             int flame = Math.round(Skins.FLAME_H * menu.burned());
             if (flame > 0) {
-                graphics.blit(SHEET, leftPos + Skins.FLAME_X,
-                        topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
-                        Skins.FLAME_U, Skins.FLAME_V + Skins.FLAME_H - flame, Skins.FLAME_W, flame);
+                graphics.blitSprite(FLAME, Skins.FLAME_W, Skins.FLAME_H,
+                        0, Skins.FLAME_H - flame,
+                        leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
+                        Skins.FLAME_W, flame);
             }
         }
     }

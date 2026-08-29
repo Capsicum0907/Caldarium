@@ -191,12 +191,16 @@ public final class Skins {
     public static final int SLOT = 18;
     public static final int SLOT_ROW_Y = 35;
 
+    /**
+     * Where the flame goes. ⚠ There is no flame <em>in</em> this sheet: the screen
+     * borrows the one the furnace uses, which is why the size is vanilla's fourteen
+     * rather than a number of ours. Drawn here it came out a tapering orange block
+     * that read as a traffic cone, and the recess around it never lined up with it.
+     */
     public static final int FLAME_X = GUI_WIDTH / 2 - 7;
     public static final int FLAME_Y = 53;
     public static final int FLAME_W = 14;
     public static final int FLAME_H = 14;
-    public static final int FLAME_U = 176;
-    public static final int FLAME_V = 0;
 
     public static final int BAR_X = 152;
     public static final int BAR_Y = 17;
@@ -221,8 +225,6 @@ public final class Skins {
     // others, drawn only by a screen whose machine burns.
     public static final int FUEL_WELL_U = 176;
     public static final int FUEL_WELL_V = 72;
-    public static final int FLAME_WELL_U = 176;
-    public static final int FLAME_WELL_V = 92;
 
     public static final int INVENTORY_X = 8;
     public static final int INVENTORY_Y = 84;
@@ -293,11 +295,9 @@ public final class Skins {
 
         // The two the burner adds to the panel it shares with the battery.
         well(pixels, FUEL_WELL_U, FUEL_WELL_V, SLOT, SLOT);
-        well(pixels, FLAME_WELL_U, FLAME_WELL_V, FLAME_W, FLAME_H);
 
         // The two strips. Both are drawn from the bottom up, so a partly filled bar
         // is the bottom of the strip rather than a scaled copy of the whole of it.
-        flame(pixels, FLAME_U, FLAME_V);
         for (int y = 0; y < BAR_H; y++) {
             for (int x = 0; x < BAR_W; x++) {
                 // Brighter towards the top, so a full bar does not read as flat paint.
@@ -333,22 +333,6 @@ public final class Skins {
         for (int y = 0; y < height; y++) {
             pixels[top + y][left] = 0xFF000000 | WELL_DARK;
             pixels[top + y][left + width - 1] = 0xFF000000 | PANEL_LIGHT;
-        }
-    }
-
-    /** A flame: widest at the base, tapering, drawn from the same two fire colours. */
-    private static void flame(int[][] pixels, int atX, int atY) {
-        for (int y = 0; y < FLAME_H; y++) {
-            float up = y / (float) (FLAME_H - 1);
-            int half = Math.round((1.0F - up) * (FLAME_W / 2.0F - 1.0F)) + 1;
-            for (int x = 0; x < FLAME_W; x++) {
-                int from = Math.abs(x - (FLAME_W - 1) / 2);
-                if (from > half) {
-                    continue;
-                }
-                pixels[atY + FLAME_H - 1 - y][atX + x] =
-                        0xFF000000 | mix(MOUTH_LIT, EMBER, up);
-            }
         }
     }
 

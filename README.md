@@ -88,7 +88,10 @@ The energy interface is NeoForge's own, so anything that already speaks Forge
 Energy — from any mod — connects without either side knowing about the other.
 
 **The level is visible in a screen**, the way a furnace shows its fire and its
-progress, and in a tooltip for the mods that read one.
+progress, and in a tooltip for the mods that read one. The panel is drawn from a
+formula like everything else here, but the flame is the furnace’s own sprite,
+named rather than copied: no vanilla art ships with this mod, and somebody who has
+restyled the furnace with a resource pack has restyled this too.
 
 Capacity, transfer rates and generation rate are settings. There is no defensible
 number to write into the code here: what is right depends entirely on what else is
