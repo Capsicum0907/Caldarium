@@ -5,7 +5,9 @@ Forge Energy: something that makes it, something that keeps it.
 *Caldarium* is the hot room of a Roman bath — the one the fire under the
 floor keeps warm.
 
-> **Status: scaffold only.** The mod loads and does nothing.
+> **Status: it makes energy and moves it.** A burner and an iron battery, built,
+> generated and loading. ⚠ Not yet watched in a running game, and there is no
+> screen: fuel goes in through a hopper.
 
 ## Target
 
@@ -74,7 +76,7 @@ gradlew runData           # regenerate models, recipes and language
 ## Roadmap
 
 - [x] **0** — scaffold; the mod loads
-- [ ] **1** — one generator type and one battery tier, as the first rows of the
+- [x] **1** — one generator type and one battery tier, as the first rows of the
   table, pushing to whatever touches them
 - [ ] **2** — the screen: fuel, progress and level, the way a furnace shows them
 - [ ] **3** — charging: a slot on the battery, and a charger block that is the same

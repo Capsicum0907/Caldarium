@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/burner"
+    },
+    "lit=true": {
+      "model": "caldarium:block/burner_on"
+    }
+  }
+}

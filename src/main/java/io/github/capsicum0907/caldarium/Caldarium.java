@@ -2,9 +2,15 @@ package io.github.capsicum0907.caldarium;
 
 import com.mojang.logging.LogUtils;
 
+import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
 
 import org.slf4j.Logger;
 
@@ -16,9 +22,44 @@ import org.slf4j.Logger;
 public class Caldarium {
     public static final String MODID = "caldarium";
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+    public static final Logger LOGGER = LogUtils.getLogger();
 
     public Caldarium(IEventBus modEventBus, ModContainer modContainer) {
+        modContainer.registerConfig(ModConfig.Type.SERVER, CaldariumConfig.SPEC);
+
+        CaldariumRegistry.BLOCKS.register(modEventBus);
+        CaldariumRegistry.ITEMS.register(modEventBus);
+        CaldariumRegistry.BLOCK_ENTITIES.register(modEventBus);
+
+        modEventBus.addListener(Caldarium::registerCapabilities);
+        modEventBus.addListener(Caldarium::addToCreativeTab);
+
         LOGGER.info("Caldarium {} loaded.", modContainer.getModInfo().getVersion());
+    }
+
+    /**
+     * The whole of the integration. Everything that moves energy — this mod's own
+     * push, another mod's cable, a machine drawing from what it is stood on — asks a
+     * block for the energy capability and for nothing else.
+     *
+     * <p>Registered without regard to side: a face that behaved differently would be
+     * a routing decision, and this mod does not make those. The generator also offers
+     * its fuel slot as an item handler, which is how a hopper feeds it.
+     */
+    private static void registerCapabilities(RegisterCapabilitiesEvent event) {
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+                CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.store());
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
+                CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.fuel());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
+                CaldariumRegistry.BATTERY_ENTITY.get(), (battery, side) -> battery.store());
+    }
+
+    private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            for (DeferredItem<?> item : CaldariumRegistry.items()) {
+                event.accept(item);
+            }
+        }
     }
 }

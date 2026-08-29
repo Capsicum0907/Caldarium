@@ -1,0 +1,8 @@
+// 1.21.1	2026-08-30T00:29:33.4560898	Block States: caldarium
+6b1675d6c65db763f4073777cc286f0f1c58642d assets/caldarium/blockstates/burner.json
+f244c5fda98a257f746c19c7baf6039c7d968c3e assets/caldarium/blockstates/iron_battery.json
+6253341003807085a40010727fd9b1ab7aed924d assets/caldarium/models/block/burner.json
+b7c5f3c84d56e6a7e2db2966ea23552302b68be0 assets/caldarium/models/block/burner_on.json
+27ea62ac26b74a599f677ac52ebb777abad9163f assets/caldarium/models/block/iron_battery.json
+177aba98cffb14e68ebf5eadfe41fd1854ccb18d assets/caldarium/models/item/burner.json
+a63df0f713e92e2c7893d59f8c9402e229b59c8d assets/caldarium/models/item/iron_battery.json
