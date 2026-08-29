@@ -40,6 +40,25 @@ public class GeneratorBlockEntity extends BlockEntity {
                 return row.fuel().accepts(stack);
             }
 
+            /**
+             * ⚠ Fuel goes in and does not come back out. Without this a hopper set
+             * under the burner — the arrangement everybody builds under a furnace —
+             * pulls the coal straight back out of it, and the generator never runs.
+             *
+             * <p>What is <em>not</em> fuel may still be taken, which is how the empty
+             * bucket a lava bucket leaves behind gets collected. Refusing everything
+             * would trap it in the slot with nothing able to reach it.
+             *
+             * <p>The rule asks the item rather than the side the request came from:
+             * this mod does not give its faces different opinions.
+             */
+            @Override
+            public ItemStack extractItem(int slot, int amount, boolean simulate) {
+                return row.fuel().accepts(getStackInSlot(slot))
+                        ? ItemStack.EMPTY
+                        : super.extractItem(slot, amount, simulate);
+            }
+
             @Override
             protected void onContentsChanged(int slot) {
                 setChanged();

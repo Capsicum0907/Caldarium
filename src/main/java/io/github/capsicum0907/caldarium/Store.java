@@ -67,14 +67,25 @@ public final class Store implements IEnergyStorage {
         return true;
     }
 
+    /**
+     * ⚠ Arithmetic on {@link #stored}, never on {@link #getEnergyStored()}.
+     *
+     * <p>The two differ in exactly one situation and it matters: capacity is a live
+     * setting, so lowering it leaves blocks holding more than they now can. Writing
+     * {@code stored = getEnergyStored() + taken} would quietly throw the surplus away
+     * on the next transfer of a single unit. Working from the raw amount instead, the
+     * excess is not lost — it drains out normally as the block is used, and the block
+     * simply refuses to take more until it is back under the new limit.
+     */
     @Override
     public int receiveEnergy(int offered, boolean simulate) {
         if (!canReceive()) {
             return 0;
         }
-        int taken = Math.min(Math.min(offered, transferRate()), getMaxEnergyStored() - getEnergyStored());
+        int room = getMaxEnergyStored() - stored;
+        int taken = Math.min(Math.min(offered, transferRate()), Math.max(0, room));
         if (taken > 0 && !simulate) {
-            stored = getEnergyStored() + taken;
+            stored += taken;
             changed.run();
         }
         return Math.max(0, taken);
@@ -82,9 +93,9 @@ public final class Store implements IEnergyStorage {
 
     @Override
     public int extractEnergy(int wanted, boolean simulate) {
-        int given = Math.min(Math.min(wanted, transferRate()), getEnergyStored());
+        int given = Math.min(Math.min(wanted, transferRate()), stored);
         if (given > 0 && !simulate) {
-            stored = getEnergyStored() - given;
+            stored -= given;
             changed.run();
         }
         return Math.max(0, given);
@@ -95,9 +106,9 @@ public final class Store implements IEnergyStorage {
      * to keep <em>other</em> blocks from filling a generator, not to stop it working.
      */
     public int generate(int amount) {
-        int made = Math.min(amount, getMaxEnergyStored() - getEnergyStored());
+        int made = Math.min(amount, Math.max(0, getMaxEnergyStored() - stored));
         if (made > 0) {
-            stored = getEnergyStored() + made;
+            stored += made;
             changed.run();
         }
         return Math.max(0, made);
@@ -108,7 +119,7 @@ public final class Store implements IEnergyStorage {
     }
 
     public boolean isFull() {
-        return getEnergyStored() >= getMaxEnergyStored();
+        return stored >= getMaxEnergyStored();
     }
 
     /** Saving and loading. The stored amount is the whole of the state. */
