@@ -134,4 +134,121 @@ public final class Skins {
         int end = (to >> at) & 0xFF;
         return Math.round(start + (end - start) * amount) << at;
     }
+
+    // ---- the screen -------------------------------------------------------
+    //
+    // Where everything on the panel sits. ⚠ These are read twice — once here to
+    // paint the picture and once by the screen to draw on top of it — so they are
+    // constants rather than numbers written into either side. A slot the painter
+    // and the screen disagree about is a slot drawn in mid-air.
+
+    public static final int SHEET = 256;
+    public static final int GUI_WIDTH = 176;
+    public static final int GUI_HEIGHT = 166;
+
+    public static final int FUEL_SLOT_X = 80;
+    public static final int FUEL_SLOT_Y = 35;
+
+    public static final int FLAME_X = 80;
+    public static final int FLAME_Y = 53;
+    public static final int FLAME_W = 14;
+    public static final int FLAME_H = 14;
+    public static final int FLAME_U = 176;
+    public static final int FLAME_V = 0;
+
+    public static final int BAR_X = 152;
+    public static final int BAR_Y = 17;
+    public static final int BAR_W = 12;
+    public static final int BAR_H = 52;
+    public static final int BAR_U = 176;
+    public static final int BAR_V = 16;
+
+    public static final int INVENTORY_X = 8;
+    public static final int INVENTORY_Y = 84;
+    public static final int HOTBAR_Y = 142;
+    public static final int SLOT = 18;
+
+    public static final String GUI = "machine";
+
+    private static final int PANEL = 0xC6C6C6;
+    private static final int PANEL_LIGHT = 0xFFFFFF;
+    private static final int PANEL_DARK = 0x555555;
+    private static final int WELL = 0x8B8B8B;
+    private static final int WELL_DARK = 0x373737;
+    private static final int CHARGE = 0xE8C33A;
+
+    /** The panel, and beside it the strips drawn over it as things fill up. */
+    public static int[][] gui() {
+        int[][] pixels = new int[SHEET][SHEET];
+        panel(pixels);
+        for (int x = 0; x < 9; x++) {
+            for (int y = 0; y < 3; y++) {
+                well(pixels, INVENTORY_X + x * SLOT, INVENTORY_Y + y * SLOT, SLOT, SLOT);
+            }
+            well(pixels, INVENTORY_X + x * SLOT, HOTBAR_Y, SLOT, SLOT);
+        }
+        well(pixels, FUEL_SLOT_X - 1, FUEL_SLOT_Y - 1, SLOT, SLOT);
+        well(pixels, BAR_X - 1, BAR_Y - 1, BAR_W + 2, BAR_H + 2);
+        well(pixels, FLAME_X, FLAME_Y, FLAME_W, FLAME_H);
+
+        // The two strips. Both are drawn from the bottom up, so a partly filled bar
+        // is the bottom of the strip rather than a scaled copy of the whole of it.
+        flame(pixels, FLAME_U, FLAME_V);
+        for (int y = 0; y < BAR_H; y++) {
+            for (int x = 0; x < BAR_W; x++) {
+                // Brighter towards the top, so a full bar does not read as flat paint.
+                pixels[BAR_V + y][BAR_U + x] = 0xFF000000 | mix(EMBER, CHARGE, 1.0F - y / (float) (BAR_H - 1));
+            }
+        }
+        return pixels;
+    }
+
+    private static void panel(int[][] pixels) {
+        fill(pixels, 0, 0, GUI_WIDTH, GUI_HEIGHT, PANEL);
+        for (int x = 0; x < GUI_WIDTH; x++) {
+            pixels[0][x] = 0xFF000000 | PANEL_LIGHT;
+            pixels[GUI_HEIGHT - 1][x] = 0xFF000000 | PANEL_DARK;
+        }
+        for (int y = 0; y < GUI_HEIGHT; y++) {
+            pixels[y][0] = 0xFF000000 | PANEL_LIGHT;
+            pixels[y][GUI_WIDTH - 1] = 0xFF000000 | PANEL_DARK;
+        }
+    }
+
+    /** A recess: dark along the top and left, light along the bottom and right. */
+    private static void well(int[][] pixels, int left, int top, int width, int height) {
+        fill(pixels, left, top, width, height, WELL);
+        for (int x = 0; x < width; x++) {
+            pixels[top][left + x] = 0xFF000000 | WELL_DARK;
+            pixels[top + height - 1][left + x] = 0xFF000000 | PANEL_LIGHT;
+        }
+        for (int y = 0; y < height; y++) {
+            pixels[top + y][left] = 0xFF000000 | WELL_DARK;
+            pixels[top + y][left + width - 1] = 0xFF000000 | PANEL_LIGHT;
+        }
+    }
+
+    /** A flame: widest at the base, tapering, drawn from the same two fire colours. */
+    private static void flame(int[][] pixels, int atX, int atY) {
+        for (int y = 0; y < FLAME_H; y++) {
+            float up = y / (float) (FLAME_H - 1);
+            int half = Math.round((1.0F - up) * (FLAME_W / 2.0F - 1.0F)) + 1;
+            for (int x = 0; x < FLAME_W; x++) {
+                int from = Math.abs(x - (FLAME_W - 1) / 2);
+                if (from > half) {
+                    continue;
+                }
+                pixels[atY + FLAME_H - 1 - y][atX + x] =
+                        0xFF000000 | mix(MOUTH_LIT, EMBER, up);
+            }
+        }
+    }
+
+    private static void fill(int[][] pixels, int left, int top, int width, int height, int colour) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                pixels[top + y][left + x] = 0xFF000000 | colour;
+            }
+        }
+    }
 }

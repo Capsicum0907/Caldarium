@@ -1,4 +1,5 @@
 {
   "block.caldarium.burner": "Burner",
-  "block.caldarium.iron_battery": "Iron Battery"
+  "block.caldarium.iron_battery": "Iron Battery",
+  "gui.caldarium.stored": "%s / %s FE"
 }

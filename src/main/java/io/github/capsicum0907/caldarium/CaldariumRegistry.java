@@ -5,12 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -32,6 +34,12 @@ public final class CaldariumRegistry {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Caldarium.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Caldarium.MODID);
+    public static final DeferredRegister<MenuType<?>> MENUS =
+            DeferredRegister.create(Registries.MENU, Caldarium.MODID);
+
+    /** One menu for every machine; what it shows is decided by what opened it. */
+    public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU =
+            MENUS.register("machine", () -> IMenuTypeExtension.create(MachineMenu::new));
 
     private static final Map<Generator, DeferredBlock<GeneratorBlock>> GENERATORS = new LinkedHashMap<>();
     private static final Map<Generator, DeferredItem<BlockItem>> GENERATOR_ITEMS = new LinkedHashMap<>();

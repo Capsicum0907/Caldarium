@@ -3,7 +3,13 @@ package io.github.capsicum0907.caldarium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -18,12 +24,14 @@ import net.neoforged.neoforge.items.ItemStackHandler;
  * side: a hopper, a dropper and every mod's pipes ask a block for exactly that and
  * for nothing else, so a generator can be fed before it has a screen of its own.
  */
-public class GeneratorBlockEntity extends BlockEntity {
+public class GeneratorBlockEntity extends BlockEntity implements MenuProvider {
     private final Generator row;
     private final CaldariumConfig.Rates rates;
     private final Store store;
     private final Pushing pushing = new Pushing();
     private final ItemStackHandler fuel;
+
+    private final MachineData data;
 
     private int burning;
     private int burnLength;
@@ -34,6 +42,8 @@ public class GeneratorBlockEntity extends BlockEntity {
         this.rates = CaldariumConfig.GENERATORS.get(row);
         this.store = new Store(Store.Role.SOURCE,
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
+        this.data = new MachineData(store::getEnergyStored, store::getMaxEnergyStored,
+                () -> burning, () -> burnLength);
         this.fuel = new ItemStackHandler(1) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
@@ -68,6 +78,17 @@ public class GeneratorBlockEntity extends BlockEntity {
 
     public Store store() {
         return store;
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable(getBlockState().getBlock().getDescriptionId());
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
+        return new MachineMenu(id, inventory,
+                ContainerLevelAccess.create(level, worldPosition), true, fuel, data);
     }
 
     public ItemStackHandler fuel() {

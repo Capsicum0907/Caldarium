@@ -89,10 +89,13 @@ public final class CaldariumDataGen {
     /** The pictures, from {@link Skins}. */
     private static class Textures implements DataProvider {
         private final PackOutput.PathProvider textures;
+        private final PackOutput.PathProvider screens;
 
         Textures(PackOutput output) {
             this.textures = output.createPathProvider(PackOutput.Target.RESOURCE_PACK,
                     "textures/block");
+            this.screens = output.createPathProvider(PackOutput.Target.RESOURCE_PACK,
+                    "textures/gui");
         }
 
         @Override
@@ -106,6 +109,10 @@ public final class CaldariumDataGen {
             for (Tier tier : Tier.values()) {
                 draw(output, writing, Skins.batterySkin(tier), Skins.battery(tier));
             }
+            Path panel = screens.file(
+                    ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, Skins.GUI), "png");
+            writing.add(CompletableFuture.runAsync(() -> write(output, Skins.gui(), panel),
+                    Util.backgroundExecutor()));
             return CompletableFuture.allOf(writing.toArray(CompletableFuture[]::new));
         }
 
@@ -170,6 +177,7 @@ public final class CaldariumDataGen {
         protected void addTranslations() {
             add(CaldariumRegistry.generators().get(Generator.BURNER).get(), "Burner");
             add(CaldariumRegistry.batteries().get(Tier.IRON).get(), "Iron Battery");
+            add("gui.caldarium.stored", "%s / %s FE");
         }
     }
 

@@ -8,7 +8,8 @@ floor keeps warm.
 > **Status: it makes energy and moves it.** A burner and an iron battery, watched
 > working in a running game on 2026-08-30 — the burner runs, the batteries fill and
 > level off against each other, a hopper feeds it and does not empty it, and the
-> level shows in a tooltip. ⚠ There is no screen yet: fuel goes in through a hopper.
+> level shows in a tooltip. Both blocks now open a screen — a bar for the charge, a
+> flame for the fuel — which is built but ⚠ not yet watched.
 
 ## Target
 
@@ -92,7 +93,7 @@ gradlew runData           # regenerate models, recipes and language
 - [x] **0** — scaffold; the mod loads
 - [x] **1** — one generator type and one battery tier, as the first rows of the
   table, pushing to whatever touches them
-- [ ] **2** — the screen: fuel, progress and level, the way a furnace shows them
+- [x] **2** — the screen: fuel, progress and level, the way a furnace shows them
 - [ ] **3** — charging: a slot on the battery, and a charger block that is the same
   idea with more slots
 - [ ] **4** — the rest of the types and tiers, as rows

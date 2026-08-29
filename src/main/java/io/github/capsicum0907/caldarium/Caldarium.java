@@ -2,7 +2,10 @@ package io.github.capsicum0907.caldarium;
 
 import com.mojang.logging.LogUtils;
 
+import io.github.capsicum0907.caldarium.client.CaldariumClient;
+
 import net.minecraft.world.item.CreativeModeTabs;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -30,6 +33,7 @@ public class Caldarium {
         CaldariumRegistry.BLOCKS.register(modEventBus);
         CaldariumRegistry.ITEMS.register(modEventBus);
         CaldariumRegistry.BLOCK_ENTITIES.register(modEventBus);
+        CaldariumRegistry.MENUS.register(modEventBus);
 
         modEventBus.addListener(Caldarium::registerCapabilities);
         modEventBus.addListener(Caldarium::addToCreativeTab);
@@ -53,6 +57,14 @@ public class Caldarium {
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.fuel());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 CaldariumRegistry.BATTERY_ENTITY.get(), (battery, side) -> battery.store());
+    }
+
+    /** Drawing is a client concern, and this is the only place that knows it exists. */
+    @Mod(value = MODID, dist = Dist.CLIENT)
+    public static class Client {
+        public Client(IEventBus modEventBus, ModContainer modContainer) {
+            modEventBus.addListener(CaldariumClient::registerScreens);
+        }
     }
 
     private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
