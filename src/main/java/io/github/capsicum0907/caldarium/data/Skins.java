@@ -210,6 +210,10 @@ public final class Skins {
     public static final int TANK_Y = 17;
     public static final int TANK_U = 176;
     public static final int TANK_V = 112;
+    public static final int TANK_WELL_U = 192;
+    public static final int TANK_WELL_V = 0;
+    public static final int TANK_WELL_W = BAR_W + 2;
+    public static final int TANK_WELL_H = BAR_H + 2;
 
     // ⚠ The slot and the recess under it are NOT painted into the panel. A battery
     // has no fuel, and a panel carrying them showed it an empty slot it would not
@@ -281,7 +285,11 @@ public final class Skins {
             well(pixels, INVENTORY_X + x * SLOT, HOTBAR_Y, SLOT, SLOT);
         }
         well(pixels, BAR_X - 1, BAR_Y - 1, BAR_W + 2, BAR_H + 2);
-        well(pixels, TANK_X - 1, TANK_Y - 1, BAR_W + 2, BAR_H + 2);
+
+        // ⚠ The tank recess is NOT painted into the panel, for the same reason the
+        // fuel slot is not: the panel is shared, and a battery drawn with one was
+        // showing a hollow that nothing could ever go into. Made twice now.
+        well(pixels, TANK_WELL_U, TANK_WELL_V, TANK_WELL_W, TANK_WELL_H);
 
         // The two the burner adds to the panel it shares with the battery.
         well(pixels, FUEL_WELL_U, FUEL_WELL_V, SLOT, SLOT);

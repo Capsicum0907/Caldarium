@@ -45,6 +45,13 @@ the weather clear, and is there anything overhead. Anything solid above it stops
 entirely; anything light passes through takes a share, and what share is a setting
 because there is no defensible number for it.
 
+**Fuel goes in and does not come back out.** A hopper under a furnace is the
+arrangement everybody builds, and one under a generator would otherwise pull the
+coal straight back out of it; a pipe set to extract would empty a tank the same
+way. Both refuse. What is left over is not fuel and may still be taken, which is
+how the bucket a lava bucket leaves behind gets collected — a tank has no such
+leftovers, so fuel put in one by mistake stays there until the block is broken.
+
 **No network.** Energy is not routed, planned or cabled. Each block, on its tick,
 offers what it has to the six blocks touching it, and that is the entire transport
 layer. A network would be a second system to keep correct, and nothing here needs

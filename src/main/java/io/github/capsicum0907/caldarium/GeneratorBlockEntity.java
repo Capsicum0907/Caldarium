@@ -16,8 +16,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 /**
@@ -40,7 +38,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     private final Store store;
     private final Pushing pushing = new Pushing();
     private final ItemStackHandler fuel;
-    private final FluidTank tank;
+    private final FuelTank tank;
     private final MachineData data;
 
     private int burning;
@@ -57,12 +55,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         this.store = new Store(Store.Role.SOURCE,
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
         this.tank = row.source() == Source.FLUID
-                ? new FluidTank(CaldariumConfig.tank(row), held -> Fuel.burnTicks(held.getFluid()) > 0) {
-                    @Override
-                    protected void onContentsChanged() {
-                        setChanged();
-                    }
-                }
+                ? new FuelTank(CaldariumConfig.tank(row), this::setChanged)
                 : null;
         this.data = new MachineData(store::getEnergyStored, store::getMaxEnergyStored,
                 () -> burning, () -> burnLength,
@@ -108,7 +101,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     }
 
     /** Null when this generator has no tank, for the same reason. */
-    public FluidTank tank() {
+    public FuelTank tank() {
         return tank;
     }
 
@@ -207,7 +200,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         if (ticks <= 0) {
             return 0;
         }
-        tank.drain(DRAUGHT, IFluidHandler.FluidAction.EXECUTE);
+        tank.spend(DRAUGHT);
         return ticks;
     }
 

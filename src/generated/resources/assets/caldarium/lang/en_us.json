@@ -11,5 +11,6 @@
   "block.caldarium.netherite_charger": "Netherite Charger",
   "block.caldarium.solar_panel": "Solar Panel",
   "gui.caldarium.held": "%s / %s mB",
-  "gui.caldarium.stored": "%s / %s FE"
+  "gui.caldarium.stored": "%s / %s FE",
+  "itemGroup.caldarium": "Caldarium"
 }

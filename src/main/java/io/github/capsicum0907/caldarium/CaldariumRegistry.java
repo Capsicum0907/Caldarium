@@ -8,8 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -40,6 +43,8 @@ public final class CaldariumRegistry {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Caldarium.MODID);
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(Registries.MENU, Caldarium.MODID);
+    public static final DeferredRegister<CreativeModeTab> TABS =
+            DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Caldarium.MODID);
 
     /** One menu for every machine; what it shows is decided by what opened it. */
     public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU =
@@ -121,6 +126,19 @@ public final class CaldariumRegistry {
     public static List<DeferredItem<BlockItem>> items() {
         return ITEM_ORDER;
     }
+
+    /**
+     * A tab of its own. Eleven blocks scattered through Functional Blocks is eleven
+     * blocks nobody can find; the order is the order of the tables, so the ladder
+     * reads as a ladder.
+     */
+    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
+            TABS.register(Caldarium.MODID, () -> CreativeModeTab.builder()
+                    .title(Component.translatable("itemGroup." + Caldarium.MODID))
+                    .icon(() -> new ItemStack(ITEM_ORDER.getFirst().get()))
+                    .displayItems((parameters, output) -> ITEM_ORDER
+                            .forEach(item -> output.accept(item.get())))
+                    .build());
 
     private CaldariumRegistry() {
     }

@@ -34,6 +34,7 @@ public class Caldarium {
         CaldariumRegistry.ITEMS.register(modEventBus);
         CaldariumRegistry.BLOCK_ENTITIES.register(modEventBus);
         CaldariumRegistry.MENUS.register(modEventBus);
+        CaldariumRegistry.TABS.register(modEventBus);
 
         modEventBus.addListener(Caldarium::registerCapabilities);
         modEventBus.addListener(Caldarium::addToCreativeTab);

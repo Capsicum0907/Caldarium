@@ -52,7 +52,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         // Only a machine with a tank has one drawn; the rest of the panel is shared.
         if (menu.fluidCapacity() > 0) {
             graphics.blit(SHEET, leftPos + Skins.TANK_X - 1, topPos + Skins.TANK_Y - 1,
-                    Skins.FUEL_WELL_U, Skins.FUEL_WELL_V, Skins.SLOT, Skins.SLOT);
+                    Skins.TANK_WELL_U, Skins.TANK_WELL_V, Skins.TANK_WELL_W, Skins.TANK_WELL_H);
             int filled = Math.round(Skins.BAR_H * menu.filled());
             if (filled > 0) {
                 graphics.blit(SHEET, leftPos + Skins.TANK_X,

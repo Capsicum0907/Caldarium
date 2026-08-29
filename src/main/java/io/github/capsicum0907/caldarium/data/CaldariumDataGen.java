@@ -191,6 +191,7 @@ public final class CaldariumDataGen {
                             titled(tier.id()) + " " + titled(kind.getSerializedName()));
                 }
             }
+            add("itemGroup." + Caldarium.MODID, "Caldarium");
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");
         }
