@@ -31,11 +31,19 @@ else in this set is one thing; this is one thing that needs more than one block 
 be a thing at all.
 
 **Generators come in types; everything else comes in tiers.** A type is what a
-generator burns — each one has its own idea of fuel, and the fuel is part of the
-type rather than a rule shared by all of them. A tier is how much and how fast, and
-a kind is what the thing does with what it holds: a battery hands it on, a charger
-puts it into what is in its slots. One kind at one tier is one block, so a kind or
-a tier added later is a row and not a class.
+generator draws on: something solid in a slot, something molten in a tank, or the
+sky. What counts as fuel belongs to the type rather than being a rule they all
+share — and the two that burn ask the item and the bucket rather than keeping a
+list, so a fuel any mod adds is one they already accept.
+
+A tier is how much and how fast, and a kind is what a thing does with what it
+holds: a battery hands it on, a charger puts it into what is in its slots. One kind
+at one tier is one block, so a kind or a tier added later is a row and not a class.
+
+**The one that draws on the sky asks three questions and no more:** is it day, is
+the weather clear, and is there anything overhead. Anything solid above it stops it
+entirely; anything light passes through takes a share, and what share is a setting
+because there is no defensible number for it.
 
 **No network.** Energy is not routed, planned or cabled. Each block, on its tick,
 offers what it has to the six blocks touching it, and that is the entire transport
@@ -98,8 +106,7 @@ gradlew runData           # regenerate models, recipes and language
 - [x] **2** — the screen: fuel, progress and level, the way a furnace shows them
 - [x] **3** — charging: a slot on the battery, and a charger block that is the same
   idea with more slots
-- [x] **4** — the rest of the tiers, as rows (⚠ which further generator types
-  there should be is still open)
+- [x] **4** — the rest of the types and tiers, as rows
 - [ ] **5** — cables: a cable, an importer and an exporter, in tiers
 - [ ] **6** — checked by game tests rather than by eye
 
