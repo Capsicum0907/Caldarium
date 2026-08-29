@@ -1,7 +1,10 @@
 package io.github.capsicum0907.caldarium;
 
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 
 /**
  * What a generator will burn, and for how long.
@@ -29,6 +32,20 @@ public enum Fuel {
 
     /** Zero when this is not fuel at all. */
     public abstract int burnTicks(ItemStack stack);
+
+    /**
+     * How long a bucket of something burns, which is the whole of what a fluid fuel
+     * is. Asked of the bucket rather than kept in a list here, for the same reason
+     * the solid fuels are asked of the item: the mod that added the fluid has
+     * already answered, and a list of our own could only disagree with it.
+     */
+    public static int burnTicks(Fluid fluid) {
+        if (fluid == null || fluid == Fluids.EMPTY) {
+            return 0;
+        }
+        Item bucket = fluid.getBucket();
+        return bucket == null ? 0 : FURNACE.burnTicks(new ItemStack(bucket));
+    }
 
     public boolean accepts(ItemStack stack) {
         return burnTicks(stack) > 0;

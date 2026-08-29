@@ -55,6 +55,8 @@ public class Caldarium {
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.store());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.fuel());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
+                CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.tank());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 CaldariumRegistry.KIND_ENTITY.get(), (machine, side) -> machine.store());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,

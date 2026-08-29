@@ -42,7 +42,7 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         this.store = new Store(kind.role(),
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
         this.data = new MachineData(store::getEnergyStored, store::getMaxEnergyStored,
-                () -> 0, () -> 0);
+                () -> 0, () -> 0, () -> 0, () -> 0);
         this.items = new ItemStackHandler(kind.slots(tier)) {
             /** Only things that can be charged, so a slot cannot be used as a shelf. */
             @Override

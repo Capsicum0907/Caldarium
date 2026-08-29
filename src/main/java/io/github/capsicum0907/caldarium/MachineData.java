@@ -22,15 +22,18 @@ public final class MachineData implements ContainerData {
     public static final int CAPACITY = 1;
     public static final int BURNING = 2;
     public static final int BURN_LENGTH = 3;
+    public static final int FLUID = 4;
+    public static final int FLUID_CAPACITY = 5;
 
     /** Two slots each. */
-    public static final int SIZE = 8;
+    public static final int SIZE = 12;
 
     private final IntSupplier[] values;
 
     public MachineData(IntSupplier energy, IntSupplier capacity, IntSupplier burning,
-            IntSupplier burnLength) {
-        this.values = new IntSupplier[] { energy, capacity, burning, burnLength };
+            IntSupplier burnLength, IntSupplier fluid, IntSupplier fluidCapacity) {
+        this.values = new IntSupplier[] { energy, capacity, burning, burnLength,
+                fluid, fluidCapacity };
     }
 
     @Override

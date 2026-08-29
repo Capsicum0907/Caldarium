@@ -53,9 +53,12 @@ public final class CaldariumRegistry {
 
     static {
         for (Generator generator : Generator.all()) {
+            // Only the ones with a fire in them give light. A solar panel lit like a
+            // furnace would be a lamp that works during the day.
             DeferredBlock<GeneratorBlock> block = BLOCKS.registerBlock(generator.id(),
                     properties -> new GeneratorBlock(generator, properties), metal()
-                            .lightLevel(state -> state.getValue(GeneratorBlock.LIT) ? 13 : 0));
+                            .lightLevel(state -> generator.source().burns()
+                                    && state.getValue(GeneratorBlock.LIT) ? 13 : 0));
             GENERATORS.put(generator, block);
             ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
         }

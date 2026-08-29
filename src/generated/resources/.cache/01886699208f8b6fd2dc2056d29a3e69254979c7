@@ -1,12 +1,16 @@
-// 1.21.1	2026-08-30T03:31:17.0134605	Caldarium textures
+// 1.21.1	2026-08-30T06:26:07.4391089	Caldarium textures
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/burner_on.png
+88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/crucible.png
+941b4e8385c2a41b53f21d688ffeb9d401f2bf70 assets/caldarium/textures/block/crucible_on.png
 d544a558a7e7efe4fa09b3e5fb26d6ac892604de assets/caldarium/textures/block/diamond_battery.png
 b3760bfc4a1287b9e7cd6e7412559adaf87ef291 assets/caldarium/textures/block/diamond_charger.png
 d22333fe2e07c6c4493e84fc996dad5415c2081e assets/caldarium/textures/block/gold_battery.png
 ff3a8c2ced71757948723e98c74fa56aa6c2f32d assets/caldarium/textures/block/gold_charger.png
 ed4ce3b4a983c1fa5c2bba492435d069def720a8 assets/caldarium/textures/block/iron_battery.png
 ec3cb5f3ba3c6ae09418e1f0d30560543152ada8 assets/caldarium/textures/block/iron_charger.png
-e81a7111fa4f72421f8d8547539f6676aaee570b assets/caldarium/textures/block/netherite_battery.png
-f8d753bdc0a453be42e1deb55a47c8d8e65e32dd assets/caldarium/textures/block/netherite_charger.png
-f1b9525ca68e00a5e35ef744ab2ea2744fd48ac3 assets/caldarium/textures/gui/machine.png
+aefd1aa5446f1419be0137721c8eabebc00ff58e assets/caldarium/textures/block/netherite_battery.png
+8134a086cbc1a1156e2ad6638603ef5b3bebeb5f assets/caldarium/textures/block/netherite_charger.png
+efd996396b9e74f4b6cf148ec7d0ee3fc8c787ca assets/caldarium/textures/block/solar_panel.png
+40194098d02cd152df89909460410b7c847e15fa assets/caldarium/textures/block/solar_panel_on.png
+2e1d87ab2b3d933fef2eb90c4dd2c0bc87f10957 assets/caldarium/textures/gui/machine.png

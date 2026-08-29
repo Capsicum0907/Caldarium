@@ -17,10 +17,15 @@ import com.mojang.serialization.Codec;
  * <p>Numbers are not here — see {@link CaldariumConfig}. A row says what a generator
  * <em>is</em>; how much it makes is a setting.
  */
-public record Generator(String id, Fuel fuel) {
-    public static final Generator BURNER = new Generator("burner", Fuel.FURNACE);
+public record Generator(String id, Source source) {
+    /** Whatever a furnace would burn, put in a slot by hand or by a hopper. */
+    public static final Generator BURNER = new Generator("burner", Source.ITEM);
+    /** The same fuels, molten, kept in a tank a pipe or a bucket can fill. */
+    public static final Generator CRUCIBLE = new Generator("crucible", Source.FLUID);
+    /** Daylight. Nothing goes in, so there is nothing to run out of. */
+    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN);
 
-    private static final List<Generator> ALL = List.of(BURNER);
+    private static final List<Generator> ALL = List.of(BURNER, CRUCIBLE, SOLAR);
 
     public static final Codec<Generator> CODEC = Codec.STRING.xmap(Generator::byId, Generator::id);
 

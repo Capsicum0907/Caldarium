@@ -1,6 +1,8 @@
 {
   "values": [
     "caldarium:burner",
+    "caldarium:crucible",
+    "caldarium:solar_panel",
     "caldarium:iron_battery",
     "caldarium:gold_battery",
     "caldarium:diamond_battery",

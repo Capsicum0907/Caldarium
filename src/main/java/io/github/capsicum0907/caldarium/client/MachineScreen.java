@@ -49,6 +49,17 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     topPos + Skins.slotY(slot, count) - 1,
                     Skins.FUEL_WELL_U, Skins.FUEL_WELL_V, Skins.SLOT, Skins.SLOT);
         }
+        // Only a machine with a tank has one drawn; the rest of the panel is shared.
+        if (menu.fluidCapacity() > 0) {
+            graphics.blit(SHEET, leftPos + Skins.TANK_X - 1, topPos + Skins.TANK_Y - 1,
+                    Skins.FUEL_WELL_U, Skins.FUEL_WELL_V, Skins.SLOT, Skins.SLOT);
+            int filled = Math.round(Skins.BAR_H * menu.filled());
+            if (filled > 0) {
+                graphics.blit(SHEET, leftPos + Skins.TANK_X,
+                        topPos + Skins.TANK_Y + Skins.BAR_H - filled,
+                        Skins.TANK_U, Skins.TANK_V + Skins.BAR_H - filled, Skins.BAR_W, filled);
+            }
+        }
         if (menu.burns()) {
             graphics.blit(SHEET, leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y,
                     Skins.FLAME_WELL_U, Skins.FLAME_WELL_V, Skins.FLAME_W, Skins.FLAME_H);
@@ -69,6 +80,12 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             // The exact numbers, because the bar only ever says roughly.
             graphics.renderTooltip(font, Component.translatable("gui.caldarium.stored",
                     count(menu.energy()), count(menu.capacity())), mouseX, mouseY);
+            return;
+        }
+        if (menu.fluidCapacity() > 0
+                && over(mouseX, mouseY, Skins.TANK_X, Skins.TANK_Y, Skins.BAR_W, Skins.BAR_H)) {
+            graphics.renderTooltip(font, Component.translatable("gui.caldarium.held",
+                    count(menu.fluid()), count(menu.fluidCapacity())), mouseX, mouseY);
             return;
         }
         renderTooltip(graphics, mouseX, mouseY);

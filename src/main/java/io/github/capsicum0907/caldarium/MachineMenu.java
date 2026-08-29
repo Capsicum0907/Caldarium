@@ -89,6 +89,19 @@ public class MachineMenu extends AbstractContainerMenu {
         return length <= 0 ? 0.0F : MachineData.whole(data, MachineData.BURNING) / (float) length;
     }
 
+    public int fluid() {
+        return MachineData.whole(data, MachineData.FLUID);
+    }
+
+    public int fluidCapacity() {
+        return MachineData.whole(data, MachineData.FLUID_CAPACITY);
+    }
+
+    public float filled() {
+        int capacity = fluidCapacity();
+        return capacity <= 0 ? 0.0F : Math.min(1.0F, fluid() / (float) capacity);
+    }
+
     public float charged() {
         int capacity = capacity();
         return capacity <= 0 ? 0.0F : Math.min(1.0F, energy() / (float) capacity);

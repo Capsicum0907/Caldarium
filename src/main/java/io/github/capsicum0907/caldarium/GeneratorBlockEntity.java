@@ -15,26 +15,40 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import net.neoforged.neoforge.items.ItemStackHandler;
 
 /**
- * Burns what its row accepts and turns it into Forge Energy.
+ * Every generator. What differs between them is what they draw on, and that is a
+ * question the {@link Source} on the row answers.
  *
- * <p>The fuel slot is offered as an item handler, which is the whole of the input
- * side: a hopper, a dropper and every mod's pipes ask a block for exactly that and
- * for nothing else, so a generator can be fed before it has a screen of its own.
+ * <p>The two that burn share the whole of their machinery and differ only in where a
+ * piece of fuel comes from: a slot, or a tank. The one that does not burn keeps
+ * nothing at all, because there is nothing to keep.
  */
 public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, Machine {
+    /** A bucket, which is the unit a fluid fuel is measured in. */
+    private static final int DRAUGHT = 1000;
+
+    /** How often the sky is looked at. Twenty times a second is twenty times too many. */
+    private static final int SUN_EVERY = 20;
+
     private final Generator row;
     private final CaldariumConfig.Rates rates;
     private final Store store;
     private final Pushing pushing = new Pushing();
     private final ItemStackHandler fuel;
-
+    private final FluidTank tank;
     private final MachineData data;
 
     private int burning;
     private int burnLength;
+
+    /** Measured now and then rather than every tick; see {@link #SUN_EVERY}. */
+    private int lookAgain;
+    private float reaching;
 
     public GeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(CaldariumRegistry.GENERATOR_ENTITY.get(), pos, state);
@@ -42,29 +56,37 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         this.rates = CaldariumConfig.GENERATORS.get(row);
         this.store = new Store(Store.Role.SOURCE,
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
+        this.tank = row.source() == Source.FLUID
+                ? new FluidTank(CaldariumConfig.tank(row), held -> Fuel.burnTicks(held.getFluid()) > 0) {
+                    @Override
+                    protected void onContentsChanged() {
+                        setChanged();
+                    }
+                }
+                : null;
         this.data = new MachineData(store::getEnergyStored, store::getMaxEnergyStored,
-                () -> burning, () -> burnLength);
-        this.fuel = new ItemStackHandler(1) {
+                () -> burning, () -> burnLength,
+                () -> tank == null ? 0 : tank.getFluidAmount(),
+                () -> tank == null ? 0 : tank.getCapacity());
+        // Sized by the source: a generator with no slot offers no item handler at all,
+        // rather than an empty one a hopper would still line itself up against.
+        this.fuel = new ItemStackHandler(row.source() == Source.ITEM ? 1 : 0) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
-                return row.fuel().accepts(stack);
+                return Fuel.FURNACE.accepts(stack);
             }
 
             /**
-             * ⚠ Fuel goes in and does not come back out. Without this a hopper set
-             * under the burner — the arrangement everybody builds under a furnace —
-             * pulls the coal straight back out of it, and the generator never runs.
+             * Fuel goes in and does not come back out. Without this a hopper set under
+             * the burner — the arrangement everybody builds under a furnace — pulls the
+             * coal straight back out of it, and the generator never runs.
              *
              * <p>What is <em>not</em> fuel may still be taken, which is how the empty
-             * bucket a lava bucket leaves behind gets collected. Refusing everything
-             * would trap it in the slot with nothing able to reach it.
-             *
-             * <p>The rule asks the item rather than the side the request came from:
-             * this mod does not give its faces different opinions.
+             * bucket a lava bucket leaves behind gets collected.
              */
             @Override
             public ItemStack extractItem(int slot, int amount, boolean simulate) {
-                return row.fuel().accepts(getStackInSlot(slot))
+                return Fuel.FURNACE.accepts(getStackInSlot(slot))
                         ? ItemStack.EMPTY
                         : super.extractItem(slot, amount, simulate);
             }
@@ -80,14 +102,123 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         return store;
     }
 
+    /** Null when this generator has no slot, so no item handler is offered at all. */
+    public ItemStackHandler fuel() {
+        return fuel.getSlots() == 0 ? null : fuel;
+    }
+
+    /** Null when this generator has no tank, for the same reason. */
+    public FluidTank tank() {
+        return tank;
+    }
+
+    public FluidStack held() {
+        return tank == null ? FluidStack.EMPTY : tank.getFluid();
+    }
+
     @Override
     public boolean burns() {
-        return true;
+        return row.source().burns();
     }
 
     @Override
     public ItemStackHandler machineSlots() {
         return fuel;
+    }
+
+    public static void serverTick(Level level, BlockPos pos, BlockState state,
+            GeneratorBlockEntity generator) {
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+        boolean wasWorking = generator.working();
+
+        switch (generator.row.source()) {
+            case ITEM, FLUID -> generator.burn();
+            case SUN -> generator.bask(server, pos);
+        }
+        generator.pushing.push(server, pos, generator.store);
+
+        boolean working = generator.working();
+        if (wasWorking != working) {
+            level.setBlock(pos, state.setValue(GeneratorBlock.LIT, working), Block.UPDATE_ALL);
+        }
+    }
+
+    /** Whether it is doing its work, whatever that work is. */
+    private boolean working() {
+        return row.source() == Source.SUN ? reaching > 0.0F : burning > 0;
+    }
+
+    /**
+     * Burning continues even once full, and the surplus is lost. The alternative is a
+     * generator that stops mid-log and resumes, which means remembering a fraction of
+     * a piece of fuel; a furnace does not do that either.
+     */
+    private void burn() {
+        if (burning > 0) {
+            burning--;
+            store.generate(rates.perTick().get());
+        }
+        if (burning <= 0 && !store.isFull()) {
+            light();
+        }
+    }
+
+    private void light() {
+        int ticks = row.source() == Source.FLUID ? draw() : take();
+        if (ticks <= 0) {
+            return;
+        }
+        burning = ticks;
+        burnLength = ticks;
+        setChanged();
+    }
+
+    /**
+     * One piece of fuel out of the slot. The remainder is put back rather than thrown
+     * away: a bucket of lava that burns leaves a bucket, and a generator that ate it
+     * would be a worse machine than a furnace.
+     */
+    private int take() {
+        ItemStack stack = fuel.getStackInSlot(0);
+        int ticks = Fuel.FURNACE.burnTicks(stack);
+        if (ticks <= 0) {
+            return 0;
+        }
+        ItemStack remainder = stack.getCraftingRemainingItem();
+        stack.shrink(1);
+        if (stack.isEmpty() && !remainder.isEmpty()) {
+            fuel.setStackInSlot(0, remainder);
+        }
+        return ticks;
+    }
+
+    /**
+     * A bucket out of the tank, and nothing at all if there is less than that in it.
+     * Burning half a draught for half as long would be defensible, but it puts a
+     * fraction into the saved state to no visible end.
+     */
+    private int draw() {
+        if (tank == null || tank.getFluidAmount() < DRAUGHT) {
+            return 0;
+        }
+        int ticks = Fuel.burnTicks(tank.getFluid().getFluid());
+        if (ticks <= 0) {
+            return 0;
+        }
+        tank.drain(DRAUGHT, IFluidHandler.FluidAction.EXECUTE);
+        return ticks;
+    }
+
+    private void bask(ServerLevel level, BlockPos pos) {
+        if (--lookAgain <= 0) {
+            lookAgain = SUN_EVERY;
+            reaching = Sunlight.reaching(level, pos);
+        }
+        if (reaching > 0.0F) {
+            store.generate(Math.round(rates.perTick().get() * reaching));
+        }
     }
 
     @Override
@@ -98,62 +229,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new MachineMenu(id, inventory,
-                ContainerLevelAccess.create(level, worldPosition), true, fuel, data);
-    }
-
-    public ItemStackHandler fuel() {
-        return fuel;
-    }
-
-    /** How far through the current piece of fuel it is, as a fraction, for a gauge. */
-    public float burnedFraction() {
-        return burnLength <= 0 ? 0.0F : (float) burning / burnLength;
-    }
-
-    public static void serverTick(Level level, BlockPos pos, BlockState state,
-            GeneratorBlockEntity generator) {
-        if (!(level instanceof ServerLevel server)) {
-            return;
-        }
-        boolean wasLit = generator.burning > 0;
-
-        // Burning continues even once full, and the surplus is lost. The alternative
-        // is a generator that stops mid-log and resumes, which means remembering a
-        // fraction of a piece of fuel; a furnace does not do that either.
-        if (generator.burning > 0) {
-            generator.burning--;
-            generator.store.generate(generator.rates.perTick().get());
-        }
-        if (generator.burning <= 0 && !generator.store.isFull()) {
-            generator.light();
-        }
-        generator.pushing.push(server, pos, generator.store);
-
-        boolean lit = generator.burning > 0;
-        if (wasLit != lit) {
-            level.setBlock(pos, state.setValue(GeneratorBlock.LIT, lit), Block.UPDATE_ALL);
-        }
-    }
-
-    /**
-     * Takes one piece of fuel and starts it. The remainder is put back rather than
-     * thrown away: a bucket of lava that burns leaves a bucket, and a generator that
-     * ate it would be a worse machine than a furnace.
-     */
-    private void light() {
-        ItemStack stack = fuel.getStackInSlot(0);
-        int ticks = row.fuel().burnTicks(stack);
-        if (ticks <= 0) {
-            return;
-        }
-        ItemStack remainder = stack.getCraftingRemainingItem();
-        stack.shrink(1);
-        if (stack.isEmpty() && !remainder.isEmpty()) {
-            fuel.setStackInSlot(0, remainder);
-        }
-        burning = ticks;
-        burnLength = ticks;
-        setChanged();
+                ContainerLevelAccess.create(level, worldPosition), burns(), fuel, data);
     }
 
     @Override
@@ -162,7 +238,12 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         tag.putInt("Energy", store.raw());
         tag.putInt("Burning", burning);
         tag.putInt("BurnLength", burnLength);
-        tag.put("Fuel", fuel.serializeNBT(registries));
+        if (fuel.getSlots() > 0) {
+            tag.put("Fuel", fuel.serializeNBT(registries));
+        }
+        if (tank != null) {
+            tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
+        }
     }
 
     @Override
@@ -171,8 +252,11 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         store.restore(tag.getInt("Energy"));
         burning = tag.getInt("Burning");
         burnLength = tag.getInt("BurnLength");
-        if (tag.contains("Fuel")) {
+        if (tag.contains("Fuel") && fuel.getSlots() > 0) {
             fuel.deserializeNBT(registries, tag.getCompound("Fuel"));
+        }
+        if (tag.contains("Tank") && tank != null) {
+            tank.readFromNBT(registries, tag.getCompound("Tank"));
         }
     }
 }

@@ -105,7 +105,8 @@ public final class CaldariumDataGen {
             List<CompletableFuture<?>> writing = new ArrayList<>();
             for (Generator generator : Generator.all()) {
                 for (boolean lit : new boolean[] { false, true }) {
-                    draw(output, writing, Skins.generatorSkin(lit), Skins.generator(generator, lit));
+                    draw(output, writing, Skins.generatorSkin(generator, lit),
+                            Skins.generator(generator, lit));
                 }
             }
             for (Kind kind : Kind.values()) {
@@ -181,7 +182,9 @@ public final class CaldariumDataGen {
 
         @Override
         protected void addTranslations() {
-            add(CaldariumRegistry.generators().get(Generator.BURNER).get(), "Burner");
+            for (Generator generator : Generator.all()) {
+                add(CaldariumRegistry.generators().get(generator).get(), titled(generator.id()));
+            }
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.values()) {
                     add(CaldariumRegistry.block(kind, tier).get(),
@@ -189,6 +192,7 @@ public final class CaldariumDataGen {
                 }
             }
             add("gui.caldarium.stored", "%s / %s FE");
+            add("gui.caldarium.held", "%s / %s mB");
         }
     }
 
@@ -233,7 +237,14 @@ public final class CaldariumDataGen {
 
     /** An id, as a name. The ids are English words, so this is the whole of it. */
     private static String titled(String id) {
-        return Character.toUpperCase(id.charAt(0)) + id.substring(1);
+        StringBuilder name = new StringBuilder();
+        for (String word : id.split("_")) {
+            if (!name.isEmpty()) {
+                name.append(' ');
+            }
+            name.append(Character.toUpperCase(word.charAt(0))).append(word.substring(1));
+        }
+        return name.toString();
     }
 
     /**
@@ -269,6 +280,9 @@ public final class CaldariumDataGen {
 
         @Override
         protected void buildRecipes(RecipeOutput output) {
+            // Each generator is iron and redstone around the vanilla thing that
+            // already does its job by hand: a furnace to burn, a cauldron to hold
+            // something molten, and glass to face the sky.
             ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
                             CaldariumRegistry.generators().get(Generator.BURNER).get())
                     .pattern("III")
@@ -278,6 +292,28 @@ public final class CaldariumDataGen {
                     .define('F', Blocks.FURNACE)
                     .define('R', Items.REDSTONE)
                     .unlockedBy("has_furnace", has(Blocks.FURNACE))
+                    .save(output);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                            CaldariumRegistry.generators().get(Generator.CRUCIBLE).get())
+                    .pattern("III")
+                    .pattern("ICI")
+                    .pattern("IRI")
+                    .define('I', Items.IRON_INGOT)
+                    .define('C', Blocks.CAULDRON)
+                    .define('R', Items.REDSTONE)
+                    .unlockedBy("has_cauldron", has(Blocks.CAULDRON))
+                    .save(output);
+
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                            CaldariumRegistry.generators().get(Generator.SOLAR).get())
+                    .pattern("GGG")
+                    .pattern("RRR")
+                    .pattern("III")
+                    .define('G', Blocks.GLASS)
+                    .define('R', Items.REDSTONE)
+                    .define('I', Items.IRON_INGOT)
+                    .unlockedBy("has_glass", has(Blocks.GLASS))
                     .save(output);
 
             // The first rung is built from parts. Every rung above it is the rung

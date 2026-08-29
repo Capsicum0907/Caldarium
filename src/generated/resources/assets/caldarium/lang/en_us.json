@@ -1,5 +1,6 @@
 {
   "block.caldarium.burner": "Burner",
+  "block.caldarium.crucible": "Crucible",
   "block.caldarium.diamond_battery": "Diamond Battery",
   "block.caldarium.diamond_charger": "Diamond Charger",
   "block.caldarium.gold_battery": "Gold Battery",
@@ -8,5 +9,7 @@
   "block.caldarium.iron_charger": "Iron Charger",
   "block.caldarium.netherite_battery": "Netherite Battery",
   "block.caldarium.netherite_charger": "Netherite Charger",
+  "block.caldarium.solar_panel": "Solar Panel",
+  "gui.caldarium.held": "%s / %s mB",
   "gui.caldarium.stored": "%s / %s FE"
 }

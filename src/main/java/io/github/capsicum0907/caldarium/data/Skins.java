@@ -5,6 +5,7 @@ import java.util.List;
 
 import io.github.capsicum0907.caldarium.Generator;
 import io.github.capsicum0907.caldarium.Kind;
+import io.github.capsicum0907.caldarium.Source;
 import io.github.capsicum0907.caldarium.Tier;
 
 /**
@@ -30,12 +31,19 @@ public final class Skins {
     private static final int MOUTH_LIT = 0xFF9A2E;
     private static final int EMBER = 0xC8461B;
 
+    private static final int MOLTEN_COLD = 0x3A3A40;
+    private static final int SKY_COLD = 0x1E3B63;
+    private static final int SKY_LIT = 0x5FA8E8;
+
     /**
      * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
      * out. The metal each tier is made of, so a block says which rung it is on
      * without anything written on it.
      */
-    private static final int[] CELL = { 0xD5DBE0, 0xF0C246, 0x5BE0D6, 0x5B4E52 };
+    // ⚠ The netherite one is the ingot's highlight rather than the block's dark
+    // face. Netherite is the darkest metal there is, and drawn true it came out at
+    // 0x5B4E52 against a 0x51565A window — a top tier that looked like a blank plate.
+    private static final int[] CELL = { 0xD5DBE0, 0xF0C246, 0x5BE0D6, 0xB0A2A5 };
 
     private static final int WINDOW_FROM = 4;
     private static final int WINDOW_TO = 12;
@@ -43,7 +51,7 @@ public final class Skins {
     private Skins() {
     }
 
-    /** The name of the texture for a generator, unlit or burning. */
+    /** The name of the texture for a generator, resting or working. */
     public static String generator(Generator generator, boolean lit) {
         return lit ? generator.id() + "_on" : generator.id();
     }
@@ -71,17 +79,28 @@ public final class Skins {
         return names;
     }
 
-    public static int[][] generatorSkin(boolean lit) {
+    /**
+     * The same plate for every generator, and the window says what it draws on: a
+     * mouth to feed, a pool to fill, or a pane facing the sky.
+     */
+    public static int[][] generatorSkin(Generator generator, boolean lit) {
         int[][] pixels = plate();
+        int span = WINDOW_TO - WINDOW_FROM - 1;
         for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
             for (int x = WINDOW_FROM; x < WINDOW_TO; x++) {
-                // A fire is brightest at its base, so the mouth is graded rather than
-                // filled: a flat orange square reads as a sticker on the front.
-                int depth = y - WINDOW_FROM;
-                int colour = lit
-                        ? mix(EMBER, MOUTH_LIT, depth / (float) (WINDOW_TO - WINDOW_FROM - 1))
-                        : MOUTH_COLD;
-                pixels[y][x] = 0xFF000000 | colour;
+                float down = (y - WINDOW_FROM) / (float) span;
+                pixels[y][x] = 0xFF000000 | switch (generator.source()) {
+                    // A fire is brightest at its base, so the mouth is graded rather
+                    // than filled: a flat orange square reads as a sticker on the front.
+                    case ITEM -> lit ? mix(EMBER, MOUTH_LIT, down) : MOUTH_COLD;
+                    // A pool, so the light is at the top where the surface is.
+                    case FLUID -> lit ? mix(MOUTH_LIT, EMBER, down) : MOLTEN_COLD;
+                    // A pane, divided into cells the way a panel of them is.
+                    case SUN -> {
+                        boolean bar = (x - WINDOW_FROM) % 4 == 3 || (y - WINDOW_FROM) % 4 == 3;
+                        yield bar ? EDGE : lit ? SKY_LIT : SKY_COLD;
+                    }
+                };
             }
         }
         return pixels;
@@ -186,6 +205,12 @@ public final class Skins {
     public static final int BAR_U = 176;
     public static final int BAR_V = 16;
 
+    // The tank, opposite the charge. A machine with no tank draws neither.
+    public static final int TANK_X = 12;
+    public static final int TANK_Y = 17;
+    public static final int TANK_U = 176;
+    public static final int TANK_V = 112;
+
     // ⚠ The slot and the recess under it are NOT painted into the panel. A battery
     // has no fuel, and a panel carrying them showed it an empty slot it would not
     // accept anything into and a hollow that never lit. They are strips like the
@@ -256,6 +281,7 @@ public final class Skins {
             well(pixels, INVENTORY_X + x * SLOT, HOTBAR_Y, SLOT, SLOT);
         }
         well(pixels, BAR_X - 1, BAR_Y - 1, BAR_W + 2, BAR_H + 2);
+        well(pixels, TANK_X - 1, TANK_Y - 1, BAR_W + 2, BAR_H + 2);
 
         // The two the burner adds to the panel it shares with the battery.
         well(pixels, FUEL_WELL_U, FUEL_WELL_V, SLOT, SLOT);
@@ -267,7 +293,11 @@ public final class Skins {
         for (int y = 0; y < BAR_H; y++) {
             for (int x = 0; x < BAR_W; x++) {
                 // Brighter towards the top, so a full bar does not read as flat paint.
-                pixels[BAR_V + y][BAR_U + x] = 0xFF000000 | mix(EMBER, CHARGE, 1.0F - y / (float) (BAR_H - 1));
+                pixels[BAR_V + y][BAR_U + x] =
+                        0xFF000000 | mix(EMBER, CHARGE, 1.0F - y / (float) (BAR_H - 1));
+                // The tank is the same shape in the colour of what is in it.
+                pixels[TANK_V + y][TANK_U + x] =
+                        0xFF000000 | mix(EMBER, MOUTH_LIT, 1.0F - y / (float) (BAR_H - 1));
             }
         }
         return pixels;

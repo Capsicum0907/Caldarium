@@ -40,12 +40,27 @@ public final class CaldariumConfig {
     private static final int GENERATOR_TRANSFER = 1_000;
     private static final int GENERATOR_PER_TICK = 40;
 
+    /** Ten buckets, which is what a tank the size of the block ought to feel like. */
+    private static final int TANK = 10_000;
+
+    /** Most of it, so a pane of glass costs something without ruining the panel. */
+    private static final int SUN_PERCENT = 60;
+
     /** What one block's numbers are, whatever kind of block it is. */
     public record Rates(ModConfigSpec.IntValue capacity, ModConfigSpec.IntValue transfer,
                         ModConfigSpec.IntValue perTick) {
     }
 
     public static final Map<Generator, Rates> GENERATORS = new LinkedHashMap<>();
+    private static final Map<Generator, ModConfigSpec.IntValue> TANKS = new LinkedHashMap<>();
+
+    /** How much a generator that burns a fluid can hold, in millibuckets. */
+    public static int tank(Generator generator) {
+        return TANKS.get(generator).get();
+    }
+
+    /** What is left of the sun through one block that light passes through. */
+    public static ModConfigSpec.IntValue SUN_THROUGH;
     private static final Map<Kind, Map<Tier, Rates>> KINDS = new EnumMap<>(Kind.class);
 
     /** The numbers for one block that is sized by its tier. */
@@ -67,10 +82,24 @@ public final class CaldariumConfig {
                             .defineInRange("capacity", GENERATOR_CAPACITY, 1, Integer.MAX_VALUE),
                     builder.comment("How much it offers each neighbour per tick.")
                             .defineInRange("transferRate", GENERATOR_TRANSFER, 1, Integer.MAX_VALUE),
-                    builder.comment("Forge Energy made per tick while it is burning.")
+                    builder.comment("Forge Energy made per tick while it is working.")
                             .defineInRange("generates", GENERATOR_PER_TICK, 1, Integer.MAX_VALUE)));
+            if (generator.source() == Source.FLUID) {
+                TANKS.put(generator, builder
+                        .comment("Millibuckets of fuel it holds. A bucket is spent at a time.")
+                        .defineInRange("tank", TANK, 1_000, Integer.MAX_VALUE));
+            }
             builder.pop();
         }
+        builder.pop();
+
+        SUN_THROUGH = builder
+                .comment("Generators that draw on daylight.")
+                .push("sun")
+                .comment("What percentage of the sun is left after one block that light",
+                        "passes through. Anything solid overhead stops it entirely, whatever",
+                        "this is set to.")
+                .defineInRange("through", SUN_PERCENT, 0, 100);
         builder.pop();
 
         for (Kind kind : Kind.values()) {

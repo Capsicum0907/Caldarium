@@ -1,5 +1,6 @@
-// 1.21.1	2026-08-30T03:31:17.0195207	Recipes
+// 1.21.1	2026-08-30T06:26:07.4501395	Recipes
 576b34e9b721292355914177dcb6ceedc12083cd data/caldarium/advancement/recipes/redstone/burner.json
+2c05cd98bf2ad453fba6f5230da2845648aac92e data/caldarium/advancement/recipes/redstone/crucible.json
 2e592d6d9933fd982f1bff65a27fe8d90b2b7387 data/caldarium/advancement/recipes/redstone/diamond_battery.json
 9403fc708ccceb7ffdb91f0a346a9d6c7a163e61 data/caldarium/advancement/recipes/redstone/diamond_charger.json
 a59cd8b784835781565bb7df1ef4ebe5932f53ea data/caldarium/advancement/recipes/redstone/gold_battery.json
@@ -8,7 +9,9 @@ c858b597acb7ae76ed7ce03c665458d0f7a6e667 data/caldarium/advancement/recipes/reds
 a8f7641c647b64d09527c107e2ca0be4270dbf3f data/caldarium/advancement/recipes/redstone/iron_charger.json
 badc44b885d55a51b59bb253fb5f51cf574856df data/caldarium/advancement/recipes/redstone/netherite_battery.json
 8535add9f5dc9629def8c92357d86a126d98f96c data/caldarium/advancement/recipes/redstone/netherite_charger.json
+fb4be03a505b522df389a6ddd696f5dd5878eb00 data/caldarium/advancement/recipes/redstone/solar_panel.json
 947f1d1da8639cb66c64b6aef5adf33b1ea51072 data/caldarium/recipe/burner.json
+d6246fdad5c9ab419c1b4e33f1acb5659bfe4045 data/caldarium/recipe/crucible.json
 06fb6df6c1257f4e4b91ede974d108a6fb97325d data/caldarium/recipe/diamond_battery.json
 3d926c9b38295cc92c66b61c7c32929f9bba6976 data/caldarium/recipe/diamond_charger.json
 7b644893c7fd7bebdb58d2a947f322e7bb114c4c data/caldarium/recipe/gold_battery.json
@@ -17,3 +20,4 @@ badc44b885d55a51b59bb253fb5f51cf574856df data/caldarium/advancement/recipes/reds
 d940ce42872f34d218589065c84b6cecca5483d5 data/caldarium/recipe/iron_charger.json
 4feb775501e5fb5c02ef5318e427a51d433e4bfc data/caldarium/recipe/netherite_battery.json
 a3609647c5a5a4a6c4eae6519ec94dd02226e3b4 data/caldarium/recipe/netherite_charger.json
+9c914ae0d204b57b0f83688c31a10eef629d7dbe data/caldarium/recipe/solar_panel.json
