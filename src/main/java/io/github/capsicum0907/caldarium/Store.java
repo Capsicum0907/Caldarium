@@ -60,7 +60,7 @@ public final class Store implements IEnergyStorage {
         return role;
     }
 
-    /** Which side of the line it stands on, and which side it offers to. */
+    /** Which side of the boundary between the mods it will offer what it holds. */
     public Wiring wiring() {
         return wiring;
     }
@@ -152,7 +152,7 @@ public final class Store implements IEnergyStorage {
     }
 
     /**
-     * What a machine spends on itself. The counterpart of {@link #generate}: it goes
+     * What a machine spends on itself. The counterpart of {@link #fill}: it goes
      * around {@link #canExtract}, which is there to stop <em>other</em> blocks
      * draining a sink rather than to stop the sink doing its job.
      */

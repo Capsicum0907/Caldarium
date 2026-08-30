@@ -13,10 +13,11 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * mods are not all built that way: a generator that waits to be asked would sit full
  * forever beside a line that only ever offers. An importer asks it.
  *
- * <p>It draws across the same boundary an exporter feeds across, in the other
- * direction — from anything <em>outside</em> the line. ⚠ Not from the line itself: an
+ * <p>It draws across the same boundary an exporter feeds across, and in the other
+ * direction — out of what belongs to another mod. ⚠ Never out of one of ours: a
+ * machine of this mod's already pushes, so there is nothing here to ask, and an
  * importer that could take out of a cable would be a second way for energy to move
- * along it, one that ignores the downhill rule and so has no reason ever to settle.
+ * along one — a way that ignores the downhill rule and so has no reason to settle.
  */
 public final class Pulling {
     private Pulling() {
@@ -38,7 +39,7 @@ public final class Pulling {
                 break;
             }
             IEnergyStorage neighbour = sides.at(level, pos, side);
-            if (neighbour == null || !neighbour.canExtract() || Neighbours.inLine(neighbour)) {
+            if (neighbour == null || !neighbour.canExtract() || Neighbours.ours(neighbour)) {
                 continue;
             }
             int taken = neighbour.extractEnergy(wanted, false);

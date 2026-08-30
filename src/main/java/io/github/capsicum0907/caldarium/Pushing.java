@@ -23,8 +23,9 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  *     the world that actually wanted the energy.
  * </ul>
  *
- * <p>{@link Wiring} sits in front of both: it says which side of the line a
- * neighbour has to be on before it is offered to at all.
+ * <p>{@link Wiring} sits in front of both: it says which side of the boundary
+ * between this mod and every other one a neighbour has to be on to be offered to at
+ * all.
  */
 public final class Pushing {
     private Pushing() {
@@ -65,7 +66,7 @@ public final class Pushing {
      * else to go.
      */
     private static boolean mayOffer(Store from, IEnergyStorage to) {
-        if (!from.wiring().mayOffer(Neighbours.inLine(to))) {
+        if (!from.wiring().mayOffer(Neighbours.ours(to))) {
             return false;
         }
         if (!(to instanceof Store peer)) {

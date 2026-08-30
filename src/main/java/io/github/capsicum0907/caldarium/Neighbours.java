@@ -34,11 +34,12 @@ public final class Neighbours {
     }
 
     /**
-     * Whether a neighbour is part of the line. Anything that is not one of ours is
-     * outside it by definition — which is the whole of what an importer and an
-     * exporter are for.
+     * Whether a neighbour is one of ours. ⭐ The whole of the test: the object handed
+     * out as the capability <em>is</em> the {@link Store}, so a neighbour that answers
+     * with one is this mod's and a neighbour that answers with anything else is not.
+     * There is no registry lookup and no second question.
      */
-    public static boolean inLine(IEnergyStorage neighbour) {
-        return neighbour instanceof Store peer && peer.wiring().inLine();
+    public static boolean ours(IEnergyStorage neighbour) {
+        return neighbour instanceof Store;
     }
 }

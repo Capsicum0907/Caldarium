@@ -30,11 +30,11 @@ public enum Kind implements StringRepresentable {
     /** Takes energy in and puts it into what is held in it. Wider at every tier. */
     CHARGER("charger", Store.Role.SINK, Wiring.OPEN, 3, true, false),
     /**
-     * Distance. It offers only to the line, which is what lets one be laid past a
-     * machine without powering it — and so what makes a corridor of cable possible
-     * at all.
+     * Distance. It offers only to this mod's own blocks, which is what lets one be
+     * laid past somebody else's machine without powering it — and so what makes a
+     * corridor of cable possible at all.
      */
-    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, false),
+    CABLE("cable", Store.Role.BUFFER, Wiring.INSIDE, 0, false, false),
     /**
      * The way in, and the only thing here that takes rather than gives. Everything
      * this mod makes pushes; other mods are full of machines that wait to be asked.
@@ -43,9 +43,9 @@ public enum Kind implements StringRepresentable {
      * went in that way would be energy in the one block whose job is to be where
      * energy starts, and the line would have two ways to move it.
      */
-    IMPORTER("importer", Store.Role.SOURCE, Wiring.ALONG, 0, false, true),
-    /** The way out: the only block here that offers to anything outside the line. */
-    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUT, 0, false, false);
+    IMPORTER("importer", Store.Role.SOURCE, Wiring.INSIDE, 0, false, true),
+    /** The way out: the only block here that offers to another mod's machine. */
+    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUTSIDE, 0, false, false);
 
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -93,7 +93,7 @@ public enum Kind implements StringRepresentable {
         return role != Store.Role.SINK;
     }
 
-    /** Whether it draws out of its neighbours. Only the way into the line does. */
+    /** Whether it draws out of its neighbours. Only the way in does. */
     public boolean pulls() {
         return pulls;
     }
@@ -101,9 +101,9 @@ public enum Kind implements StringRepresentable {
     /**
      * Whether right-clicking it opens a screen.
      *
-     * <p>⭐ The line has no windows, and that is a design promise rather than an
-     * omission: no wrench, because the direction is which of the three blocks was
-     * placed; no upgrade to fit, because the speed is the tier; and nothing to
+     * <p>⭐ Nothing that carries has a window, and that is a design promise rather
+     * than an omission: no wrench, because the direction is which of the three blocks
+     * was placed; no upgrade to fit, because the speed is the tier; and nothing to
      * configure, so nothing to open. A block that passes the click through is also a
      * block you can build against, which matters when you are laying a hundred.
      */

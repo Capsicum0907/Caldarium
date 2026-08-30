@@ -77,13 +77,19 @@ an **importer** that draws out of what is outside it, and an **exporter** that f
 into it. Each has tiers.
 
 **The boundary is about pushing, not about connecting**, and splitting it that way
-is what keeps both halves honest. A cable offers only to the line, so one laid past
-a machine does not power it and a corridor of cable is possible at all. It has no
-matching rule about being offered *to*: a burner or a battery standing against a
-cable fills it directly, which leaves the importer to do the job nothing else here
-can — asking, for the machines in other mods that wait to be asked rather than
-pushing. The exporter is the one block that offers outside the line, and it offers to
-everything outside it, this mod's own batteries included.
+is what keeps both halves honest. A cable offers only to this mod's own blocks, so
+one laid past somebody else's machine does not power it and a corridor of cable is
+possible at all. It has no matching rule about being offered *to*: a burner or a
+battery standing against a cable fills it directly.
+
+**The boundary is drawn between the mods rather than around the cable**, and that is
+the whole reason there are two doors and not four. A line closed even to this mod's
+own batteries would want an exporter to reach one a block away, and would leave the
+importer able to draw out of a generator that pushes anyway — two blocks to bridge
+nothing, and a door where there is no wall. The complaint the rule answers was always
+about somebody else's machine. So an importer draws out of another mod's machine and
+never out of one of ours, an exporter feeds one and never one of ours, and everything
+between them simply connects.
 
 An importer is a `SOURCE`, the same as a generator: energy that arrives in the line
 arrives through one, and nothing may push into it. Where it came from — burnt,
