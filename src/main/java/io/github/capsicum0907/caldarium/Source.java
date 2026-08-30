@@ -14,16 +14,33 @@ public enum Source {
     /** Something molten, kept in a tank. Whatever a furnace would burn by the bucket. */
     FLUID(true),
     /** Daylight, and nothing overhead. Nothing is consumed and nothing is stored. */
-    SUN(false);
+    SUN(false, true);
 
     private final boolean burns;
+    private final boolean flat;
 
     Source(boolean burns) {
+        this(burns, false);
+    }
+
+    Source(boolean burns, boolean flat) {
         this.burns = burns;
+        this.flat = flat;
     }
 
     /** Whether there is a fire: a flame on the screen, and a light on the block. */
     public boolean burns() {
         return burns;
+    }
+
+    /**
+     * Whether it is a panel rather than a box.
+     *
+     * <p>Something that draws on the sky only needs the face it points at the sky,
+     * and a full cube of machinery under a solar panel is a cube that does nothing.
+     * The shape, the model and the pictures all follow from this one answer.
+     */
+    public boolean flat() {
+        return flat;
     }
 }

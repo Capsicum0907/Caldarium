@@ -22,6 +22,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+
+import io.github.capsicum0907.caldarium.data.Skins;
 
 /** One row of {@link Generator}, as a block. The row is what tells it what to burn. */
 public class GeneratorBlock extends BaseEntityBlock {
@@ -33,6 +38,9 @@ public class GeneratorBlock extends BaseEntityBlock {
                     Generator.CODEC.fieldOf("generator").forGetter(GeneratorBlock::row),
                     propertiesCodec())
                     .apply(instance, GeneratorBlock::new));
+
+    /** A panel is only as tall as it needs to be to hold a face at the sky. */
+    private static final VoxelShape PANEL = box(0.0, 0.0, 0.0, 16.0, Skins.PANEL_HEIGHT, 16.0);
 
     private final Generator row;
 
@@ -85,6 +93,12 @@ public class GeneratorBlock extends BaseEntityBlock {
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
+            CollisionContext context) {
+        return row.source().flat() ? PANEL : super.getShape(state, level, pos, context);
     }
 
     /** Server side only: burning and pushing are world state, not something drawn. */

@@ -60,10 +60,17 @@ public final class CaldariumRegistry {
         for (Generator generator : Generator.all()) {
             // Only the ones with a fire in them give light. A solar panel lit like a
             // furnace would be a lamp that works during the day.
+            // ⚠ noOcclusion for a panel: a block that declares itself solid has its
+            // neighbours' faces culled against it, and a three-pixel plate that did
+            // that would leave a hole in the ground it sits on.
+            BlockBehaviour.Properties properties = metal()
+                    .lightLevel(state -> generator.source().burns()
+                            && state.getValue(GeneratorBlock.LIT) ? 13 : 0);
+            if (generator.source().flat()) {
+                properties = properties.noOcclusion();
+            }
             DeferredBlock<GeneratorBlock> block = BLOCKS.registerBlock(generator.id(),
-                    properties -> new GeneratorBlock(generator, properties), metal()
-                            .lightLevel(state -> generator.source().burns()
-                                    && state.getValue(GeneratorBlock.LIT) ? 13 : 0));
+                    made -> new GeneratorBlock(generator, made), properties);
             GENERATORS.put(generator, block);
             ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
         }

@@ -40,8 +40,10 @@ A tier is how much and how fast, and a kind is what a thing does with what it
 holds: a battery hands it on, a charger puts it into what is in its slots. One kind
 at one tier is one block, so a kind or a tier added later is a row and not a class.
 
-**The one that draws on the sky asks three questions and no more:** is it day, is
-the weather clear, and is there anything overhead. Anything solid above it stops it
+**The one that draws on the sky is a panel rather than a box** — three pixels of
+it, because all it needs is the face it points upwards, and a full cube of
+machinery underneath would be a cube that does nothing. It asks three questions
+and no more: is it day, is the weather clear, and is there anything overhead. Anything solid above it stops it
 entirely; anything light passes through takes a share, and what share is a setting
 because there is no defensible number for it.
 

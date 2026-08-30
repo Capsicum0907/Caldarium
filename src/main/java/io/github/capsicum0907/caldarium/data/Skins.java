@@ -51,9 +51,22 @@ public final class Skins {
     private Skins() {
     }
 
+    /** How tall a panel is, in pixels. Read by the block, the model and the picture. */
+    public static final int PANEL_HEIGHT = 3;
+
     /** The name of the texture for a generator, resting or working. */
     public static String generator(Generator generator, boolean lit) {
         return lit ? generator.id() + "_on" : generator.id();
+    }
+
+    /** The face a panel points at the sky. */
+    public static String generatorTop(Generator generator, boolean lit) {
+        return lit ? generator.id() + "_top_on" : generator.id() + "_top";
+    }
+
+    /** Its edge and its underside, which are the same plain metal. */
+    public static String generatorSide(Generator generator) {
+        return generator.id() + "_side";
     }
 
     public static String kind(Kind kind, Tier tier) {
@@ -68,8 +81,14 @@ public final class Skins {
     public static List<String> names() {
         List<String> names = new ArrayList<>();
         for (Generator generator : Generator.all()) {
-            names.add(generator(generator, false));
-            names.add(generator(generator, true));
+            if (generator.source().flat()) {
+                names.add(generatorTop(generator, false));
+                names.add(generatorTop(generator, true));
+                names.add(generatorSide(generator));
+            } else {
+                names.add(generator(generator, false));
+                names.add(generator(generator, true));
+            }
         }
         for (Kind kind : Kind.values()) {
             for (Tier tier : Tier.values()) {
@@ -133,6 +152,45 @@ public final class Skins {
                 yield in == 1 || in == 3;
             }
         };
+    }
+
+    /**
+     * The face of a panel: cells behind glass in a frame.
+     *
+     * <p>Four rows of four, so the grid reads at a glance and still fits the frame,
+     * and each cell is lighter towards its top left - a flat blue square looks
+     * painted on, while a sheen looks like something under glass.
+     */
+    public static int[][] solarSkin(boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        int cell = lit ? SKY_LIT : SKY_COLD;
+        for (int y = 0; y < SIZE; y++) {
+            for (int x = 0; x < SIZE; x++) {
+                boolean frame = x == 0 || y == 0 || x == SIZE - 1 || y == SIZE - 1;
+                boolean gap = (x - 1) % 4 == 3 || (y - 1) % 4 == 3;
+                int colour;
+                if (frame) {
+                    colour = grain(BODY, x, y);
+                } else if (gap) {
+                    colour = EDGE;
+                } else {
+                    // Where in its own cell this pixel is, top left brightest.
+                    float across = (((x - 1) % 4) + ((y - 1) % 4)) / 6.0F;
+                    colour = mix(lighter(cell), cell, across);
+                }
+                pixels[y][x] = 0xFF000000 | colour;
+            }
+        }
+        return pixels;
+    }
+
+    /** The edge and underside of a panel: metal, and nothing else. */
+    public static int[][] plainSkin() {
+        return plate();
+    }
+
+    private static int lighter(int colour) {
+        return channel(colour, 16, 40) | channel(colour, 8, 40) | channel(colour, 0, 40);
     }
 
     /** Metal with a darker rim and a rivet in each corner. */

@@ -18,6 +18,7 @@ import io.github.capsicum0907.caldarium.GeneratorBlock;
 import io.github.capsicum0907.caldarium.Tier;
 
 import net.minecraft.Util;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataGenerator;
@@ -104,6 +105,14 @@ public final class CaldariumDataGen {
         public CompletableFuture<?> run(CachedOutput output) {
             List<CompletableFuture<?>> writing = new ArrayList<>();
             for (Generator generator : Generator.all()) {
+                if (generator.source().flat()) {
+                    for (boolean lit : new boolean[] { false, true }) {
+                        draw(output, writing, Skins.solarSkin(lit),
+                                Skins.generatorTop(generator, lit));
+                    }
+                    draw(output, writing, Skins.plainSkin(), Skins.generatorSide(generator));
+                    continue;
+                }
                 for (boolean lit : new boolean[] { false, true }) {
                     draw(output, writing, Skins.generatorSkin(generator, lit),
                             Skins.generator(generator, lit));
@@ -153,10 +162,13 @@ public final class CaldariumDataGen {
         @Override
         protected void registerStatesAndModels() {
             for (Generator generator : Generator.all()) {
-                String cold = Skins.generator(generator, false);
-                String hot = Skins.generator(generator, true);
-                ModelFile unlit = models().cubeAll(cold, modLoc("block/" + cold));
-                ModelFile lit = models().cubeAll(hot, modLoc("block/" + hot));
+                boolean flat = generator.source().flat();
+                String cold = flat ? generator.id() : Skins.generator(generator, false);
+                String hot = flat ? generator.id() + "_on" : Skins.generator(generator, true);
+                ModelFile unlit = flat ? panel(generator, cold, false)
+                        : models().cubeAll(cold, modLoc("block/" + cold));
+                ModelFile lit = flat ? panel(generator, hot, true)
+                        : models().cubeAll(hot, modLoc("block/" + hot));
                 getVariantBuilder(CaldariumRegistry.generators().get(generator).get())
                         .forAllStates(state -> ConfiguredModel.builder()
                                 .modelFile(state.getValue(GeneratorBlock.LIT) ? lit : unlit)
@@ -172,6 +184,32 @@ public final class CaldariumDataGen {
                     itemModels().withExistingParent(name, modLoc("block/" + name));
                 }
             }
+        }
+
+        /**
+         * A plate as tall as {@link Skins#PANEL_HEIGHT}: the face it points at the
+         * sky, and plain metal everywhere else. The sides take the top of the edge
+         * texture, so what is seen is the top few pixels of a sheet of metal rather
+         * than a squashed copy of the whole of it.
+         */
+        private ModelFile panel(Generator generator, String name, boolean lit) {
+            String top = Skins.generatorTop(generator, lit);
+            String side = Skins.generatorSide(generator);
+            int tall = Skins.PANEL_HEIGHT;
+            return models().getBuilder(name)
+                    .texture("particle", modLoc("block/" + top))
+                    .texture("top", modLoc("block/" + top))
+                    .texture("side", modLoc("block/" + side))
+                    .element()
+                    .from(0, 0, 0)
+                    .to(16, tall, 16)
+                    .face(Direction.DOWN).texture("#side").cullface(Direction.DOWN).end()
+                    .face(Direction.UP).texture("#top").end()
+                    .face(Direction.NORTH).texture("#side").uvs(0, 0, 16, tall).end()
+                    .face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, tall).end()
+                    .face(Direction.WEST).texture("#side").uvs(0, 0, 16, tall).end()
+                    .face(Direction.EAST).texture("#side").uvs(0, 0, 16, tall).end()
+                    .end();
         }
     }
 
