@@ -51,12 +51,12 @@ public final class CaldariumConfig {
                         ModConfigSpec.IntValue perTick) {
     }
 
-    public static final Map<Generator, Rates> GENERATORS = new LinkedHashMap<>();
-    private static final Map<Generator, ModConfigSpec.IntValue> TANKS = new LinkedHashMap<>();
+    public static final Map<Generator.Made, Rates> GENERATORS = new LinkedHashMap<>();
+    private static final Map<Generator.Made, ModConfigSpec.IntValue> TANKS = new LinkedHashMap<>();
 
     /** How much a generator that burns a fluid can hold, in millibuckets. */
-    public static int tank(Generator generator) {
-        return TANKS.get(generator).get();
+    public static int tank(Generator.Made made) {
+        return TANKS.get(made).get();
     }
 
     /** What is left of the sun through one block that light passes through. */
@@ -75,17 +75,20 @@ public final class CaldariumConfig {
 
         builder.comment("Generators, a section each. A type is what it burns; these are its numbers.")
                 .push("generator");
-        for (Generator generator : Generator.all()) {
-            builder.push(generator.id());
-            GENERATORS.put(generator, new Rates(
+        for (Generator.Made made : Generator.made()) {
+            builder.push(made.id());
+            GENERATORS.put(made, new Rates(
                     builder.comment("Forge Energy it can hold before it has to stop and wait.")
-                            .defineInRange("capacity", GENERATOR_CAPACITY, 1, Integer.MAX_VALUE),
+                            .defineInRange("capacity", atRung(GENERATOR_CAPACITY, made.tier()),
+                                    1, Integer.MAX_VALUE),
                     builder.comment("How much it offers each neighbour per tick.")
-                            .defineInRange("transferRate", GENERATOR_TRANSFER, 1, Integer.MAX_VALUE),
+                            .defineInRange("transferRate", atRung(GENERATOR_TRANSFER, made.tier()),
+                                    1, Integer.MAX_VALUE),
                     builder.comment("Forge Energy made per tick while it is working.")
-                            .defineInRange("generates", GENERATOR_PER_TICK, 1, Integer.MAX_VALUE)));
-            if (generator.source() == Source.FLUID) {
-                TANKS.put(generator, builder
+                            .defineInRange("generates", atRung(GENERATOR_PER_TICK, made.tier()),
+                                    1, Integer.MAX_VALUE)));
+            if (made.source() == Source.FLUID) {
+                TANKS.put(made, builder
                         .comment("Millibuckets of fuel it holds. A bucket is spent at a time.")
                         .defineInRange("tank", TANK, 1_000, Integer.MAX_VALUE));
             }
@@ -133,6 +136,11 @@ public final class CaldariumConfig {
      * whatever the numbers are. Meeting it is not an error — it is the largest
      * battery that can honestly report itself.
      */
+    /** The same, for something that may or may not stand on a rung at all. */
+    private static int atRung(int first, Tier tier) {
+        return tier == null ? first : stepped(first, tier);
+    }
+
     private static int stepped(int first, Tier tier) {
         long value = first;
         for (int rung = 0; rung < tier.ordinal(); rung++) {

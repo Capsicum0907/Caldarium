@@ -42,15 +42,15 @@ public class GeneratorBlock extends BaseEntityBlock {
     /** A panel is only as tall as it needs to be to hold a face at the sky. */
     private static final VoxelShape PANEL = box(0.0, 0.0, 0.0, 16.0, Skins.PANEL_HEIGHT, 16.0);
 
-    private final Generator row;
+    private final Generator.Made row;
 
-    public GeneratorBlock(Generator row, Properties properties) {
+    public GeneratorBlock(Generator.Made row, Properties properties) {
         super(properties);
         this.row = row;
         registerDefaultState(stateDefinition.any().setValue(LIT, Boolean.FALSE));
     }
 
-    public Generator row() {
+    public Generator.Made row() {
         return row;
     }
 

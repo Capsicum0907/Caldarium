@@ -147,8 +147,8 @@
     }
   ],
   "textures": {
-    "particle": "caldarium:block/solar_panel_top_on",
-    "side": "caldarium:block/solar_panel_side",
-    "top": "caldarium:block/solar_panel_top_on"
+    "particle": "caldarium:block/iron_solar_panel_top",
+    "side": "caldarium:block/iron_solar_panel_side",
+    "top": "caldarium:block/iron_solar_panel_top"
   }
 }

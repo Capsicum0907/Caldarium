@@ -40,6 +40,16 @@ A tier is how much and how fast, and a kind is what a thing does with what it
 holds: a battery hands it on, a charger puts it into what is in its slots. One kind
 at one tier is one block, so a kind or a tier added later is a row and not a class.
 
+**A generator may say that it comes in tiers, and only then is it multiplied.** The
+sun gives the same everywhere, so a better panel is the only way that one gets
+better; a burner gets better by being fed something better, and has no ladder at
+all. The table stays flat by default and one row is allowed to be a ladder.
+
+**The ladder is expected to grow.** Nothing counts the rungs: the numbers come from
+where a tier sits in the list, the slots from the same, the recipe from the rung
+below, and the colour from the tier itself. A rung added to the list needs a colour
+on its line and a metal in the recipes, and the compiler asks for the second one.
+
 **The one that draws on the sky is a panel rather than a box** — three pixels of
 it, because all it needs is the face it points upwards, and a full cube of
 machinery underneath would be a cube that does nothing. It asks three questions

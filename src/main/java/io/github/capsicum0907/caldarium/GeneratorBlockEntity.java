@@ -33,7 +33,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     /** How often the sky is looked at. Twenty times a second is twenty times too many. */
     private static final int SUN_EVERY = 20;
 
-    private final Generator row;
+    private final Generator.Made row;
     private final CaldariumConfig.Rates rates;
     private final Store store;
     private final Pushing pushing = new Pushing();

@@ -147,8 +147,8 @@
     }
   ],
   "textures": {
-    "particle": "caldarium:block/solar_panel_top",
-    "side": "caldarium:block/solar_panel_side",
-    "top": "caldarium:block/solar_panel_top"
+    "particle": "caldarium:block/netherite_solar_panel_top",
+    "side": "caldarium:block/netherite_solar_panel_side",
+    "top": "caldarium:block/netherite_solar_panel_top"
   }
 }

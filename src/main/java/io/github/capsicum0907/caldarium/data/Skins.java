@@ -66,15 +66,6 @@ public final class Skins {
     /** How far a pixel may stray from its colour. Small, so the lines stay lines. */
     private static final int SPECKLE = 8;
 
-    /**
-     * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
-     * out. The metal each tier is made of, so a block says which rung it is on
-     * without anything written on it.
-     */
-    // ⚠ The netherite one is the ingot's highlight rather than the block's dark
-    // face. Netherite is the darkest metal there is, and drawn true it came out at
-    // 0x5B4E52 against a 0x51565A window — a top tier that looked like a blank plate.
-    private static final int[] CELL = { 0xD5DBE0, 0xF0C246, 0x5BE0D6, 0xB0A2A5 };
 
     private static final int WINDOW_FROM = 4;
     private static final int WINDOW_TO = 12;
@@ -86,18 +77,18 @@ public final class Skins {
     public static final int PANEL_HEIGHT = 3;
 
     /** The name of the texture for a generator, resting or working. */
-    public static String generator(Generator generator, boolean lit) {
-        return lit ? generator.id() + "_on" : generator.id();
+    public static String generator(Generator.Made made, boolean lit) {
+        return lit ? made.id() + "_on" : made.id();
     }
 
     /** The face a panel points at the sky. */
-    public static String generatorTop(Generator generator, boolean lit) {
-        return lit ? generator.id() + "_top_on" : generator.id() + "_top";
+    public static String generatorTop(Generator.Made made, boolean lit) {
+        return lit ? made.id() + "_top_on" : made.id() + "_top";
     }
 
     /** Its edge and its underside, which are the same plain metal. */
-    public static String generatorSide(Generator generator) {
-        return generator.id() + "_side";
+    public static String generatorSide(Generator.Made made) {
+        return made.id() + "_side";
     }
 
     public static String kind(Kind kind, Tier tier) {
@@ -111,14 +102,14 @@ public final class Skins {
      */
     public static List<String> names() {
         List<String> names = new ArrayList<>();
-        for (Generator generator : Generator.all()) {
-            if (generator.source().flat()) {
-                names.add(generatorTop(generator, false));
-                names.add(generatorTop(generator, true));
-                names.add(generatorSide(generator));
+        for (Generator.Made made : Generator.made()) {
+            if (made.source().flat()) {
+                names.add(generatorTop(made, false));
+                names.add(generatorTop(made, true));
+                names.add(generatorSide(made));
             } else {
-                names.add(generator(generator, false));
-                names.add(generator(generator, true));
+                names.add(generator(made, false));
+                names.add(generator(made, true));
             }
         }
         for (Kind kind : Kind.values()) {
@@ -133,7 +124,7 @@ public final class Skins {
      * The same plate for every generator that is a box, and the window says what it
      * draws on: a mouth to feed, or a pool to fill. What is flat has its own face.
      */
-    public static int[][] generatorSkin(Generator generator, boolean lit) {
+    public static int[][] generatorSkin(Generator.Made made, boolean lit) {
         int[][] pixels = plate();
         int span = WINDOW_TO - WINDOW_FROM - 1;
         for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
@@ -142,7 +133,7 @@ public final class Skins {
                 // A fire is brightest at its base, so the mouth is graded rather than
                 // filled: a flat orange square reads as a sticker on the front. A pool
                 // is the other way up, because its light is at the surface.
-                pixels[y][x] = 0xFF000000 | (generator.source() == Source.ITEM
+                pixels[y][x] = 0xFF000000 | (made.source() == Source.ITEM
                         ? (lit ? mix(EMBER, MOUTH_LIT, down) : MOUTH_COLD)
                         : (lit ? mix(MOUTH_LIT, EMBER, down) : MOLTEN_COLD));
             }
@@ -155,7 +146,7 @@ public final class Skins {
      * machine seen doing different jobs, and the picture should say so.
      */
     public static int[][] kindSkin(Kind kind, Tier tier) {
-        int colour = CELL[Math.min(tier.ordinal(), CELL.length - 1)];
+        int colour = tier.colour();
         int[][] pixels = plate();
         for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
             for (int x = WINDOW_FROM; x < WINDOW_TO; x++) {
@@ -186,9 +177,12 @@ public final class Skins {
      * and each cell is lighter towards its top left - a flat blue square looks
      * painted on, while a sheen looks like something under glass.
      */
-    public static int[][] solarSkin(boolean lit) {
+    public static int[][] solarSkin(Tier tier, boolean lit) {
         int[][] pixels = new int[SIZE][SIZE];
-        int base = lit ? CELL_WORKING : CELL_RESTING;
+        // ⭐ The glass is the same glass on every rung; what the rung changes is the
+        // cast of it. Mixing towards the metal keeps one picture for all of them and
+        // still tells them apart from above, which is the only side anybody sees.
+        int base = mix(lit ? CELL_WORKING : CELL_RESTING, tier.colour(), TIER_TINT);
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 int colour = x % LINE_EVERY == 0 ? shift(base, LINE_LIFT) : base;
@@ -219,20 +213,28 @@ public final class Skins {
         return channel(colour, 16, by) | channel(colour, 8, by) | channel(colour, 0, by);
     }
 
-    /** The edge and underside of a panel: metal, and nothing else. */
-    public static int[][] plainSkin() {
-        return plate();
+    /** The edge and underside of a panel: metal, in the colour of its rung. */
+    public static int[][] plainSkin(Tier tier) {
+        return plate(mix(BODY, tier.colour(), EDGE_TINT));
     }
 
 
-    /** Metal with a darker rim and a rivet in each corner. */
+    /** How far the pictures are pulled towards the metal of the rung they are on. */
+    private static final float TIER_TINT = 0.34F;
+    private static final float EDGE_TINT = 0.30F;
+
     private static int[][] plate() {
+        return plate(BODY);
+    }
+
+    /** Metal with a darker rim and a rivet in each corner. */
+    private static int[][] plate(int body) {
         int[][] pixels = new int[SIZE][SIZE];
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 boolean rim = x == 0 || y == 0 || x == SIZE - 1 || y == SIZE - 1;
                 boolean rivet = (x == 2 || x == SIZE - 3) && (y == 2 || y == SIZE - 3);
-                int colour = rim ? EDGE : rivet ? RIVET : grain(BODY, x, y);
+                int colour = rim ? EDGE : rivet ? RIVET : grain(body, x, y);
                 pixels[y][x] = 0xFF000000 | colour;
             }
         }

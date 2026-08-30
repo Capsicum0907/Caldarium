@@ -50,28 +50,28 @@ public final class CaldariumRegistry {
     public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU =
             MENUS.register("machine", () -> IMenuTypeExtension.create(MachineMenu::new));
 
-    private static final Map<Generator, DeferredBlock<GeneratorBlock>> GENERATORS =
+    private static final Map<Generator.Made, DeferredBlock<GeneratorBlock>> GENERATORS =
             new LinkedHashMap<>();
     private static final Map<Kind, Map<Tier, DeferredBlock<KindBlock>>> KINDS =
             new EnumMap<>(Kind.class);
     private static final List<DeferredItem<BlockItem>> ITEM_ORDER = new ArrayList<>();
 
     static {
-        for (Generator generator : Generator.all()) {
+        for (Generator.Made made : Generator.made()) {
             // Only the ones with a fire in them give light. A solar panel lit like a
             // furnace would be a lamp that works during the day.
             // ⚠ noOcclusion for a panel: a block that declares itself solid has its
             // neighbours' faces culled against it, and a three-pixel plate that did
             // that would leave a hole in the ground it sits on.
             BlockBehaviour.Properties properties = metal()
-                    .lightLevel(state -> generator.source().burns()
+                    .lightLevel(state -> made.source().burns()
                             && state.getValue(GeneratorBlock.LIT) ? 13 : 0);
-            if (generator.source().flat()) {
+            if (made.source().flat()) {
                 properties = properties.noOcclusion();
             }
-            DeferredBlock<GeneratorBlock> block = BLOCKS.registerBlock(generator.id(),
-                    made -> new GeneratorBlock(generator, made), properties);
-            GENERATORS.put(generator, block);
+            DeferredBlock<GeneratorBlock> block = BLOCKS.registerBlock(made.id(),
+                    built -> new GeneratorBlock(made, built), properties);
+            GENERATORS.put(made, block);
             ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
         }
         for (Kind kind : Kind.values()) {
@@ -121,7 +121,7 @@ public final class CaldariumRegistry {
         return blocks(all);
     }
 
-    public static Map<Generator, DeferredBlock<GeneratorBlock>> generators() {
+    public static Map<Generator.Made, DeferredBlock<GeneratorBlock>> generators() {
         return GENERATORS;
     }
 

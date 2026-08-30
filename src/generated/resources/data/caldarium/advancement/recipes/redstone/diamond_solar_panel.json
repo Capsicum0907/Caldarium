@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_glass": {
+    "has_gold_solar_panel": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:glass"
+            "items": "caldarium:gold_solar_panel"
           }
         ]
       },
@@ -13,7 +13,7 @@
     },
     "has_the_recipe": {
       "conditions": {
-        "recipe": "caldarium:solar_panel"
+        "recipe": "caldarium:diamond_solar_panel"
       },
       "trigger": "minecraft:recipe_unlocked"
     }
@@ -21,12 +21,12 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_glass"
+      "has_gold_solar_panel"
     ]
   ],
   "rewards": {
     "recipes": [
-      "caldarium:solar_panel"
+      "caldarium:diamond_solar_panel"
     ]
   }
 }

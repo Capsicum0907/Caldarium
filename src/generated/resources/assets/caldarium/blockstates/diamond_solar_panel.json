@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/diamond_solar_panel"
+    },
+    "lit=true": {
+      "model": "caldarium:block/diamond_solar_panel_on"
+    }
+  }
+}

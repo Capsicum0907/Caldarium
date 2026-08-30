@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "caldarium:solar_panel"
+          "name": "caldarium:gold_solar_panel"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "caldarium:blocks/solar_panel"
+  "random_sequence": "caldarium:blocks/gold_solar_panel"
 }

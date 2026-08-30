@@ -105,18 +105,19 @@ public final class CaldariumDataGen {
         @Override
         public CompletableFuture<?> run(CachedOutput output) {
             List<CompletableFuture<?>> writing = new ArrayList<>();
-            for (Generator generator : Generator.all()) {
-                if (generator.source().flat()) {
+            for (Generator.Made made : Generator.made()) {
+                if (made.source().flat()) {
                     for (boolean lit : new boolean[] { false, true }) {
-                        draw(output, writing, Skins.solarSkin(lit),
-                                Skins.generatorTop(generator, lit));
+                        draw(output, writing, Skins.solarSkin(made.tier(), lit),
+                                Skins.generatorTop(made, lit));
                     }
-                    draw(output, writing, Skins.plainSkin(), Skins.generatorSide(generator));
+                    draw(output, writing, Skins.plainSkin(made.tier()),
+                            Skins.generatorSide(made));
                     continue;
                 }
                 for (boolean lit : new boolean[] { false, true }) {
-                    draw(output, writing, Skins.generatorSkin(generator, lit),
-                            Skins.generator(generator, lit));
+                    draw(output, writing, Skins.generatorSkin(made, lit),
+                            Skins.generator(made, lit));
                 }
             }
             for (Kind kind : Kind.values()) {
@@ -162,15 +163,15 @@ public final class CaldariumDataGen {
 
         @Override
         protected void registerStatesAndModels() {
-            for (Generator generator : Generator.all()) {
-                boolean flat = generator.source().flat();
-                String cold = flat ? generator.id() : Skins.generator(generator, false);
-                String hot = flat ? generator.id() + "_on" : Skins.generator(generator, true);
-                ModelFile unlit = flat ? panel(generator, cold, false)
+            for (Generator.Made made : Generator.made()) {
+                boolean flat = made.source().flat();
+                String cold = flat ? made.id() : Skins.generator(made, false);
+                String hot = flat ? made.id() + "_on" : Skins.generator(made, true);
+                ModelFile unlit = flat ? panel(made, cold, false)
                         : models().cubeAll(cold, modLoc("block/" + cold));
-                ModelFile lit = flat ? panel(generator, hot, true)
+                ModelFile lit = flat ? panel(made, hot, true)
                         : models().cubeAll(hot, modLoc("block/" + hot));
-                getVariantBuilder(CaldariumRegistry.generators().get(generator).get())
+                getVariantBuilder(CaldariumRegistry.generators().get(made).get())
                         .forAllStates(state -> ConfiguredModel.builder()
                                 .modelFile(state.getValue(GeneratorBlock.LIT) ? lit : unlit)
                                 .build());
@@ -193,9 +194,9 @@ public final class CaldariumDataGen {
          * texture, so what is seen is the top few pixels of a sheet of metal rather
          * than a squashed copy of the whole of it.
          */
-        private ModelFile panel(Generator generator, String name, boolean lit) {
-            String top = Skins.generatorTop(generator, lit);
-            String side = Skins.generatorSide(generator);
+        private ModelFile panel(Generator.Made made, String name, boolean lit) {
+            String top = Skins.generatorTop(made, lit);
+            String side = Skins.generatorSide(made);
             int tall = Skins.PANEL_HEIGHT;
             // ⚠ block/block, for its display transforms and nothing else. Without a
             // parent a model carries none, and the game drew this one square on to
@@ -241,8 +242,8 @@ public final class CaldariumDataGen {
 
         @Override
         protected void addTranslations() {
-            for (Generator generator : Generator.all()) {
-                add(CaldariumRegistry.generators().get(generator).get(), titled(generator.id()));
+            for (Generator.Made made : Generator.made()) {
+                add(CaldariumRegistry.generators().get(made).get(), titled(made.id()));
             }
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.values()) {
@@ -343,39 +344,49 @@ public final class CaldariumDataGen {
         protected void buildRecipes(RecipeOutput output) {
             // Each generator is iron and redstone around the vanilla thing that
             // already does its job by hand: a furnace to burn, a cauldron to hold
-            // something molten, and glass to face the sky.
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.generators().get(Generator.BURNER).get())
-                    .pattern("III")
-                    .pattern("IFI")
-                    .pattern("IRI")
-                    .define('I', Items.IRON_INGOT)
-                    .define('F', Blocks.FURNACE)
-                    .define('R', Items.REDSTONE)
-                    .unlockedBy("has_furnace", has(Blocks.FURNACE))
-                    .save(output);
-
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.generators().get(Generator.CRUCIBLE).get())
-                    .pattern("III")
-                    .pattern("ICI")
-                    .pattern("IRI")
-                    .define('I', Items.IRON_INGOT)
-                    .define('C', Blocks.CAULDRON)
-                    .define('R', Items.REDSTONE)
-                    .unlockedBy("has_cauldron", has(Blocks.CAULDRON))
-                    .save(output);
-
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.generators().get(Generator.SOLAR).get())
-                    .pattern("GGG")
-                    .pattern("RRR")
-                    .pattern("III")
-                    .define('G', Blocks.GLASS)
-                    .define('R', Items.REDSTONE)
-                    .define('I', Items.IRON_INGOT)
-                    .unlockedBy("has_glass", has(Blocks.GLASS))
-                    .save(output);
+            // something molten, and glass to face the sky. A generator that stands on
+            // a ladder is built from parts on its first rung and from the rung below
+            // on every one after, the same as everything else that has tiers.
+            for (Generator.Made made : Generator.made()) {
+                Block block = CaldariumRegistry.generators().get(made).get();
+                Tier under = made.tier() == null ? null : made.tier().under();
+                if (under != null) {
+                    Block below = CaldariumRegistry.generators()
+                            .get(new Generator.Made(made.generator(), under)).get();
+                    upgrade(output, block, below, made.tier(),
+                            "has_" + new Generator.Made(made.generator(), under).id());
+                    continue;
+                }
+                switch (made.source()) {
+                    case ITEM -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("III")
+                            .pattern("IFI")
+                            .pattern("IRI")
+                            .define('I', Items.IRON_INGOT)
+                            .define('F', Blocks.FURNACE)
+                            .define('R', Items.REDSTONE)
+                            .unlockedBy("has_furnace", has(Blocks.FURNACE))
+                            .save(output);
+                    case FLUID -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("III")
+                            .pattern("ICI")
+                            .pattern("IRI")
+                            .define('I', Items.IRON_INGOT)
+                            .define('C', Blocks.CAULDRON)
+                            .define('R', Items.REDSTONE)
+                            .unlockedBy("has_cauldron", has(Blocks.CAULDRON))
+                            .save(output);
+                    case SUN -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("GGG")
+                            .pattern("RRR")
+                            .pattern("III")
+                            .define('G', Blocks.GLASS)
+                            .define('R', Items.REDSTONE)
+                            .define('I', Items.IRON_INGOT)
+                            .unlockedBy("has_glass", has(Blocks.GLASS))
+                            .save(output);
+                }
+            }
 
             // The first rung is built from parts. Every rung above it is the rung
             // below in a frame of its own metal, so a tier added to the table brings
@@ -407,15 +418,21 @@ public final class CaldariumDataGen {
         }
 
         private void upgrade(RecipeOutput output, Kind kind, Tier tier) {
-            ItemLike under = CaldariumRegistry.block(kind, tier.under()).get();
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
-                            CaldariumRegistry.block(kind, tier).get())
+            upgrade(output, CaldariumRegistry.block(kind, tier).get(),
+                    CaldariumRegistry.block(kind, tier.under()).get(), tier,
+                    "has_" + kind.id(tier.under()));
+        }
+
+        /** One rung: the thing below it, in a frame of the metal this rung is made of. */
+        private void upgrade(RecipeOutput output, ItemLike result, ItemLike under, Tier tier,
+                String unlocked) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, result)
                     .pattern(" M ")
                     .pattern("MPM")
                     .pattern(" M ")
                     .define('M', metal(tier))
                     .define('P', under)
-                    .unlockedBy("has_" + kind.id(tier.under()), has(under))
+                    .unlockedBy(unlocked, has(under))
                     .save(output);
         }
 

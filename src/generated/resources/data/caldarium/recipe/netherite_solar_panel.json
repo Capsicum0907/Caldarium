@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "M": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "P": {
+      "item": "caldarium:diamond_solar_panel"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MPM",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "caldarium:netherite_solar_panel"
+  }
+}
