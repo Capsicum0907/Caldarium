@@ -37,7 +37,15 @@ public final class Sunlight {
             if (state.isAir()) {
                 continue;
             }
-            if (state.isSolidRender(level, above)) {
+            // ⚠ How much light the block stops, not how it is drawn.
+            //
+            // This asked isSolidRender, which is a question about rendering: a solar
+            // panel is declared noOcclusion so that it does not cull the face of the
+            // ground it stands on, and that answered "not solid" - so a panel above a
+            // panel was letting most of the sun through and the one underneath went
+            // on making energy. Glass reports nought here and is meant to; anything
+            // that stops any light at all stops all of it.
+            if (state.getLightBlock(level, above) > 0) {
                 return 0.0F;
             }
             left *= through;

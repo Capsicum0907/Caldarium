@@ -101,6 +101,19 @@ public class GeneratorBlock extends BaseEntityBlock {
         return row.source().flat() ? PANEL : super.getShape(state, level, pos, context);
     }
 
+    /**
+     * ⚠ Nothing here lets daylight past, panel or not.
+     *
+     * <p>A thin block would otherwise be taken for a see-through one: the default
+     * answer is worked out from the shape, and three pixels is not a full block. It
+     * is opaque material all the same, so what stands under a panel is in its shade
+     * and a panel under a panel makes nothing.
+     */
+    @Override
+    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+        return false;
+    }
+
     /** Server side only: burning and pushing are world state, not something drawn. */
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
