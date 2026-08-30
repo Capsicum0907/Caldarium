@@ -74,8 +74,18 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         return store;
     }
 
+    /**
+     * ⚠ Null where there is nothing to put anything in, which is what the generator
+     * already answers for its fuel slot. An empty handler is not the same as none: a
+     * hopper lines itself up against anything that answers at all, and then spends the
+     * rest of its life pushing into a block with no slots.
+     *
+     * <p>⚠ Asked here rather than by whoever hands the capability out. The same
+     * question asked in two places is one place too many — the second copy read this
+     * one's null and crashed on it, which is how it came to be written down.
+     */
     public ItemStackHandler items() {
-        return items;
+        return items.getSlots() == 0 ? null : items;
     }
 
     public Kind kind() {
