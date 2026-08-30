@@ -32,8 +32,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     private static final ResourceLocation FLAME =
             ResourceLocation.withDefaultNamespace("container/furnace/lit_progress");
 
-    /** How dark the unlit flame is. Vanilla bakes its own into the furnace image. */
-    private static final float SPENT = 0.28F;
+
 
     public MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
@@ -74,15 +73,18 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             }
         }
         if (menu.burns()) {
-            // The shape of what is missing is the shape of the flame itself, so the
-            // same sprite is drawn dark underneath rather than a box being drawn
-            // around it. A box never fits a flame.
-            graphics.setColor(SPENT, SPENT, SPENT, 1.0F);
-            graphics.blitSprite(FLAME, Skins.FLAME_W, Skins.FLAME_H, 0, 0,
-                    leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y,
-                    Skins.FLAME_W, Skins.FLAME_H);
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-
+            // ⚠ Only the burning part, and nothing at all underneath it.
+            //
+            // The sprite is not a flame cut out of transparency: all fourteen by
+            // fourteen pixels are opaque, and the ones that are not flame are the
+            // panel colours - 0xC6C6C6 for the face and 0x8B8B8B for a recess, which
+            // are the two this mod paints its own panel with. It is a tile meant to
+            // be laid on a panel, and laying it on this one is seamless.
+            //
+            // So there is no silhouette to darken. Drawing the whole sprite dark put
+            // a grey box on the panel, which is what it looked like. Vanilla shows an
+            // unlit flame above the burning one because its background image has one
+            // painted in; this one simply shows nothing until something is burning.
             int flame = Math.round(Skins.FLAME_H * menu.burned());
             if (flame > 0) {
                 graphics.blitSprite(FLAME, Skins.FLAME_W, Skins.FLAME_H,
