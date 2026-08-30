@@ -156,18 +156,44 @@ public final class Skins {
         return pixels;
     }
 
-    /** What the window shows: cells stood side by side, or a socket to plug into. */
+    /**
+     * What the window shows: cells stood side by side, a socket to plug into, a
+     * junction, or an arrow saying which way across the boundary it works.
+     *
+     * <p>⭐ An exhaustive switch, so a kind added to the table is a compiler error
+     * here rather than a block wearing another one's face.
+     *
+     * <p>The three that carry are told apart by that arrow alone, and it is drawn as
+     * large as the window will hold: an importer and an exporter placed next to each
+     * other have to be legible from across the room, which is the only place anybody
+     * ever looks at a line of cable from.
+     */
     private static boolean marked(Kind kind, int x, int y) {
+        int across = x - WINDOW_FROM;
+        int down = y - WINDOW_FROM;
+        int span = WINDOW_TO - WINDOW_FROM;
         return switch (kind) {
             // Every third column is the gap between two cells.
-            case BATTERY -> (x - WINDOW_FROM) % 3 != 2;
+            case BATTERY -> across % 3 != 2;
             // A ring one pixel in, and a contact in the middle of it.
             case CHARGER -> {
-                int in = Math.min(Math.min(x - WINDOW_FROM, y - WINDOW_FROM),
-                        Math.min(WINDOW_TO - 1 - x, WINDOW_TO - 1 - y));
+                int in = Math.min(Math.min(across, down),
+                        Math.min(span - 1 - across, span - 1 - down));
                 yield in == 1 || in == 3;
             }
+            // A crossing: the line goes through, whichever way it was laid.
+            case CABLE -> middle(across) || middle(down);
+            // Pointing in, at the block. What comes this way is being drawn in.
+            case IMPORTER -> Math.abs(2 * across - (span - 1)) <= span - down;
+            // The same arrow turned over: this is where it leaves.
+            case EXPORTER -> Math.abs(2 * across - (span - 1)) <= down + 1;
         };
+    }
+
+    /** The two columns, or rows, that run through the centre of the window. */
+    private static boolean middle(int at) {
+        int span = WINDOW_TO - WINDOW_FROM;
+        return at == span / 2 - 1 || at == span / 2;
     }
 
     /**

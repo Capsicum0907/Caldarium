@@ -49,7 +49,9 @@ public class KindBlock extends BaseEntityBlock {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
-        return MachineMenu.open(level, pos, player);
+        // Nothing in the line has a screen, and a click that passes through is what
+        // lets a block be built against a cable rather than opening one.
+        return kind.opens() ? MachineMenu.open(level, pos, player) : InteractionResult.PASS;
     }
 
     @Override

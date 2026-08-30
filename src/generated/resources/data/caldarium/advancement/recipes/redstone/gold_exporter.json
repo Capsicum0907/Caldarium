@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_iron_exporter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:iron_exporter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:gold_exporter"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_iron_exporter"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:gold_exporter"
+    ]
+  }
+}

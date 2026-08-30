@@ -70,18 +70,38 @@ layer. A network would be a second system to keep correct, and nothing here need
 one: a row of batteries already carries, because energy can only move towards the
 emptier end.
 
-**Cables come later, and they are rows in the same table.** A cable is a battery
-that holds almost nothing and moves a great deal, so carrying over distance needs
-no new mechanism — only a smaller capacity. Three blocks make the boundary
-explicit: a **cable** that speaks only to other Caldarium transport, an **importer**
-that draws out of something else, and an **exporter** that feeds into it. Each has
-tiers.
+**Cables are rows in the same table.** A cable is a battery that holds almost
+nothing and moves a great deal, so carrying over distance needed no new mechanism —
+only a smaller capacity and a boundary. Three blocks draw that boundary: a **cable**,
+an **importer** that draws out of what is outside it, and an **exporter** that feeds
+into it. Each has tiers.
+
+**The boundary is about pushing, not about connecting**, and splitting it that way
+is what keeps both halves honest. A cable offers only to the line, so one laid past
+a machine does not power it and a corridor of cable is possible at all. It has no
+matching rule about being offered *to*: a burner or a battery standing against a
+cable fills it directly, which leaves the importer to do the job nothing else here
+can — asking, for the machines in other mods that wait to be asked rather than
+pushing. The exporter is the one block that offers outside the line, and it offers to
+everything outside it, this mod's own batteries included.
+
+An importer is a `SOURCE`, the same as a generator: energy that arrives in the line
+arrives through one, and nothing may push into it. Where it came from — burnt,
+gathered off the sky, or drawn out of somebody else's machine — is not a distinction
+anything downstream has to make.
 
 The reason to build these rather than lean on a cable mod is the handling. **No
 wrench**, because the direction is which of the three blocks was placed. **No
 upgrade to fit**, because the speed is the tier. **No window to open**, because
-there is nothing to configure. A pipe that needs three of those before it moves
-anything is a pipe that is faster to lay by hand.
+there is nothing to configure — a right-click passes straight through, so a cable is
+something you can build against rather than something that opens. A pipe that needs
+three of those before it moves anything is a pipe that is faster to lay by hand.
+
+**A cable can only forward what it is holding**, so its capacity is its throughput
+rather than a comfort: it holds two ticks of its own rate and no more. And a cable is
+not a machine you improve but wire you draw — the one thing here made from its own
+metal at every rung, six at a time, rather than built up from the rung below, because
+four ingots a block is a price nothing laid by the hundred can pay.
 
 Pushing has one asymmetry, and it is the whole of the rule:
 

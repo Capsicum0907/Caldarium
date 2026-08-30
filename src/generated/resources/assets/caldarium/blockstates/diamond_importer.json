@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "caldarium:block/diamond_importer"
+    }
+  }
+}

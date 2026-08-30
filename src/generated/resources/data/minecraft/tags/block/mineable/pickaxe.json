@@ -13,6 +13,18 @@
     "caldarium:iron_charger",
     "caldarium:gold_charger",
     "caldarium:diamond_charger",
-    "caldarium:netherite_charger"
+    "caldarium:netherite_charger",
+    "caldarium:iron_cable",
+    "caldarium:gold_cable",
+    "caldarium:diamond_cable",
+    "caldarium:netherite_cable",
+    "caldarium:iron_importer",
+    "caldarium:gold_importer",
+    "caldarium:diamond_importer",
+    "caldarium:netherite_importer",
+    "caldarium:iron_exporter",
+    "caldarium:gold_exporter",
+    "caldarium:diamond_exporter",
+    "caldarium:netherite_exporter"
   ]
 }

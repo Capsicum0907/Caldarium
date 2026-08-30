@@ -29,11 +29,27 @@ public final class CaldariumConfig {
     private record First(int capacity, int transfer) {
     }
 
-    private static final Map<Kind, First> FIRST = Map.of(
+    /**
+     * ⚠ A switch and not a map. A map is missing a key silently, and a kind added
+     * to the table would arrive as a block with no numbers at all — the same shape of
+     * fault as the colour table that used to quietly repeat its last entry. This one
+     * refuses to compile instead.
+     *
+     * <p>⚠ <b>A cable can only forward what it is holding.</b> Capacity is not a
+     * comfort here, it is the throughput: a block that held less than one tick of its
+     * rate would move that much per tick and the rate would be decoration. Twice the
+     * rate, so a line has a tick of slack in it and does not empty and refill in step.
+     */
+    private static First first(Kind kind) {
+        return switch (kind) {
             // A battery is capacity; a charger is a doorway, so it is quicker and
             // holds only enough to keep working while it waits for more.
-            Kind.BATTERY, new First(400_000, 2_000),
-            Kind.CHARGER, new First(100_000, 4_000));
+            case BATTERY -> new First(400_000, 2_000);
+            case CHARGER -> new First(100_000, 4_000);
+            // Four times what a battery moves, and a fiftieth of what one holds.
+            case CABLE, IMPORTER, EXPORTER -> new First(16_000, 8_000);
+        };
+    }
 
     /** A generator holds little: it is a source, not a store. */
     private static final int GENERATOR_CAPACITY = 40_000;
@@ -106,7 +122,7 @@ public final class CaldariumConfig {
         builder.pop();
 
         for (Kind kind : Kind.values()) {
-            First first = FIRST.get(kind);
+            First first = first(kind);
             Map<Tier, Rates> tiers = new LinkedHashMap<>();
             builder.comment("One section per tier, in the order the tiers are declared.")
                     .push(kind.getSerializedName());

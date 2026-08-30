@@ -36,7 +36,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     private final Generator.Made row;
     private final CaldariumConfig.Rates rates;
     private final Store store;
-    private final Pushing pushing = new Pushing();
+    private final Neighbours sides = new Neighbours();
     private final ItemStackHandler fuel;
     private final FuelTank tank;
     private final MachineData data;
@@ -52,7 +52,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         super(CaldariumRegistry.GENERATOR_ENTITY.get(), pos, state);
         this.row = ((GeneratorBlock) state.getBlock()).row();
         this.rates = CaldariumConfig.GENERATORS.get(row);
-        this.store = new Store(Store.Role.SOURCE,
+        this.store = new Store(Store.Role.SOURCE, Wiring.OPEN,
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
         this.tank = row.source() == Source.FLUID
                 ? new FuelTank(CaldariumConfig.tank(row), this::setChanged)
@@ -130,7 +130,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             case ITEM, FLUID -> generator.burn();
             case SUN -> generator.bask(server, pos);
         }
-        generator.pushing.push(server, pos, generator.store);
+        Pushing.push(generator.sides, server, pos, generator.store);
 
         boolean working = generator.working();
         if (wasWorking != working) {
@@ -151,7 +151,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     private void burn() {
         if (burning > 0) {
             burning--;
-            store.generate(rates.perTick().get());
+            store.fill(rates.perTick().get());
         }
         if (burning <= 0 && !store.isFull()) {
             light();
@@ -210,7 +210,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             reaching = Sunlight.reaching(level, pos);
         }
         if (reaching > 0.0F) {
-            store.generate(Math.round(rates.perTick().get() * reaching));
+            store.fill(Math.round(rates.perTick().get() * reaching));
         }
     }
 

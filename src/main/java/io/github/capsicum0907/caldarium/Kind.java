@@ -12,8 +12,12 @@ import net.minecraft.util.StringRepresentable;
  *
  * <p>The name is built here rather than on the tier. A tier is how big something is
  * and nothing else; when it also knew how to spell "battery" there was no room for a
- * second kind that is sized the same way, which is what a charger — and later a
- * cable — is.
+ * second kind that is sized the same way, which is what a charger — and a cable — is.
+ *
+ * <p><b>The three that carry are rows here and nothing more.</b> A cable is a battery
+ * that holds almost nothing and moves a great deal, so distance needed no mechanism
+ * of its own: what it needed was a smaller capacity and a boundary, and the boundary
+ * is {@link Wiring}.
  *
  * <p>⚠ <b>How many slots is not a setting.</b> Everything else about these blocks is
  * in {@link CaldariumConfig}, but the number of slots decides the shape of the
@@ -22,9 +26,26 @@ import net.minecraft.util.StringRepresentable;
  */
 public enum Kind implements StringRepresentable {
     /** Holds energy and hands it on. A row of these is a line that carries. */
-    BATTERY("battery", Store.Role.BUFFER, 1, false, true),
+    BATTERY("battery", Store.Role.BUFFER, Wiring.OPEN, 1, false, false),
     /** Takes energy in and puts it into what is held in it. Wider at every tier. */
-    CHARGER("charger", Store.Role.SINK, 3, true, false);
+    CHARGER("charger", Store.Role.SINK, Wiring.OPEN, 3, true, false),
+    /**
+     * Distance. It offers only to the line, which is what lets one be laid past a
+     * machine without powering it — and so what makes a corridor of cable possible
+     * at all.
+     */
+    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, false),
+    /**
+     * The way in, and the only thing here that takes rather than gives. Everything
+     * this mod makes pushes; other mods are full of machines that wait to be asked.
+     *
+     * <p>⚠ A {@link Store.Role#SOURCE}, so nothing can push into it. Energy that
+     * went in that way would be energy in the one block whose job is to be where
+     * energy starts, and the line would have two ways to move it.
+     */
+    IMPORTER("importer", Store.Role.SOURCE, Wiring.ALONG, 0, false, true),
+    /** The way out: the only block here that offers to anything outside the line. */
+    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUT, 0, false, false);
 
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -32,16 +53,19 @@ public enum Kind implements StringRepresentable {
 
     private final String suffix;
     private final Store.Role role;
+    private final Wiring wiring;
     private final int slots;
     private final boolean widens;
-    private final boolean pushes;
+    private final boolean pulls;
 
-    Kind(String suffix, Store.Role role, int slots, boolean widens, boolean pushes) {
+    Kind(String suffix, Store.Role role, Wiring wiring, int slots, boolean widens,
+            boolean pulls) {
         this.suffix = suffix;
         this.role = role;
+        this.wiring = wiring;
         this.slots = slots;
         this.widens = widens;
-        this.pushes = pushes;
+        this.pulls = pulls;
     }
 
     /** The name in the registry, the model, the recipe and the language file. */
@@ -53,9 +77,38 @@ public enum Kind implements StringRepresentable {
         return role;
     }
 
-    /** Whether it offers what it holds to the blocks touching it. */
+    public Wiring wiring() {
+        return wiring;
+    }
+
+    /**
+     * Whether it offers what it holds to the blocks touching it.
+     *
+     * <p>Derived rather than declared: anything that can give energy up does offer
+     * it, and the one kind that cannot is the charger, which spends what it takes on
+     * what is in its slots. A flag beside the role would be the same answer written
+     * twice and free to disagree with itself.
+     */
     public boolean pushes() {
-        return pushes;
+        return role != Store.Role.SINK;
+    }
+
+    /** Whether it draws out of its neighbours. Only the way into the line does. */
+    public boolean pulls() {
+        return pulls;
+    }
+
+    /**
+     * Whether right-clicking it opens a screen.
+     *
+     * <p>⭐ The line has no windows, and that is a design promise rather than an
+     * omission: no wrench, because the direction is which of the three blocks was
+     * placed; no upgrade to fit, because the speed is the tier; and nothing to
+     * configure, so nothing to open. A block that passes the click through is also a
+     * block you can build against, which matters when you are laying a hundred.
+     */
+    public boolean opens() {
+        return wiring == Wiring.OPEN;
     }
 
     /**

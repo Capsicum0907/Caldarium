@@ -336,6 +336,9 @@ public final class CaldariumDataGen {
      * recipe is about when they become available rather than about how strong they are.
      */
     private static class Recipes extends RecipeProvider {
+        /** How many a length of wire comes out as. Two ingots and a redstone. */
+        private static final int CABLES_AT_ONCE = 6;
+
         Recipes(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
             super(output, registries);
         }
@@ -393,27 +396,87 @@ public final class CaldariumDataGen {
             // its recipe with it and the ladder cannot grow a missing step.
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.values()) {
-                    if (tier.under() == null) {
-                        first(output, kind, tier);
-                    } else {
-                        upgrade(output, kind, tier);
-                    }
+                    recipe(output, kind, tier);
                 }
             }
         }
 
-        /** Redstone around the vanilla block that already does the job in miniature. */
-        private void first(RecipeOutput output, Kind kind, Tier tier) {
+        /**
+         * How one block of one kind at one tier is made.
+         *
+         * <p>⭐ Exhaustive, so a kind added to the table stops the build here rather
+         * than quietly coming out of the crafting table wearing the battery's recipe.
+         */
+        private void recipe(RecipeOutput output, Kind kind, Tier tier) {
+            switch (kind) {
+                case BATTERY -> laddered(output, kind, tier, "IRI", "RBR", "IRI");
+                // A charger is a battery you can reach into, so its frame is open at
+                // the top.
+                case CHARGER -> laddered(output, kind, tier, "I I", "RBR", "IRI");
+                // The two that cross the boundary are the vanilla blocks that already
+                // do it by hand, in a frame: a hopper takes out of something, and a
+                // dropper puts into it.
+                case IMPORTER -> boundary(output, kind, tier, Blocks.HOPPER, "has_hopper");
+                case EXPORTER -> boundary(output, kind, tier, Blocks.DROPPER, "has_dropper");
+                case CABLE -> wire(output, tier);
+            }
+        }
+
+        /**
+         * A rung of a ladder: redstone around the vanilla block that already does the
+         * job in miniature on the first one, and the rung below in a frame of its own
+         * metal on every one after.
+         */
+        private void laddered(RecipeOutput output, Kind kind, Tier tier, String... rows) {
+            if (tier.under() != null) {
+                upgrade(output, kind, tier);
+                return;
+            }
             ShapedRecipeBuilder built = ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
                     CaldariumRegistry.block(kind, tier).get());
-            // A charger is a battery you can reach into, so its frame is open at the top.
-            built = kind == Kind.CHARGER
-                    ? built.pattern("I I").pattern("RBR").pattern("IRI")
-                    : built.pattern("IRI").pattern("RBR").pattern("IRI");
+            for (String row : rows) {
+                built = built.pattern(row);
+            }
             built.define('I', metal(tier))
                     .define('R', Items.REDSTONE)
                     .define('B', Blocks.REDSTONE_BLOCK)
                     .unlockedBy("has_redstone_block", has(Blocks.REDSTONE_BLOCK))
+                    .save(output);
+        }
+
+        /** The way in or the way out: a vanilla block that already does it, framed. */
+        private void boundary(RecipeOutput output, Kind kind, Tier tier, ItemLike core,
+                String unlocked) {
+            if (tier.under() != null) {
+                upgrade(output, kind, tier);
+                return;
+            }
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                            CaldariumRegistry.block(kind, tier).get())
+                    .pattern(" M ")
+                    .pattern("MCM")
+                    .pattern(" M ")
+                    .define('M', metal(tier))
+                    .define('C', core)
+                    .unlockedBy(unlocked, has(core))
+                    .save(output);
+        }
+
+        /**
+         * ⚠ <b>The one thing here that is not a ladder.</b> Every other kind is built
+         * from the rung below, which costs four ingots a block — and a cable is not a
+         * machine you improve but wire you draw, wanted by the hundred and laid in
+         * lines a hundred long. Four netherite ingots each would be a tier nobody
+         * could ever use. It is made from its own metal at every rung instead, and
+         * several at a time.
+         */
+        private void wire(RecipeOutput output, Tier tier) {
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE,
+                            CaldariumRegistry.block(Kind.CABLE, tier).get(), CABLES_AT_ONCE)
+                    .pattern("MRM")
+                    .define('M', metal(tier))
+                    .define('R', Items.REDSTONE)
+                    .unlockedBy("has_redstone", has(Items.REDSTONE))
                     .save(output);
         }
 

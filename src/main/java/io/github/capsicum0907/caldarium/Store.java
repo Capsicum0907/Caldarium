@@ -5,7 +5,8 @@ import java.util.function.IntSupplier;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
- * The energy a block holds. One class for both blocks, told apart by {@link Role}.
+ * The energy a block holds. One class for every block here, told apart by
+ * {@link Role} and by {@link Wiring}.
  *
  * <p>This is also the object handed out as the capability, which is what makes
  * {@link Pushing} able to recognise its own kind without a second lookup: a
@@ -18,7 +19,12 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
 public final class Store implements IEnergyStorage {
     /** What the block is for. The push rule in {@link Pushing} turns on this. */
     public enum Role {
-        /** Makes energy. Never accepts any: something that did would be a battery. */
+        /**
+         * Where energy comes into the mod, and never a place to put any: something
+         * that took a push would be a battery. What it is made from is not this
+         * enum's business — a generator burns for it, an importer draws it out of
+         * somebody else's machine, and to everything downstream they are the same.
+         */
         SOURCE,
         /** Holds energy on its way somewhere. */
         BUFFER,
@@ -34,14 +40,17 @@ public final class Store implements IEnergyStorage {
     }
 
     private final Role role;
+    private final Wiring wiring;
     private final IntSupplier capacity;
     private final IntSupplier transfer;
     private final Runnable changed;
 
     private int stored;
 
-    public Store(Role role, IntSupplier capacity, IntSupplier transfer, Runnable changed) {
+    public Store(Role role, Wiring wiring, IntSupplier capacity, IntSupplier transfer,
+            Runnable changed) {
         this.role = role;
+        this.wiring = wiring;
         this.capacity = capacity;
         this.transfer = transfer;
         this.changed = changed;
@@ -49,6 +58,11 @@ public final class Store implements IEnergyStorage {
 
     public Role role() {
         return role;
+    }
+
+    /** Which side of the line it stands on, and which side it offers to. */
+    public Wiring wiring() {
+        return wiring;
     }
 
     @Override
@@ -115,16 +129,26 @@ public final class Store implements IEnergyStorage {
     }
 
     /**
-     * What a generator does to itself. Goes around {@link #canReceive}, which exists
-     * to keep <em>other</em> blocks from filling a generator, not to stop it working.
+     * What a block puts into itself — burnt out of fuel, gathered off the sky, or
+     * drawn out of somebody else's machine. Goes around {@link #canReceive}, which
+     * exists to keep <em>other</em> blocks from filling a source, not to stop one
+     * working.
      */
-    public int generate(int amount) {
-        int made = Math.min(amount, Math.max(0, getMaxEnergyStored() - stored));
+    public int fill(int amount) {
+        int made = Math.min(amount, room());
         if (made > 0) {
             stored += made;
             changed.run();
         }
         return Math.max(0, made);
+    }
+
+    /**
+     * How much more would fit. ⚠ Measured from the raw amount, so a capacity lowered
+     * under a full block reads as no room at all rather than as room to spare.
+     */
+    public int room() {
+        return Math.max(0, getMaxEnergyStored() - stored);
     }
 
     /**

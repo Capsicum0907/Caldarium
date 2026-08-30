@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gold_importer": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:gold_importer"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:diamond_importer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gold_importer"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:diamond_importer"
+    ]
+  }
+}

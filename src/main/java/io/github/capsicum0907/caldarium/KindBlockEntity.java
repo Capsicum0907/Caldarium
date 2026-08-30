@@ -29,7 +29,7 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
     private final Tier tier;
     private final CaldariumConfig.Rates rates;
     private final Store store;
-    private final Pushing pushing = new Pushing();
+    private final Neighbours sides = new Neighbours();
     private final ItemStackHandler items;
     private final MachineData data;
 
@@ -39,7 +39,7 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         this.kind = block.kind();
         this.tier = block.tier();
         this.rates = CaldariumConfig.rates(kind, tier);
-        this.store = new Store(kind.role(),
+        this.store = new Store(kind.role(), kind.wiring(),
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
         this.data = new MachineData(store::getEnergyStored, store::getMaxEnergyStored,
                 () -> 0, () -> 0, () -> 0, () -> 0);
@@ -99,8 +99,13 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
             return;
         }
         Charging.tick(machine.items, machine.store, machine.rates.transfer().get());
+        // Drawn in before it is handed on, so what arrives this tick leaves this
+        // tick: an importer that pushed first would always be one tick behind.
+        if (machine.kind.pulls()) {
+            Pulling.pull(machine.sides, server, pos, machine.store);
+        }
         if (machine.kind.pushes()) {
-            machine.pushing.push(server, pos, machine.store);
+            Pushing.push(machine.sides, server, pos, machine.store);
         }
     }
 

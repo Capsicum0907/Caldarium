@@ -13,6 +13,7 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 import org.slf4j.Logger;
@@ -55,13 +56,23 @@ public class Caldarium {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.store());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-                CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.fuel());
+                CaldariumRegistry.GENERATOR_ENTITY.get(),
+                (generator, side) -> withSlots(generator.fuel()));
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK,
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.tank());
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 CaldariumRegistry.KIND_ENTITY.get(), (machine, side) -> machine.store());
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK,
-                CaldariumRegistry.KIND_ENTITY.get(), (machine, side) -> machine.items());
+                CaldariumRegistry.KIND_ENTITY.get(), (machine, side) -> withSlots(machine.items()));
+    }
+
+    /**
+     * An item handler only where there is somewhere to put something. ⚠ An empty one
+     * is not the same as none: a hopper lines itself up against anything that answers
+     * at all, and then spends the rest of its life pushing into a block with no slots.
+     */
+    private static IItemHandler withSlots(IItemHandler handler) {
+        return handler.getSlots() > 0 ? handler : null;
     }
 
     /** Drawing is a client concern, and this is the only place that knows it exists. */
