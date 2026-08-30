@@ -43,18 +43,28 @@ public final class Skins {
     /**
      * The face is a colour with grain on it and nothing else.
      *
-     * <p>⚠ Three goes at this drew a lattice, then a lattice with a seam, then a
-     * seam with a reflection, and each one looked more like a tiled floor than the
-     * one before. The mods this was measured against have no lattice at all: their
-     * faces are a single colour, pixel by pixel a little lighter or darker, and what
-     * makes them read as panels is the shape they are on and the colour they are.
-     * The structure was the mistake, three times over.
+     * <p>⚠ Four goes at this. A lattice, a lattice with a seam, a seam with a
+     * reflection, then no structure at all - and the last was wrong too. The
+     * reference has one thing on it and it is a bright line every third column, seen
+     * by taking the column means rather than by looking: a table of colours hides
+     * how they are arranged, and looking at one is how three of the four attempts
+     * went wrong.
      */
     private static final int CELL_RESTING = 0x24405E;
     private static final int CELL_WORKING = 0x3A8CD4;
 
-    /** How far a pixel of the face may stray from that colour, either way. */
-    private static final int SPECKLE = 16;
+    /**
+     * ⚠ Lines, not grain. Measured off the reference rather than guessed at: the
+     * column means of its face run 137 112 111 136 112 110 ... and the row means are
+     * flat, which is a bright line every third column and nothing else going on
+     * across. It is the collector on a photovoltaic cell, and it is what makes the
+     * surface read as one.
+     */
+    private static final int LINE_EVERY = 3;
+    private static final int LINE_LIFT = 26;
+
+    /** How far a pixel may stray from its colour. Small, so the lines stay lines. */
+    private static final int SPECKLE = 8;
 
     /**
      * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
@@ -181,7 +191,8 @@ public final class Skins {
         int base = lit ? CELL_WORKING : CELL_RESTING;
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
-                pixels[y][x] = 0xFF000000 | speckle(base, x, y);
+                int colour = x % LINE_EVERY == 0 ? shift(base, LINE_LIFT) : base;
+                pixels[y][x] = 0xFF000000 | speckle(colour, x, y);
             }
         }
         return pixels;
@@ -200,8 +211,12 @@ public final class Skins {
     private static int speckle(int colour, int x, int y) {
         int hash = x * 73856093 ^ y * 19349663;
         hash ^= hash >>> 13;
-        int shift = Math.floorMod(hash, 2 * SPECKLE + 1) - SPECKLE;
-        return channel(colour, 16, shift) | channel(colour, 8, shift) | channel(colour, 0, shift);
+        return shift(colour, Math.floorMod(hash, 2 * SPECKLE + 1) - SPECKLE);
+    }
+
+    /** The same colour, brighter or darker, with its hue left where it was. */
+    private static int shift(int colour, int by) {
+        return channel(colour, 16, by) | channel(colour, 8, by) | channel(colour, 0, by);
     }
 
     /** The edge and underside of a panel: metal, and nothing else. */
