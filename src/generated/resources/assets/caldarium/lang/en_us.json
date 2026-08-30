@@ -10,6 +10,7 @@
   "block.caldarium.netherite_battery": "Netherite Battery",
   "block.caldarium.netherite_charger": "Netherite Charger",
   "block.caldarium.solar_panel": "Solar Panel",
+  "gui.caldarium.burning": "Burning: %s",
   "gui.caldarium.held": "%s / %s mB",
   "gui.caldarium.stored": "%s / %s FE",
   "itemGroup.caldarium": "Caldarium"

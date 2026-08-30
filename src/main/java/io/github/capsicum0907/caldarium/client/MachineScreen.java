@@ -4,6 +4,8 @@ import io.github.capsicum0907.caldarium.Caldarium;
 import io.github.capsicum0907.caldarium.MachineMenu;
 import io.github.capsicum0907.caldarium.data.Skins;
 
+import java.util.Locale;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
@@ -110,7 +112,23 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     count(menu.fluid()), count(menu.fluidCapacity())), mouseX, mouseY);
             return;
         }
+        // How long the fire has left, on the fire and on the slot the fuel goes in.
+        // The slot only when it is empty: when it holds something, what it holds is
+        // the more useful answer and the game is already giving it.
+        if (menu.burns() && menu.burningTicks() > 0
+                && (over(mouseX, mouseY, Skins.FLAME_X, Skins.FLAME_Y, Skins.FLAME_W, Skins.FLAME_H)
+                        || onEmptyMachineSlot())) {
+            graphics.renderTooltip(font, Component.translatable("gui.caldarium.burning",
+                    left(menu.burningTicks())), mouseX, mouseY);
+            return;
+        }
         renderTooltip(graphics, mouseX, mouseY);
+    }
+
+    /** Whether the cursor is on one of the machine's own slots, with nothing in it. */
+    private boolean onEmptyMachineSlot() {
+        return hoveredSlot != null && !hoveredSlot.hasItem()
+                && menu.slots.indexOf(hoveredSlot) < menu.machineSlots();
     }
 
     private boolean over(int mouseX, int mouseY, int x, int y, int width, int height) {
@@ -121,5 +139,20 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     /** Grouped in threes: six figures of Forge Energy are unreadable otherwise. */
     private static String count(int amount) {
         return String.format("%,d", amount);
+    }
+
+    /**
+     * Ticks, as a length of time a person can read. A bucket of lava is twenty
+     * thousand of them, which is sixteen minutes and forty seconds and is not a
+     * number anybody wants to be told in ticks.
+     *
+     * <p>Locale.ROOT for the decimal point: the separator moves with the language,
+     * and a fire with 12,4 seconds left reads as a mistake to half its readers.
+     */
+    private static String left(int ticks) {
+        int seconds = ticks / 20;
+        return seconds >= 60
+                ? String.format(Locale.ROOT, "%d:%02d", seconds / 60, seconds % 60)
+                : String.format(Locale.ROOT, "%.1fs", ticks / 20.0F);
     }
 }

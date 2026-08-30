@@ -194,6 +194,7 @@ public final class CaldariumDataGen {
             add("itemGroup." + Caldarium.MODID, "Caldarium");
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");
+            add("gui.caldarium.burning", "Burning: %s");
         }
     }
 

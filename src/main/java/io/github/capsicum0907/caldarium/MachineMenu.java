@@ -83,6 +83,11 @@ public class MachineMenu extends AbstractContainerMenu {
         return MachineData.whole(data, MachineData.CAPACITY);
     }
 
+    /** Ticks of burning left in the piece of fuel that is alight. */
+    public int burningTicks() {
+        return MachineData.whole(data, MachineData.BURNING);
+    }
+
     /** How much of the burning piece of fuel is left, as a fraction. */
     public float burned() {
         int length = MachineData.whole(data, MachineData.BURN_LENGTH);
