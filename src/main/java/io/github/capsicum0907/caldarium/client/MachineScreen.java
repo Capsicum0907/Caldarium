@@ -4,6 +4,8 @@ import io.github.capsicum0907.caldarium.Caldarium;
 import io.github.capsicum0907.caldarium.MachineMenu;
 import io.github.capsicum0907.caldarium.data.Skins;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -113,22 +115,32 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             return;
         }
         // How long the fire has left, on the fire and on the slot the fuel goes in.
-        // The slot only when it is empty: when it holds something, what it holds is
-        // the more useful answer and the game is already giving it.
-        if (menu.burns() && menu.burningTicks() > 0
-                && (over(mouseX, mouseY, Skins.FLAME_X, Skins.FLAME_Y, Skins.FLAME_W, Skins.FLAME_H)
-                        || onEmptyMachineSlot())) {
-            graphics.renderTooltip(font, Component.translatable("gui.caldarium.burning",
-                    left(menu.burningTicks())), mouseX, mouseY);
-            return;
+        if (menu.burns() && menu.burningTicks() > 0) {
+            Component line = Component.translatable("gui.caldarium.burning",
+                    left(menu.burningTicks()));
+            if (over(mouseX, mouseY, Skins.FLAME_X, Skins.FLAME_Y, Skins.FLAME_W, Skins.FLAME_H)) {
+                graphics.renderTooltip(font, line, mouseX, mouseY);
+                return;
+            }
+            // ⚠ On the slot it is added to what the game was going to say rather than
+            // put in place of it. Restricting it to an empty slot, as it was, made it
+            // almost useless: a burner that is alight has fuel in that slot, so the
+            // one moment the line is worth reading was the one it was hidden in.
+            if (onMachineSlot()) {
+                List<Component> lines =
+                        new ArrayList<>(getTooltipFromContainerItem(hoveredSlot.getItem()));
+                lines.add(line);
+                graphics.renderTooltip(font, lines,
+                        hoveredSlot.getItem().getTooltipImage(), mouseX, mouseY);
+                return;
+            }
         }
         renderTooltip(graphics, mouseX, mouseY);
     }
 
-    /** Whether the cursor is on one of the machine's own slots, with nothing in it. */
-    private boolean onEmptyMachineSlot() {
-        return hoveredSlot != null && !hoveredSlot.hasItem()
-                && menu.slots.indexOf(hoveredSlot) < menu.machineSlots();
+    /** Whether the cursor is on one of the machine's own slots. */
+    private boolean onMachineSlot() {
+        return hoveredSlot != null && menu.slots.indexOf(hoveredSlot) < menu.machineSlots();
     }
 
     private boolean over(int mouseX, int mouseY, int x, int y, int width, int height) {
