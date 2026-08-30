@@ -32,8 +32,21 @@ public final class Skins {
     private static final int EMBER = 0xC8461B;
 
     private static final int MOLTEN_COLD = 0x3A3A40;
-    private static final int SKY_COLD = 0x1E3B63;
-    private static final int SKY_LIT = 0x5FA8E8;
+
+    /**
+     * A cell is nearly black when it is resting and lights up when it is working.
+     *
+     * <p>⚠ The first attempt made them pale blue, which read as a tiled floor rather
+     * than as anything under glass. What sells a panel is the contrast: dark cells
+     * held apart by bright metal, not light cells with dark gaps between them.
+     */
+    private static final int CELL_RESTING = 0x142138;
+    private static final int CELL_WORKING = 0x2E63B4;
+    private static final int GRID = 0xAEB4B9;
+
+    /** Where the bars between the cells fall, leaving three rows of three. */
+    private static final int BAR_ONE = 5;
+    private static final int BAR_TWO = 10;
 
     /**
      * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
@@ -99,8 +112,8 @@ public final class Skins {
     }
 
     /**
-     * The same plate for every generator, and the window says what it draws on: a
-     * mouth to feed, a pool to fill, or a pane facing the sky.
+     * The same plate for every generator that is a box, and the window says what it
+     * draws on: a mouth to feed, or a pool to fill. What is flat has its own face.
      */
     public static int[][] generatorSkin(Generator generator, boolean lit) {
         int[][] pixels = plate();
@@ -108,18 +121,12 @@ public final class Skins {
         for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
             for (int x = WINDOW_FROM; x < WINDOW_TO; x++) {
                 float down = (y - WINDOW_FROM) / (float) span;
-                pixels[y][x] = 0xFF000000 | switch (generator.source()) {
-                    // A fire is brightest at its base, so the mouth is graded rather
-                    // than filled: a flat orange square reads as a sticker on the front.
-                    case ITEM -> lit ? mix(EMBER, MOUTH_LIT, down) : MOUTH_COLD;
-                    // A pool, so the light is at the top where the surface is.
-                    case FLUID -> lit ? mix(MOUTH_LIT, EMBER, down) : MOLTEN_COLD;
-                    // A pane, divided into cells the way a panel of them is.
-                    case SUN -> {
-                        boolean bar = (x - WINDOW_FROM) % 4 == 3 || (y - WINDOW_FROM) % 4 == 3;
-                        yield bar ? EDGE : lit ? SKY_LIT : SKY_COLD;
-                    }
-                };
+                // A fire is brightest at its base, so the mouth is graded rather than
+                // filled: a flat orange square reads as a sticker on the front. A pool
+                // is the other way up, because its light is at the surface.
+                pixels[y][x] = 0xFF000000 | (generator.source() == Source.ITEM
+                        ? (lit ? mix(EMBER, MOUTH_LIT, down) : MOUTH_COLD)
+                        : (lit ? mix(MOUTH_LIT, EMBER, down) : MOLTEN_COLD));
             }
         }
         return pixels;
@@ -163,20 +170,26 @@ public final class Skins {
      */
     public static int[][] solarSkin(boolean lit) {
         int[][] pixels = new int[SIZE][SIZE];
-        int cell = lit ? SKY_LIT : SKY_COLD;
+        int cell = lit ? CELL_WORKING : CELL_RESTING;
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 boolean frame = x == 0 || y == 0 || x == SIZE - 1 || y == SIZE - 1;
-                boolean gap = (x - 1) % 4 == 3 || (y - 1) % 4 == 3;
+                boolean bar = x == BAR_ONE || x == BAR_TWO || y == BAR_ONE || y == BAR_TWO;
                 int colour;
                 if (frame) {
                     colour = grain(BODY, x, y);
-                } else if (gap) {
-                    colour = EDGE;
+                } else if (bar) {
+                    colour = GRID;
                 } else {
                     // Where in its own cell this pixel is, top left brightest.
-                    float across = (((x - 1) % 4) + ((y - 1) % 4)) / 6.0F;
+                    float across = (((x - 1) % 5) + ((y - 1) % 5)) / 8.0F;
                     colour = mix(lighter(cell), cell, across);
+                    // ⭐ And one band of light across the whole face, cells and bars
+                    // alike, because what says glass is a reflection that does not
+                    // stop at the edge of a cell.
+                    if ((x + y) % 13 < 2) {
+                        colour = mix(colour, 0xFFFFFF, 0.32F);
+                    }
                 }
                 pixels[y][x] = 0xFF000000 | colour;
             }

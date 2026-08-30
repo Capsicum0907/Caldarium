@@ -196,7 +196,11 @@ public final class CaldariumDataGen {
             String top = Skins.generatorTop(generator, lit);
             String side = Skins.generatorSide(generator);
             int tall = Skins.PANEL_HEIGHT;
+            // ⚠ block/block, for its display transforms and nothing else. Without a
+            // parent a model carries none, and the game drew this one square on to
+            // its own edge: three pixels of panel, seen end on, in the inventory.
             return models().getBuilder(name)
+                    .parent(models().getExistingFile(mcLoc("block/block")))
                     .texture("particle", modLoc("block/" + top))
                     .texture("top", modLoc("block/" + top))
                     .texture("side", modLoc("block/" + side))
