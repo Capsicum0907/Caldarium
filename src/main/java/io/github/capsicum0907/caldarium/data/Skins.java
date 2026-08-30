@@ -40,14 +40,21 @@ public final class Skins {
      * than as anything under glass. What sells a panel is the contrast: dark cells
      * held apart by bright metal, not light cells with dark gaps between them.
      */
-    private static final int CELL_RESTING = 0x16233D;
-    private static final int CELL_WORKING = 0x2A5EA8;
+    /**
+     * The face is a colour with grain on it and nothing else.
+     *
+     * <p>⚠ Three goes at this drew a lattice, then a lattice with a seam, then a
+     * seam with a reflection, and each one looked more like a tiled floor than the
+     * one before. The mods this was measured against have no lattice at all: their
+     * faces are a single colour, pixel by pixel a little lighter or darker, and what
+     * makes them read as panels is the shape they are on and the colour they are.
+     * The structure was the mistake, three times over.
+     */
+    private static final int CELL_RESTING = 0x24405E;
+    private static final int CELL_WORKING = 0x3A8CD4;
 
-    /** The line the glass is split on, barely darker than the glass itself. */
-    private static final float SEAM = 0.22F;
-
-    /** How far in the metal frame reaches before the glass starts. */
-    private static final int FRAME = 2;
+    /** How far a pixel of the face may stray from that colour, either way. */
+    private static final int SPECKLE = 16;
 
     /**
      * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
@@ -171,40 +178,30 @@ public final class Skins {
      */
     public static int[][] solarSkin(boolean lit) {
         int[][] pixels = new int[SIZE][SIZE];
-        int glass = lit ? CELL_WORKING : CELL_RESTING;
-        int last = SIZE - 1;
+        int base = lit ? CELL_WORKING : CELL_RESTING;
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
-                int in = Math.min(Math.min(x, y), Math.min(last - x, last - y));
-                if (in == 0) {
-                    // The frame, and a dark line just inside it so the glass sits in
-                    // the frame rather than on it.
-                    pixels[y][x] = 0xFF000000 | grain(BODY, x, y);
-                    continue;
-                }
-                if (in < FRAME) {
-                    pixels[y][x] = 0xFF000000 | EDGE;
-                    continue;
-                }
-                int colour = glass;
-                // ⚠ One seam, and only just visible. Two attempts at a bright grid
-                // both came out looking like a tiled floor: what these panels are is
-                // a sheet of glass, and a sheet does not have a lattice drawn on it.
-                if (x == SIZE / 2 || y == SIZE / 2) {
-                    colour = mix(colour, 0x000000, SEAM);
-                }
-                // A soft band of reflection across the whole face. Smooth, because a
-                // reflection with a staircase edge reads as noise rather than light.
-                float along = (x + y) / (float) (2 * last);
-                float sheen = Math.max(0.0F, 1.0F - Math.abs(along - 0.34F) / 0.20F);
-                colour = mix(colour, 0xFFFFFF, 0.30F * sheen);
-                // And a little darker towards the frame, the way glass in a frame is.
-                float edge = Math.min(1.0F, (in - FRAME + 1) / 3.0F);
-                colour = mix(mix(colour, 0x000000, 0.18F), colour, edge);
-                pixels[y][x] = 0xFF000000 | colour;
+                pixels[y][x] = 0xFF000000 | speckle(base, x, y);
             }
         }
         return pixels;
+    }
+
+    /**
+     * One pixel of the face, its brightness knocked about a little.
+     *
+     * <p>Deterministic on the position, because datagen has to write the same file
+     * every time it runs or it reports a change on every build.
+     *
+     * <p>The shift is the same on all three channels, so what varies is how bright a
+     * pixel is and not what colour it is: a hue that wanders turns a flat surface
+     * into confetti.
+     */
+    private static int speckle(int colour, int x, int y) {
+        int hash = x * 73856093 ^ y * 19349663;
+        hash ^= hash >>> 13;
+        int shift = Math.floorMod(hash, 2 * SPECKLE + 1) - SPECKLE;
+        return channel(colour, 16, shift) | channel(colour, 8, shift) | channel(colour, 0, shift);
     }
 
     /** The edge and underside of a panel: metal, and nothing else. */
@@ -212,9 +209,6 @@ public final class Skins {
         return plate();
     }
 
-    private static int lighter(int colour) {
-        return channel(colour, 16, 40) | channel(colour, 8, 40) | channel(colour, 0, 40);
-    }
 
     /** Metal with a darker rim and a rivet in each corner. */
     private static int[][] plate() {
