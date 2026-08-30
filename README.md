@@ -91,6 +91,11 @@ about somebody else's machine. So an importer draws out of another mod's machine
 never out of one of ours, an exporter feeds one and never one of ours, and everything
 between them simply connects.
 
+An importer is the only thing here that asks; an exporter is the only thing here that
+never does. Its way in is one of ours pushing into it, so an exporter stood between
+two of another mod's machines does nothing at all, and there is no window on it to
+say so.
+
 An importer is a `SOURCE`, the same as a generator: energy that arrives in the line
 arrives through one, and nothing may push into it. Where it came from — burnt,
 gathered off the sky, or drawn out of somebody else's machine — is not a distinction
