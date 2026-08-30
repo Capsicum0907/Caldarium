@@ -1,4 +1,4 @@
-// 1.21.1	2026-08-31T04:22:00.0547602	Caldarium textures
+// 1.21.1	2026-08-31T05:07:47.6815161	Caldarium textures
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/burner_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/crucible.png
@@ -12,6 +12,6 @@ ec3cb5f3ba3c6ae09418e1f0d30560543152ada8 assets/caldarium/textures/block/iron_ch
 aefd1aa5446f1419be0137721c8eabebc00ff58e assets/caldarium/textures/block/netherite_battery.png
 8134a086cbc1a1156e2ad6638603ef5b3bebeb5f assets/caldarium/textures/block/netherite_charger.png
 4cfcb82203c031f505cfcf938d31384b77e899f2 assets/caldarium/textures/block/solar_panel_side.png
-dc15c03870e37f03410dbc32578ffefcaf44ac4a assets/caldarium/textures/block/solar_panel_top.png
-71da6b4d58cef6d8c52e0a4e137ca2bc35926862 assets/caldarium/textures/block/solar_panel_top_on.png
+2d4398fb991c4c0f821da52984609eeec9ac9a21 assets/caldarium/textures/block/solar_panel_top.png
+f1baeb920cf4e1899a6832f12ec3ada26a23a908 assets/caldarium/textures/block/solar_panel_top_on.png
 5c462b9d5d784117a6b94f0ec22177f8b58d1afa assets/caldarium/textures/gui/machine.png

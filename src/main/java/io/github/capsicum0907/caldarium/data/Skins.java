@@ -40,13 +40,14 @@ public final class Skins {
      * than as anything under glass. What sells a panel is the contrast: dark cells
      * held apart by bright metal, not light cells with dark gaps between them.
      */
-    private static final int CELL_RESTING = 0x142138;
-    private static final int CELL_WORKING = 0x2E63B4;
-    private static final int GRID = 0xAEB4B9;
+    private static final int CELL_RESTING = 0x16233D;
+    private static final int CELL_WORKING = 0x2A5EA8;
 
-    /** Where the bars between the cells fall, leaving three rows of three. */
-    private static final int BAR_ONE = 5;
-    private static final int BAR_TWO = 10;
+    /** The line the glass is split on, barely darker than the glass itself. */
+    private static final float SEAM = 0.22F;
+
+    /** How far in the metal frame reaches before the glass starts. */
+    private static final int FRAME = 2;
 
     /**
      * One per rung of the ladder, taken by ordinal; the last one repeats if it runs
@@ -170,27 +171,36 @@ public final class Skins {
      */
     public static int[][] solarSkin(boolean lit) {
         int[][] pixels = new int[SIZE][SIZE];
-        int cell = lit ? CELL_WORKING : CELL_RESTING;
+        int glass = lit ? CELL_WORKING : CELL_RESTING;
+        int last = SIZE - 1;
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
-                boolean frame = x == 0 || y == 0 || x == SIZE - 1 || y == SIZE - 1;
-                boolean bar = x == BAR_ONE || x == BAR_TWO || y == BAR_ONE || y == BAR_TWO;
-                int colour;
-                if (frame) {
-                    colour = grain(BODY, x, y);
-                } else if (bar) {
-                    colour = GRID;
-                } else {
-                    // Where in its own cell this pixel is, top left brightest.
-                    float across = (((x - 1) % 5) + ((y - 1) % 5)) / 8.0F;
-                    colour = mix(lighter(cell), cell, across);
-                    // ⭐ And one band of light across the whole face, cells and bars
-                    // alike, because what says glass is a reflection that does not
-                    // stop at the edge of a cell.
-                    if ((x + y) % 13 < 2) {
-                        colour = mix(colour, 0xFFFFFF, 0.32F);
-                    }
+                int in = Math.min(Math.min(x, y), Math.min(last - x, last - y));
+                if (in == 0) {
+                    // The frame, and a dark line just inside it so the glass sits in
+                    // the frame rather than on it.
+                    pixels[y][x] = 0xFF000000 | grain(BODY, x, y);
+                    continue;
                 }
+                if (in < FRAME) {
+                    pixels[y][x] = 0xFF000000 | EDGE;
+                    continue;
+                }
+                int colour = glass;
+                // ⚠ One seam, and only just visible. Two attempts at a bright grid
+                // both came out looking like a tiled floor: what these panels are is
+                // a sheet of glass, and a sheet does not have a lattice drawn on it.
+                if (x == SIZE / 2 || y == SIZE / 2) {
+                    colour = mix(colour, 0x000000, SEAM);
+                }
+                // A soft band of reflection across the whole face. Smooth, because a
+                // reflection with a staircase edge reads as noise rather than light.
+                float along = (x + y) / (float) (2 * last);
+                float sheen = Math.max(0.0F, 1.0F - Math.abs(along - 0.34F) / 0.20F);
+                colour = mix(colour, 0xFFFFFF, 0.30F * sheen);
+                // And a little darker towards the frame, the way glass in a frame is.
+                float edge = Math.min(1.0F, (in - FRAME + 1) / 3.0F);
+                colour = mix(mix(colour, 0x000000, 0.18F), colour, edge);
                 pixels[y][x] = 0xFF000000 | colour;
             }
         }

@@ -34,6 +34,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -213,6 +214,22 @@ public final class CaldariumDataGen {
                     .face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, tall).end()
                     .face(Direction.WEST).texture("#side").uvs(0, 0, 16, tall).end()
                     .face(Direction.EAST).texture("#side").uvs(0, 0, 16, tall).end()
+                    .end()
+                    // ⚠ A panel held in a hand sits where a whole block would, which
+                    // for three pixels means down by the wrist and out of sight. It
+                    // is lifted, and turned far enough to show the face rather than
+                    // the edge - the face being the entire point of the block.
+                    .transforms()
+                    .transform(ItemDisplayContext.GUI)
+                    .rotation(30, 225, 0).translation(0, 3, 0).scale(0.72F).end()
+                    .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND)
+                    .rotation(25, 45, 0).translation(0, 6, 0).scale(0.5F).end()
+                    .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND)
+                    .rotation(25, 225, 0).translation(0, 6, 0).scale(0.5F).end()
+                    .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND)
+                    .rotation(75, 45, 0).translation(0, 5, 0).scale(0.42F).end()
+                    .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND)
+                    .rotation(75, 45, 0).translation(0, 5, 0).scale(0.42F).end()
                     .end();
         }
     }
