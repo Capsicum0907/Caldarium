@@ -109,13 +109,17 @@ one laid past somebody else's machine does not power it and a corridor of cable 
 possible at all. It has no matching rule about being offered *to*: a burner or a
 battery standing against a cable fills it directly.
 
-**There are two boundaries, and they are not the same one.** The cable keeps out of
-other mods, because that is what the corridor is for. The doors keep out of the line,
-because they are its ends — an importer draws out of anything that is not the line and
-an exporter feeds anything that is not the line, whoever made it. Drawing both in the
-same place is the mistake this made first, and it made the arrangement everybody
-builds do nothing at all: a generator, an importer, a run of cable, an exporter and a
-battery, refused at both ends because every block in it belonged to this mod.
+**A door is a cable that also does one thing through the one face it was aimed at.**
+That face is the whole of the difference between the three: a cable does nothing
+through it, an importer draws out of what is there, an exporter gives to it. Everything
+else about them is the same block, so all three join to each other and to a battery of
+ours the way any two cables do.
+
+⚠ The doors had a boundary of their own before this — an importer that accepted
+nothing, an exporter that would not offer to the line — and it was true to its own
+rules and impossible to hold in your head: two exporters side by side would not join,
+nor two importers, but an importer and an exporter would. Which is what a second
+boundary buys, and it bought nothing else.
 
 **So a door is optional between two of these and required at the edge of the set.** A
 cable laid straight against a burner is fed by it, because the burner pushes and it is
@@ -134,12 +138,13 @@ over rather than offering. So a generator from another mod cannot fill a cable i
 touching, however willing it is: what reaches the line from outside comes through an
 importer, which draws instead of offering, and that is exactly what an importer was
 for. **A battery is not sealed**, so anything that can only push still has a port — it
-just is not the pipe.
+just is not the pipe. ⭐ An exporter is the only way out for the same reason and by the
+same one fact: it is the only thing here aimed at giving.
 
-An importer is the only thing here that asks; an exporter is the only thing here that
-never does. Its way in is something pushing into it, so an exporter stood between two
-machines that both wait to be asked does nothing at all, and there is no window on it
-to say so.
+An importer is the only thing here that asks, and it asks through its aimed face only.
+An exporter never asks: its way in is something pushing into it, so one stood between
+two machines that both wait to be asked does nothing at all, and there is no window on
+it to say so.
 
 **The arm is what says so instead.** A block that carries grows one towards every
 neighbour energy can actually cross to, and towards no others: a cable laid past

@@ -20,10 +20,8 @@ public final class Store implements IEnergyStorage {
     /** What the block is for. The push rule in {@link Pushing} turns on this. */
     public enum Role {
         /**
-         * Where energy comes into the mod, and never a place to put any: something
-         * that took a push would be a battery. What it is made from is not this
-         * enum's business — a generator burns for it, an importer draws it out of
-         * somebody else's machine, and to everything downstream they are the same.
+         * Where energy is made, and never a place to put any: something that took a
+         * push would be a battery.
          */
         SOURCE,
         /** Holds energy on its way somewhere. */

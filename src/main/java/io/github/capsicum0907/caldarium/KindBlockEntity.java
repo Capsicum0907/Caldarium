@@ -115,11 +115,14 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         Direction aimed = machine.kind.door() ? CarrierBlock.aimed(state) : null;
         // Drawn in before it is handed on, so what arrives this tick leaves this
         // tick: an importer that pushed first would always be one tick behind.
+        // ⭐ The aim goes to whichever half of it the kind uses, and to neither for a
+        // cable. That one face is the only thing telling the three of them apart.
         if (machine.kind.pulls()) {
             Pulling.pull(machine.sides, server, pos, machine.store, aimed);
         }
         if (machine.kind.pushes()) {
-            Pushing.push(machine.sides, server, pos, machine.store, aimed);
+            Pushing.push(machine.sides, server, pos, machine.store,
+                    machine.kind.gives() ? aimed : null);
         }
     }
 

@@ -153,14 +153,7 @@ public class CarrierBlock extends KindBlock {
      */
     private Joint joint(Level level, BlockPos pos, Direction side) {
         IEnergyStorage neighbour = energy(level, pos, side);
-        if (neighbour == null || !kind().touches(neighbour)) {
-            return Joint.NONE;
-        }
-        // ⚠ A door reaches outside the line only where it is aimed, so a plain joint on
-        // any other face of one is a joint with something of ours. An arm drawn at
-        // another mod's machine on a face the block no longer works through would be
-        // the picture claiming something the rule stopped doing.
-        return kind().door() && !Neighbours.ours(neighbour) ? Joint.NONE : Joint.ALONG;
+        return neighbour != null && kind().touches(neighbour) ? Joint.ALONG : Joint.NONE;
     }
 
     private static IEnergyStorage energy(Level level, BlockPos pos, Direction side) {

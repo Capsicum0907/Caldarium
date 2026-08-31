@@ -36,10 +36,10 @@ public final class Pushing {
     /**
      * Offers up to the store's transfer rate to each side. Returns what left.
      *
-     * <p>{@code aimed} is the one face a door reaches outside the line on, or null for
-     * anything with no such face. ⭐ Only the way <em>out</em> is aimed: what a block
-     * hands along the line it hands on every side, because a fitting halfway down a run
-     * is still part of the run.
+     * <p>{@code aimed} is the one face a door gives through, or null for anything that
+     * gives through none. ⭐ It widens the rule rather than narrowing it: a block offers
+     * to its own mod's blocks on every side, and through that one face to anything at
+     * all. Which is the whole of what an exporter is.
      */
     public static int push(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
             Direction aimed) {
@@ -52,11 +52,9 @@ public final class Pushing {
             return 0;
         }
         for (Direction side : Direction.values()) {
-            if (store.wiring() == Wiring.OUT && aimed != null && side != aimed) {
-                continue;
-            }
             IEnergyStorage neighbour = sides.at(level, pos, side);
-            if (neighbour == null || !Store.accepts(neighbour) || !mayOffer(store, neighbour)) {
+            if (neighbour == null || !Store.accepts(neighbour)
+                    || !mayOffer(store, neighbour, side == aimed)) {
                 continue;
             }
             int offered = Math.min(rate, store.getEnergyStored());
@@ -84,8 +82,8 @@ public final class Pushing {
      * {@link Store.Role#SOURCE} and so is never held back: what it makes has nowhere
      * else to go.
      */
-    private static boolean mayOffer(Store from, IEnergyStorage to) {
-        if (!from.wiring().mayOffer(Neighbours.ours(to), Neighbours.inLine(to))) {
+    private static boolean mayOffer(Store from, IEnergyStorage to, boolean aimedAt) {
+        if (!aimedAt && !from.wiring().mayOffer(Neighbours.ours(to))) {
             return false;
         }
         if (!(to instanceof Store peer)) {

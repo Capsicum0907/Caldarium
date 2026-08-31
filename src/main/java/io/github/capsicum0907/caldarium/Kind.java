@@ -29,15 +29,15 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  */
 public enum Kind implements StringRepresentable {
     /** Holds energy and hands it on. A row of these is a line that carries. */
-    BATTERY("battery", Store.Role.BUFFER, Wiring.OPEN, 1, false, false),
+    BATTERY("battery", Store.Role.BUFFER, Wiring.OPEN, 1, false, Aim.NONE),
     /** Takes energy in and puts it into what is held in it. Wider at every tier. */
-    CHARGER("charger", Store.Role.SINK, Wiring.OPEN, 3, true, false),
+    CHARGER("charger", Store.Role.SINK, Wiring.OPEN, 3, true, Aim.NONE),
     /**
      * Distance. It offers only to this mod's own blocks, which is what lets one be
      * laid past somebody else's machine without powering it — and so what makes a
      * corridor of cable possible at all.
      */
-    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, false),
+    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.NONE),
     /**
      * The way in: it draws out of anything that is not the line and hands it to the
      * line. Other mods are full of machines that wait to be asked, and this is the
@@ -48,9 +48,9 @@ public enum Kind implements StringRepresentable {
      * went in that way would be energy in the one block whose job is to be where
      * energy starts, and the line would have two ways to move it.
      */
-    IMPORTER("importer", Store.Role.SOURCE, Wiring.ALONG, 0, false, true),
+    IMPORTER("importer", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.DRAWS),
     /** The way out: the only block here that offers to another mod's machine. */
-    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUT, 0, false, false);
+    EXPORTER("exporter", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.GIVES);
 
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -61,16 +61,16 @@ public enum Kind implements StringRepresentable {
     private final Wiring wiring;
     private final int slots;
     private final boolean widens;
-    private final boolean pulls;
+    private final Aim aim;
 
     Kind(String suffix, Store.Role role, Wiring wiring, int slots, boolean widens,
-            boolean pulls) {
+            Aim aim) {
         this.suffix = suffix;
         this.role = role;
         this.wiring = wiring;
         this.slots = slots;
         this.widens = widens;
-        this.pulls = pulls;
+        this.aim = aim;
     }
 
     /** The name in the registry, the model, the recipe and the language file. */
@@ -98,9 +98,19 @@ public enum Kind implements StringRepresentable {
         return role != Store.Role.SINK;
     }
 
-    /** Whether it draws out of its neighbours. Only the way in does. */
+    /** What it does through the face it was aimed at. */
+    public Aim aim() {
+        return aim;
+    }
+
+    /** Whether it draws out of what it is aimed at. */
     public boolean pulls() {
-        return pulls;
+        return aim == Aim.DRAWS;
+    }
+
+    /** Whether it gives to what it is aimed at, which is the one way out of the line. */
+    public boolean gives() {
+        return aim == Aim.GIVES;
     }
 
     /**
@@ -121,22 +131,18 @@ public enum Kind implements StringRepresentable {
         return wiring != Wiring.OPEN;
     }
 
-    /**
-     * Whether it is one of the two doors through the boundary, and so whether a face
-     * of it that reaches outside the line is worth putting a drill on.
-     */
+    /** Whether it is aimed at all, and so wears a drill on the face it points at. */
     public boolean door() {
-        return pulls || wiring == Wiring.OUT;
+        return aim != Aim.NONE;
     }
 
     /**
-     * Which way round the drill on an outward face tapers: widest against what it
-     * takes from, narrowest against what it gives to. ⭐ Derived from the same answer
-     * that decides whether it draws at all, so the shape cannot come out disagreeing
-     * with the behaviour.
+     * Which way round the drill on the aimed face tapers: widest against what it draws
+     * from, narrowest against what it gives to. ⭐ The same answer that decides what the
+     * block does there, so the shape cannot come out disagreeing with the behaviour.
      */
     public boolean mouth() {
-        return pulls;
+        return aim == Aim.DRAWS;
     }
 
     /**
@@ -155,20 +161,15 @@ public enum Kind implements StringRepresentable {
      */
     public boolean touches(IEnergyStorage neighbour) {
         boolean ours = Neighbours.ours(neighbour);
-        boolean inLine = Neighbours.inLine(neighbour);
         // What this one can hand over.
-        if (pushes() && wiring.mayOffer(ours, inLine) && Store.accepts(neighbour)) {
-            return true;
-        }
-        // What this one can draw out.
-        if (pulls && !inLine && neighbour.canExtract()) {
+        if (pushes() && wiring.mayOffer(ours) && Store.accepts(neighbour)) {
             return true;
         }
         // What the neighbour can hand over. ⚠ Only asked of this mod's own blocks:
         // whether another mod pushes what it holds is its business, and guessing would
         // put an arm on a face nothing ever crosses.
         return role != Store.Role.SOURCE && neighbour instanceof Store peer
-                && peer.canExtract() && peer.wiring().mayOffer(true, carries());
+                && peer.canExtract() && peer.wiring().mayOffer(true);
     }
 
     /**
