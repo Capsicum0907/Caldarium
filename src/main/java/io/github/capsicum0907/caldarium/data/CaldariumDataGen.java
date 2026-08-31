@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
@@ -39,12 +40,15 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.PipeBlock;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -125,6 +129,11 @@ public final class CaldariumDataGen {
                     draw(output, writing, Skins.kindSkin(kind, tier), Skins.kind(kind, tier));
                 }
             }
+            // The arms are the metal of the rung and nothing else: what says which of
+            // the three a block is belongs on the middle, where every side can read it.
+            for (Tier tier : Tier.values()) {
+                draw(output, writing, Skins.plainSkin(tier), Skins.arm(tier));
+            }
             Path panel = screens.file(
                     ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, Skins.GUI), "png");
             writing.add(CompletableFuture.runAsync(() -> write(output, Skins.gui(), panel),
@@ -157,6 +166,9 @@ public final class CaldariumDataGen {
     }
 
     private static class Models extends BlockStateProvider {
+        /** Models shared between kinds or between tiers, so each is built once. */
+        private final Set<String> drawn = new HashSet<>();
+
         Models(PackOutput output, ExistingFileHelper existingFileHelper) {
             super(output, Caldarium.MODID, existingFileHelper);
         }
@@ -181,11 +193,107 @@ public final class CaldariumDataGen {
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.values()) {
                     String name = Skins.kind(kind, tier);
+                    if (kind.carries()) {
+                        carrier(kind, tier, name);
+                        continue;
+                    }
                     simpleBlock(CaldariumRegistry.block(kind, tier).get(),
                             models().cubeAll(name, modLoc("block/" + name)));
                     itemModels().withExistingParent(name, modLoc("block/" + name));
                 }
             }
+        }
+
+        /**
+         * A middle that is always drawn, and an arm for each side it is joined on.
+         *
+         * <p>Multipart rather than a variant for each of the sixty-four states: the
+         * arms are the same six pictures however they are combined, and a variant list
+         * would be the same model named sixty-four times over.
+         */
+        private void carrier(Kind kind, Tier tier, String name) {
+            var parts = getMultipartBuilder(CaldariumRegistry.block(kind, tier).get());
+            parts.part().modelFile(core(name, kind)).addModel().end();
+            for (Direction side : Direction.values()) {
+                parts.part().modelFile(arm(tier, side)).addModel()
+                        .condition(PipeBlock.PROPERTY_BY_DIRECTION.get(side), true).end();
+            }
+            // What is held is joined on all six sides, because a cable in a hand is not
+            // pointing anywhere yet and a bare middle would be a small grey box.
+            var held = itemModels().getBuilder(name)
+                    .parent(models().getExistingFile(mcLoc("block/block")));
+            box(held, "middle", modLoc("block/" + name), middle(kind));
+            for (Direction side : Direction.values()) {
+                box(held, "arm", modLoc("block/" + Skins.arm(tier)), arm(side));
+            }
+        }
+
+        /** The middle, wearing the face that says which of the three it is. */
+        private ModelFile core(String name, Kind kind) {
+            String built = name + "_core";
+            BlockModelBuilder model = models().getBuilder(built);
+            if (drawn.add(built)) {
+                model.parent(models().getExistingFile(mcLoc("block/block")));
+                box(model, "middle", modLoc("block/" + name), middle(kind));
+            }
+            return model;
+        }
+
+        /** One arm, in the metal of its rung. The same six for every kind on it. */
+        private ModelFile arm(Tier tier, Direction side) {
+            String built = Skins.arm(tier) + "_" + side.getSerializedName();
+            BlockModelBuilder model = models().getBuilder(built);
+            if (drawn.add(built)) {
+                model.parent(models().getExistingFile(mcLoc("block/block")));
+                box(model, "arm", modLoc("block/" + Skins.arm(tier)), arm(side));
+            }
+            return model;
+        }
+
+        /**
+         * One box on a model.
+         *
+         * <p>⚠ No UV named anywhere, and that is deliberate. Left alone the game reads
+         * the texture through the box, so a middle eight pixels across takes the eight
+         * in the middle of the picture, which is exactly the window, and an arm takes a
+         * strip of plain metal. Writing the UVs out by hand would be writing that same
+         * arithmetic twice and getting it wrong the first time a size changed.
+         */
+        private static <T extends ModelBuilder<T>> void box(T model, String slot,
+                ResourceLocation texture, int[] corners) {
+            model.texture("particle", texture).texture(slot, texture)
+                    .element()
+                    .from(corners[0], corners[1], corners[2])
+                    .to(corners[3], corners[4], corners[5])
+                    .allFaces((face, built) -> built.texture("#" + slot))
+                    .end();
+        }
+
+        private static int[] middle(Kind kind) {
+            int in = (Skins.SIZE - kind.core()) / 2;
+            int out = in + kind.core();
+            return new int[] { in, in, in, out, out, out };
+        }
+
+        /**
+         * ⚠ The same arithmetic the block shape uses in {@link CarrierBlock}. The two
+         * have to agree: a model drawn where nothing can be bumped into is a block you
+         * can walk through the visible half of.
+         */
+        private static int[] arm(Direction side) {
+            int near = (Skins.SIZE - Skins.ARM_ACROSS) / 2;
+            int far = near + Skins.ARM_ACROSS;
+            int deep = Skins.ARM_DEEP;
+            int back = Skins.SIZE - deep;
+            int size = Skins.SIZE;
+            return switch (side) {
+                case NORTH -> new int[] { near, near, 0, far, far, deep };
+                case SOUTH -> new int[] { near, near, back, far, far, size };
+                case WEST -> new int[] { 0, near, near, deep, far, far };
+                case EAST -> new int[] { back, near, near, size, far, far };
+                case DOWN -> new int[] { near, 0, near, far, deep, far };
+                case UP -> new int[] { near, back, near, far, size, far };
+            };
         }
 
         /**

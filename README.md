@@ -96,6 +96,15 @@ never does. Its way in is one of ours pushing into it, so an exporter stood betw
 two of another mod's machines does nothing at all, and there is no window on it to
 say so.
 
+**The arm is what says so instead.** A block that carries grows one towards every
+neighbour energy can actually cross to, and towards no others: a cable laid past
+another mod's machine keeps a bare face on that side, and a cable that has joined the
+line has an arm on it. That is not decoration. These blocks have no window, no wrench
+and nothing to configure, and the rule they follow refuses some neighbours on
+purpose — without the arm there is nothing at all to tell a refusal from a line that
+has simply not filled yet, and the two look identical for as long as you stare at
+them. The arm makes the rule something you look at rather than something you work out.
+
 An importer is a `SOURCE`, the same as a generator: energy that arrives in the line
 arrives through one, and nothing may push into it. Where it came from — burnt,
 gathered off the sky, or drawn out of somebody else's machine — is not a distinction

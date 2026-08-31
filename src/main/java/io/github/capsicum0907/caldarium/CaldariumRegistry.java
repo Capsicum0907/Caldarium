@@ -77,8 +77,16 @@ public final class CaldariumRegistry {
         for (Kind kind : Kind.values()) {
             Map<Tier, DeferredBlock<KindBlock>> tiers = new LinkedHashMap<>();
             for (Tier tier : Tier.values()) {
+                // ⚠ noOcclusion for anything laid in lines: a block that declares
+                // itself solid has its neighbours' faces culled against it, and a
+                // six-pixel post that did that would leave holes around itself.
+                BlockBehaviour.Properties properties =
+                        kind.carries() ? metal().noOcclusion() : metal();
                 DeferredBlock<KindBlock> block = BLOCKS.registerBlock(kind.id(tier),
-                        properties -> new KindBlock(kind, tier, properties), metal());
+                        built -> kind.carries()
+                                ? new CarrierBlock(kind, tier, built)
+                                : new KindBlock(kind, tier, built),
+                        properties);
                 tiers.put(tier, block);
                 ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
             }

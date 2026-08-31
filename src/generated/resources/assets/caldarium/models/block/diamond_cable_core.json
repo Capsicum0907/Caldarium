@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#middle"
+        },
+        "east": {
+          "texture": "#middle"
+        },
+        "north": {
+          "texture": "#middle"
+        },
+        "south": {
+          "texture": "#middle"
+        },
+        "up": {
+          "texture": "#middle"
+        },
+        "west": {
+          "texture": "#middle"
+        }
+      },
+      "from": [
+        4,
+        4,
+        4
+      ],
+      "to": [
+        12,
+        12,
+        12
+      ]
+    }
+  ],
+  "textures": {
+    "middle": "caldarium:block/diamond_cable",
+    "particle": "caldarium:block/diamond_cable"
+  }
+}

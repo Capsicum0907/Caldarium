@@ -1,7 +1,57 @@
 {
-  "variants": {
-    "": {
-      "model": "caldarium:block/netherite_exporter"
+  "multipart": [
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_exporter_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_down"
+      },
+      "when": {
+        "down": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_up"
+      },
+      "when": {
+        "up": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_north"
+      },
+      "when": {
+        "north": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_south"
+      },
+      "when": {
+        "south": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_west"
+      },
+      "when": {
+        "west": "true"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_east"
+      },
+      "when": {
+        "east": "true"
+      }
     }
-  }
+  ]
 }

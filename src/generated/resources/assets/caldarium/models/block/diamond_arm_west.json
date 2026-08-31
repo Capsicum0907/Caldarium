@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        0,
+        5,
+        5
+      ],
+      "to": [
+        5,
+        11,
+        11
+      ]
+    }
+  ],
+  "textures": {
+    "arm": "caldarium:block/diamond_arm",
+    "particle": "caldarium:block/diamond_arm"
+  }
+}

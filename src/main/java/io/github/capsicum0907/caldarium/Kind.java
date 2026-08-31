@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import com.mojang.serialization.Codec;
 
+import io.github.capsicum0907.caldarium.data.Skins;
+
 import net.minecraft.util.StringRepresentable;
 
 /**
@@ -109,6 +111,45 @@ public enum Kind implements StringRepresentable {
      */
     public boolean opens() {
         return wiring == Wiring.OPEN;
+    }
+
+    /** Whether it is a thing that carries rather than a thing that is served. */
+    public boolean carries() {
+        return wiring != Wiring.OPEN;
+    }
+
+    /**
+     * Whether it is one of the two doors through the boundary. Derived: a kind that
+     * draws out of another mod's machine, or offers into one, is standing in the wall.
+     */
+    public boolean door() {
+        return pulls || wiring == Wiring.OUTSIDE;
+    }
+
+    /**
+     * Whether energy can cross a face with this on one side and that on the other —
+     * and so, for a thing that carries, whether it grows an arm towards it.
+     *
+     * <p>⭐ <b>The arm is the only thing that says so.</b> These blocks have no window
+     * to open and the rule they follow refuses some neighbours on purpose, which
+     * leaves nothing to tell a cable that will not talk to what it is touching from a
+     * cable that is simply not carrying anything yet. An arm that grows only where
+     * energy can pass makes the rule something you look at.
+     */
+    public boolean touches(boolean neighbourIsOurs) {
+        return neighbourIsOurs || door();
+    }
+
+    /**
+     * How much of the middle of the block it fills, in pixels. A whole block for
+     * anything that is not laid in lines.
+     */
+    public int core() {
+        return switch (this) {
+            case BATTERY, CHARGER -> Skins.SIZE;
+            case CABLE -> Skins.CORE_CABLE;
+            case IMPORTER, EXPORTER -> Skins.CORE_DOOR;
+        };
     }
 
     /**

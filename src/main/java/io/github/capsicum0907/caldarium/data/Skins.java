@@ -76,6 +76,36 @@ public final class Skins {
     /** How tall a panel is, in pixels. Read by the block, the model and the picture. */
     public static final int PANEL_HEIGHT = 3;
 
+    // ---- what a thing that carries is shaped like ------------------------
+    //
+    // ⚠ Read twice, like everything else in this file: once by the model that draws
+    // the block and once by the shape you bump into. A number written into one of them
+    // is a block you can walk through the visible half of.
+
+    /** A cable is mostly arm: enough middle to hold the face that says what it is. */
+    public static final int CORE_CABLE = 8;
+
+    /**
+     * A door is nearly a whole block, because it is a machine and not a length of
+     * wire, and because the arrow on its face has to be readable from a distance.
+     */
+    public static final int CORE_DOOR = 10;
+
+    /** How wide an arm is, and how far it reaches in from the face of the block. */
+    public static final int ARM_ACROSS = 6;
+
+    /**
+     * ⚠ One pixel further than the widest core is deep, on purpose. An arm that
+     * stopped exactly on the face of a core would put two surfaces in the same plane,
+     * and the two of them would flicker against each other at every distance.
+     */
+    public static final int ARM_DEEP = (16 - CORE_CABLE) / 2 + 1;
+
+    /** The plain metal an arm is made of — the rung's colour and nothing on it. */
+    public static String arm(Tier tier) {
+        return tier.id() + "_arm";
+    }
+
     /** The name of the texture for a generator, resting or working. */
     public static String generator(Generator.Made made, boolean lit) {
         return lit ? made.id() + "_on" : made.id();
@@ -116,6 +146,9 @@ public final class Skins {
             for (Tier tier : Tier.values()) {
                 names.add(kind(kind, tier));
             }
+        }
+        for (Tier tier : Tier.values()) {
+            names.add(arm(tier));
         }
         return names;
     }
