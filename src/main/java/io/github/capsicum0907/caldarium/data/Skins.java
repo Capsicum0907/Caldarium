@@ -167,9 +167,18 @@ public final class Skins {
         return box(side, ARM_ACROSS, 0, ARM_DEEP);
     }
 
-    /** One step of a drill, counting out from the middle. */
-    public static int[] drillBox(Direction side, int step) {
-        int from = (DRILL_STEPS - 1 - step) * DRILL_DEEP;
+    /**
+     * One step of a drill, counting out from the middle.
+     *
+     * <p>⭐ The same three steps either way round, and which way round says what the
+     * block does: a <b>mouth</b> puts its widest step against what it takes from, and a
+     * <b>nozzle</b> puts its narrowest against what it gives to. So the direction the
+     * shape narrows in is the direction the energy goes, which is readable from any
+     * angle and at any distance — unlike an arrow on a six-pixel face.
+     */
+    public static int[] drillBox(Direction side, int step, boolean mouth) {
+        int out = mouth ? DRILL_STEPS - 1 - step : step;
+        int from = out * DRILL_DEEP;
         return box(side, drillAcross(step), from, from + DRILL_DEEP);
     }
 

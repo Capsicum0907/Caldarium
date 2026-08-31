@@ -227,7 +227,7 @@ public final class CaldariumDataGen {
                 }
                 parts.part().modelFile(arm(tier, side)).addModel()
                         .condition(joint, Joint.LINE).end();
-                parts.part().modelFile(drill(tier, side)).addModel()
+                parts.part().modelFile(drill(tier, side, kind.mouth())).addModel()
                         .condition(joint, Joint.OUTSIDE).end();
             }
             held(kind, tier, name);
@@ -249,7 +249,7 @@ public final class CaldariumDataGen {
             if (kind.door()) {
                 box(held, "arm", metal, Skins.armBox(Direction.SOUTH), Direction.NORTH);
                 for (int step = 0; step < Skins.DRILL_STEPS; step++) {
-                    box(held, "arm", metal, Skins.drillBox(Direction.NORTH, step));
+                    box(held, "arm", metal, Skins.drillBox(Direction.NORTH, step, kind.mouth()));
                 }
                 return;
             }
@@ -274,14 +274,15 @@ public final class CaldariumDataGen {
          * of them serve both doors on a rung: what an importer and an exporter do at
          * such a face differs in direction, and direction is said on the middle.
          */
-        private ModelFile drill(Tier tier, Direction side) {
-            String built = Skins.arm(tier) + "_drill_" + side.getSerializedName();
+        private ModelFile drill(Tier tier, Direction side, boolean mouth) {
+            String built = Skins.arm(tier) + (mouth ? "_mouth_" : "_nozzle_")
+                    + side.getSerializedName();
             BlockModelBuilder model = models().getBuilder(built);
             if (drawn.add(built)) {
                 model.parent(models().getExistingFile(mcLoc("block/block")));
                 for (int step = 0; step < Skins.DRILL_STEPS; step++) {
                     box(model, "arm", modLoc("block/" + Skins.arm(tier)),
-                            Skins.drillBox(side, step));
+                            Skins.drillBox(side, step, mouth));
                 }
             }
             return model;

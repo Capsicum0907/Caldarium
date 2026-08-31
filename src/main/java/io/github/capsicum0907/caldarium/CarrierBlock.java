@@ -60,7 +60,7 @@ public class CarrierBlock extends KindBlock {
      * every tier of it: what a block is shaped like depends on its middle and on
      * whether it draws drills, and not at all on which rung it stands on.
      */
-    private static final Map<Integer, VoxelShape[]> SHAPES = new ConcurrentHashMap<>();
+    private static final Map<String, VoxelShape[]> SHAPES = new ConcurrentHashMap<>();
 
     private final VoxelShape[] shapes;
 
@@ -71,8 +71,9 @@ public class CarrierBlock extends KindBlock {
             bare = bare.setValue(JOINTS.get(side), Joint.NONE);
         }
         registerDefaultState(bare);
-        this.shapes = SHAPES.computeIfAbsent(kind.core() * 2 + (kind.door() ? 1 : 0),
-                build -> shapes(build / 2, build % 2 == 1));
+        this.shapes = SHAPES.computeIfAbsent(
+                kind.core() + ":" + kind.door() + ":" + kind.mouth(),
+                build -> shapes(kind.core(), kind.door(), kind.mouth()));
     }
 
     @Override
@@ -146,13 +147,13 @@ public class CarrierBlock extends KindBlock {
      * Worked out once at registration: there are seven hundred and twenty-nine of them
      * and the answer is asked for on every block the player walks into.
      */
-    private static VoxelShape[] shapes(int core, boolean drills) {
+    private static VoxelShape[] shapes(int core, boolean drills, boolean mouth) {
         VoxelShape middle = box(Skins.middleBox(core));
         VoxelShape[] along = new VoxelShape[Direction.values().length];
         VoxelShape[] outward = new VoxelShape[Direction.values().length];
         for (Direction side : Direction.values()) {
             along[side.ordinal()] = box(Skins.armBox(side));
-            outward[side.ordinal()] = drills ? drill(side) : along[side.ordinal()];
+            outward[side.ordinal()] = drills ? drill(side, mouth) : along[side.ordinal()];
         }
 
         Joint[] joints = Joint.values();
@@ -180,11 +181,11 @@ public class CarrierBlock extends KindBlock {
         return all;
     }
 
-    /** Square steps widening towards the face of the block. */
-    private static VoxelShape drill(Direction side) {
+    /** Square steps, widening towards a mouth's face and away from a nozzle's. */
+    private static VoxelShape drill(Direction side, boolean mouth) {
         VoxelShape shape = Shapes.empty();
         for (int step = 0; step < Skins.DRILL_STEPS; step++) {
-            shape = Shapes.or(shape, box(Skins.drillBox(side, step)));
+            shape = Shapes.or(shape, box(Skins.drillBox(side, step, mouth)));
         }
         return shape;
     }

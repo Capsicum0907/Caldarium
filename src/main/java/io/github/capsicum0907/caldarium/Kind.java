@@ -130,6 +130,16 @@ public enum Kind implements StringRepresentable {
     }
 
     /**
+     * Which way round the drill on an outward face tapers: widest against what it
+     * takes from, narrowest against what it gives to. ⭐ Derived from the same answer
+     * that decides whether it draws at all, so the shape cannot come out disagreeing
+     * with the behaviour.
+     */
+    public boolean mouth() {
+        return pulls;
+    }
+
+    /**
      * Whether energy can cross a face with this on one side and that on the other —
      * and so, for a thing that carries, whether it grows an arm towards it.
      *

@@ -4,31 +4,63 @@
     {
       "faces": {
         "down": {
-          "texture": "#middle"
+          "texture": "#arm"
         },
         "east": {
-          "texture": "#middle"
+          "texture": "#arm"
         },
         "north": {
-          "texture": "#middle"
+          "texture": "#arm"
         },
         "south": {
-          "texture": "#middle"
+          "texture": "#arm"
         },
         "up": {
-          "texture": "#middle"
+          "texture": "#arm"
         },
         "west": {
-          "texture": "#middle"
+          "texture": "#arm"
         }
       },
       "from": [
-        5,
+        14,
+        6,
+        6
+      ],
+      "to": [
+        16,
+        10,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        12,
         5,
         5
       ],
       "to": [
-        11,
+        14,
         11,
         11
       ]
@@ -41,35 +73,6 @@
         "east": {
           "texture": "#arm"
         },
-        "south": {
-          "texture": "#arm"
-        },
-        "up": {
-          "texture": "#arm"
-        },
-        "west": {
-          "texture": "#arm"
-        }
-      },
-      "from": [
-        6,
-        6,
-        10
-      ],
-      "to": [
-        10,
-        10,
-        16
-      ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#arm"
-        },
-        "east": {
-          "texture": "#arm"
-        },
         "north": {
           "texture": "#arm"
         },
@@ -84,84 +87,19 @@
         }
       },
       "from": [
-        6,
-        6,
-        0
-      ],
-      "to": [
         10,
-        10,
-        2
-      ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#arm"
-        },
-        "east": {
-          "texture": "#arm"
-        },
-        "north": {
-          "texture": "#arm"
-        },
-        "south": {
-          "texture": "#arm"
-        },
-        "up": {
-          "texture": "#arm"
-        },
-        "west": {
-          "texture": "#arm"
-        }
-      },
-      "from": [
-        5,
-        5,
-        2
-      ],
-      "to": [
-        11,
-        11,
-        4
-      ]
-    },
-    {
-      "faces": {
-        "down": {
-          "texture": "#arm"
-        },
-        "east": {
-          "texture": "#arm"
-        },
-        "north": {
-          "texture": "#arm"
-        },
-        "south": {
-          "texture": "#arm"
-        },
-        "up": {
-          "texture": "#arm"
-        },
-        "west": {
-          "texture": "#arm"
-        }
-      },
-      "from": [
         3,
-        3,
-        4
+        3
       ],
       "to": [
+        12,
         13,
-        13,
-        6
+        13
       ]
     }
   ],
   "textures": {
-    "arm": "caldarium:block/gold_arm",
-    "middle": "caldarium:block/gold_exporter",
-    "particle": "caldarium:block/gold_arm"
+    "arm": "caldarium:block/diamond_arm",
+    "particle": "caldarium:block/diamond_arm"
   }
 }
