@@ -25,7 +25,9 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  *
  * <p>{@link Wiring} sits in front of both: it says which side of the boundary
  * between this mod and every other one a neighbour has to be on to be offered to at
- * all.
+ * all. The line is closed in the other direction as well — see
+ * {@link Store#canReceive} — so what this rule refuses cannot simply arrive from the
+ * other side instead.
  */
 public final class Pushing {
     private Pushing() {
@@ -43,11 +45,17 @@ public final class Pushing {
         }
         for (Direction side : Direction.values()) {
             IEnergyStorage neighbour = sides.at(level, pos, side);
-            if (neighbour == null || !neighbour.canReceive() || !mayOffer(store, neighbour)) {
+            if (neighbour == null || !Store.accepts(neighbour) || !mayOffer(store, neighbour)) {
                 continue;
             }
             int offered = Math.min(rate, store.getEnergyStored());
-            int taken = neighbour.receiveEnergy(offered, false);
+            // ⚠ One of ours is handed to rather than offered to. The line refuses
+            // every offer, including this one, so that nothing outside can push into
+            // it; going around that seal is what this mod is allowed to do, and what
+            // an importer does on behalf of anything that is not.
+            int taken = neighbour instanceof Store peer
+                    ? peer.take(offered)
+                    : neighbour.receiveEnergy(offered, false);
             if (taken > 0) {
                 store.extractEnergy(taken, false);
                 moved += taken;

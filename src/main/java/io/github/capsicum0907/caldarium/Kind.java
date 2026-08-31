@@ -139,7 +139,7 @@ public enum Kind implements StringRepresentable {
         boolean ours = Neighbours.ours(neighbour);
         boolean inLine = Neighbours.inLine(neighbour);
         // What this one can hand over.
-        if (pushes() && wiring.mayOffer(ours, inLine) && neighbour.canReceive()) {
+        if (pushes() && wiring.mayOffer(ours, inLine) && Store.accepts(neighbour)) {
             return true;
         }
         // What this one can draw out.

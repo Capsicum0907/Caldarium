@@ -80,9 +80,35 @@ public final class Store implements IEnergyStorage {
         return Math.max(0, transfer.getAsInt());
     }
 
+    /**
+     * ⚠ <b>What anybody else may put in, which for the line is nothing.</b>
+     *
+     * <p>The corridor rule can only be enforced on the offering side — a cable chooses
+     * who it offers to, and refusing that is what lets one be laid past a machine
+     * without powering it. The other direction looked impossible at first, because
+     * {@code receiveEnergy} does not say who is calling and the capability is handed
+     * out without regard to which face asked.
+     *
+     * <p>⭐ It never needed to say. Refusing <em>everybody</em> here and letting this
+     * mod's own push go around through {@link #take} seals the line without anyone
+     * having to be identified: what is inside comes in through {@link #take}, and the
+     * only thing outside that reaches it is an importer, which draws rather than
+     * offers. A battery is not sealed, so there is still a port for anything that can
+     * only push.
+     */
     @Override
     public boolean canReceive() {
+        return accepts() && !wiring.inLine();
+    }
+
+    /** Whether it is a thing energy goes into at all, seal or no seal. */
+    public boolean accepts() {
         return role != Role.SOURCE;
+    }
+
+    /** The same question about a neighbour, whoever made it. */
+    public static boolean accepts(IEnergyStorage neighbour) {
+        return neighbour instanceof Store peer ? peer.accepts() : neighbour.canReceive();
     }
 
     /** Nothing comes back out of a sink: what went in was spent on what it holds. */
@@ -103,9 +129,19 @@ public final class Store implements IEnergyStorage {
      */
     @Override
     public int receiveEnergy(int offered, boolean simulate) {
-        if (!canReceive()) {
-            return 0;
-        }
+        return canReceive() ? put(offered, simulate) : 0;
+    }
+
+    /**
+     * What one of this mod's own blocks hands over. Goes around the seal in
+     * {@link #canReceive} and around nothing else: the rate, the room and the role
+     * all still hold, so a source still refuses and a full block still fills up.
+     */
+    public int take(int offered) {
+        return accepts() ? put(offered, false) : 0;
+    }
+
+    private int put(int offered, boolean simulate) {
         int room = getMaxEnergyStored() - stored;
         int taken = Math.min(Math.min(offered, transferRate()), Math.max(0, room));
         if (taken > 0 && !simulate) {
