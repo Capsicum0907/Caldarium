@@ -21,9 +21,11 @@ floor keeps warm.
 > heap. Every block in the line had grown an arm towards the next, and the doors had
 > grown one towards the other mod as well.
 >
-> ⚠ **The refusal itself is still not watched** — a cable laid straight against
-> another mod's machine, showing no arm and leaving it unpowered. That is what the
-> boundary is drawn for, and it is the one claim here nobody has seen hold.
+> **And the refusal holds, which is the claim the whole boundary is drawn for.**
+> Watched the same day: a cable laid straight against a Generator Galore generator
+> shows no arm and takes nothing from it, an importer between the two carries it
+> again, and a burner of ours against the same cable feeds it as it always did. The
+> line is closed to other mods in both directions and open to this one throughout.
 
 ## Target
 
@@ -83,6 +85,17 @@ offers what it has to the six blocks touching it, and that is the entire transpo
 layer. A network would be a second system to keep correct, and nothing here needs
 one: a row of batteries already carries, because energy can only move towards the
 emptier end.
+
+**What that costs was measured rather than argued about.** Two thousand cables, every
+one of them carrying, added about a millisecond to a fifty-millisecond tick — and at
+that size it is not distinguishable from the world itself: an empty world's own tick
+time moved further between two readings than either this or a cable mod added. So the
+honest finding is that they are the same order, not that either wins.
+
+⚠ The other end of the trade is not close, and it is the end nobody thinks to look
+at. Two thousand of these are laid in a tenth of a second; two thousand pipes of a mod
+that keeps a network took **half a minute**, three times running. A network is walked
+again every time it is edited, and there is none here to walk.
 
 **Cables are rows in the same table.** A cable is a battery that holds almost
 nothing and moves a great deal, so carrying over distance needed no new mechanism —
@@ -201,7 +214,7 @@ gradlew runData           # regenerate models, recipes and language
 - [x] **3** — charging: a slot on the battery, and a charger block that is the same
   idea with more slots
 - [x] **4** — the rest of the types and tiers, as rows
-- [ ] **5** — cables: a cable, an importer and an exporter, in tiers
+- [x] **5** — cables: a cable, an importer and an exporter, in tiers
 - [ ] **6** — checked by game tests rather than by eye
 
 ## Related
