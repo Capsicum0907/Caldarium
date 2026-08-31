@@ -10,6 +10,14 @@ floor keeps warm.
 > level off against each other, a hopper feeds it and does not empty it, and the
 > level shows in a tooltip. Both blocks open a screen — a bar for the charge, a
 > flame for the fuel, and the exact figures on hover — watched working the same day.
+>
+> **The line carries, between this mod's own blocks.** A burner, an importer, three
+> cables, an exporter and a netherite battery, watched working on 2026-08-31: the
+> burner holds nothing because what it makes leaves the same tick, each cable holds
+> one tick of it in transit, and the battery climbed from nothing to 200.36 kFE. Every
+> block in the line had grown an arm towards the next. ⚠ **The other half is not
+> watched yet** — a cable laid past another mod's machine, which is what the whole
+> boundary exists for, and an exporter feeding one, which is what an exporter is for.
 
 ## Target
 
