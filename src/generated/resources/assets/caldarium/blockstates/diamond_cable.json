@@ -10,7 +10,7 @@
         "model": "caldarium:block/diamond_arm_down"
       },
       "when": {
-        "down": "true"
+        "down": "line|outside"
       }
     },
     {
@@ -18,7 +18,7 @@
         "model": "caldarium:block/diamond_arm_up"
       },
       "when": {
-        "up": "true"
+        "up": "line|outside"
       }
     },
     {
@@ -26,7 +26,7 @@
         "model": "caldarium:block/diamond_arm_north"
       },
       "when": {
-        "north": "true"
+        "north": "line|outside"
       }
     },
     {
@@ -34,7 +34,7 @@
         "model": "caldarium:block/diamond_arm_south"
       },
       "when": {
-        "south": "true"
+        "south": "line|outside"
       }
     },
     {
@@ -42,7 +42,7 @@
         "model": "caldarium:block/diamond_arm_west"
       },
       "when": {
-        "west": "true"
+        "west": "line|outside"
       }
     },
     {
@@ -50,7 +50,7 @@
         "model": "caldarium:block/diamond_arm_east"
       },
       "when": {
-        "east": "true"
+        "east": "line|outside"
       }
     }
   ]

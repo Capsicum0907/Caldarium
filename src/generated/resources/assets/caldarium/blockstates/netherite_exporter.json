@@ -10,7 +10,15 @@
         "model": "caldarium:block/netherite_arm_down"
       },
       "when": {
-        "down": "true"
+        "down": "line"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_drill_down"
+      },
+      "when": {
+        "down": "outside"
       }
     },
     {
@@ -18,7 +26,15 @@
         "model": "caldarium:block/netherite_arm_up"
       },
       "when": {
-        "up": "true"
+        "up": "line"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_drill_up"
+      },
+      "when": {
+        "up": "outside"
       }
     },
     {
@@ -26,7 +42,15 @@
         "model": "caldarium:block/netherite_arm_north"
       },
       "when": {
-        "north": "true"
+        "north": "line"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_drill_north"
+      },
+      "when": {
+        "north": "outside"
       }
     },
     {
@@ -34,7 +58,15 @@
         "model": "caldarium:block/netherite_arm_south"
       },
       "when": {
-        "south": "true"
+        "south": "line"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_drill_south"
+      },
+      "when": {
+        "south": "outside"
       }
     },
     {
@@ -42,7 +74,15 @@
         "model": "caldarium:block/netherite_arm_west"
       },
       "when": {
-        "west": "true"
+        "west": "line"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_drill_west"
+      },
+      "when": {
+        "west": "outside"
       }
     },
     {
@@ -50,7 +90,15 @@
         "model": "caldarium:block/netherite_arm_east"
       },
       "when": {
-        "east": "true"
+        "east": "line"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/netherite_arm_drill_east"
+      },
+      "when": {
+        "east": "outside"
       }
     }
   ]

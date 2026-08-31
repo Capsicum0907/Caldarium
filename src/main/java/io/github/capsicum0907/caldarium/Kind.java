@@ -122,6 +122,14 @@ public enum Kind implements StringRepresentable {
     }
 
     /**
+     * Whether it is one of the two doors through the boundary, and so whether a face
+     * of it that reaches outside the line is worth putting a drill on.
+     */
+    public boolean door() {
+        return pulls || wiring == Wiring.OUT;
+    }
+
+    /**
      * Whether energy can cross a face with this on one side and that on the other —
      * and so, for a thing that carries, whether it grows an arm towards it.
      *

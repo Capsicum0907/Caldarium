@@ -150,6 +150,12 @@ purpose — without the arm there is nothing at all to tell a refusal from a lin
 has simply not filled yet, and the two look identical for as long as you stare at
 them. The arm makes the rule something you look at rather than something you work out.
 
+**And where a door reaches out of the line, the arm is a drill instead**: square steps
+widening from the thickness of the wire out to a flange against whatever it is working
+on. A door has two jobs at once — along the line and across the boundary — and the
+drill is which of its faces is doing the second. An importer standing in a run of
+cable with no drill on it has nothing to import from, and says so without being asked.
+
 An importer is a `SOURCE`, the same as a generator: energy that arrives in the line
 arrives through one, and nothing may push into it. Where it came from — burnt,
 gathered off the sky, or drawn out of somebody else's machine — is not a distinction

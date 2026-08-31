@@ -14,6 +14,8 @@ import com.google.common.hash.Hashing;
 import io.github.capsicum0907.caldarium.Caldarium;
 import io.github.capsicum0907.caldarium.CaldariumRegistry;
 import io.github.capsicum0907.caldarium.Generator;
+import io.github.capsicum0907.caldarium.CarrierBlock;
+import io.github.capsicum0907.caldarium.Joint;
 import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.GeneratorBlock;
 import io.github.capsicum0907.caldarium.Tier;
@@ -40,7 +42,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.PipeBlock;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -215,17 +217,44 @@ public final class CaldariumDataGen {
             var parts = getMultipartBuilder(CaldariumRegistry.block(kind, tier).get());
             parts.part().modelFile(core(name, kind)).addModel().end();
             for (Direction side : Direction.values()) {
+                EnumProperty<Joint> joint = CarrierBlock.JOINTS.get(side);
+                if (!kind.door()) {
+                    // A cable wears the same arm whichever side of the boundary it is
+                    // joined to; only a door has two jobs to tell apart.
+                    parts.part().modelFile(arm(tier, side)).addModel()
+                            .condition(joint, Joint.LINE, Joint.OUTSIDE).end();
+                    continue;
+                }
                 parts.part().modelFile(arm(tier, side)).addModel()
-                        .condition(PipeBlock.PROPERTY_BY_DIRECTION.get(side), true).end();
+                        .condition(joint, Joint.LINE).end();
+                parts.part().modelFile(drill(tier, side)).addModel()
+                        .condition(joint, Joint.OUTSIDE).end();
             }
-            // What is held is joined on all six sides, because a cable in a hand is not
-            // pointing anywhere yet and a bare middle would be a small grey box.
+            held(kind, tier, name);
+        }
+
+        /**
+         * What the block looks like in a hand.
+         *
+         * <p>A cable is joined on all six sides, because one in a hand is not pointing
+         * anywhere yet and a bare middle would be a small grey box. A door gets one
+         * drill and one arm instead, which is the shape of what it is for: a fitting
+         * with a line on one side of it and something else on the other.
+         */
+        private void held(Kind kind, Tier tier, String name) {
             var held = itemModels().getBuilder(name)
                     .parent(models().getExistingFile(mcLoc("block/block")));
-            box(held, "middle", modLoc("block/" + name), middle(kind));
+            box(held, "middle", modLoc("block/" + name), Skins.middleBox(kind.core()));
+            ResourceLocation metal = modLoc("block/" + Skins.arm(tier));
+            if (kind.door()) {
+                box(held, "arm", metal, Skins.armBox(Direction.SOUTH), Direction.NORTH);
+                for (int step = 0; step < Skins.DRILL_STEPS; step++) {
+                    box(held, "arm", metal, Skins.drillBox(Direction.NORTH, step));
+                }
+                return;
+            }
             for (Direction side : Direction.values()) {
-                box(held, "arm", modLoc("block/" + Skins.arm(tier)), arm(side),
-                        side.getOpposite());
+                box(held, "arm", metal, Skins.armBox(side), side.getOpposite());
             }
         }
 
@@ -235,7 +264,25 @@ public final class CaldariumDataGen {
             BlockModelBuilder model = models().getBuilder(built);
             if (drawn.add(built)) {
                 model.parent(models().getExistingFile(mcLoc("block/block")));
-                box(model, "middle", modLoc("block/" + name), middle(kind));
+                box(model, "middle", modLoc("block/" + name), Skins.middleBox(kind.core()));
+            }
+            return model;
+        }
+
+        /**
+         * The steps a door puts on a face that reaches outside the line. The same six
+         * of them serve both doors on a rung: what an importer and an exporter do at
+         * such a face differs in direction, and direction is said on the middle.
+         */
+        private ModelFile drill(Tier tier, Direction side) {
+            String built = Skins.arm(tier) + "_drill_" + side.getSerializedName();
+            BlockModelBuilder model = models().getBuilder(built);
+            if (drawn.add(built)) {
+                model.parent(models().getExistingFile(mcLoc("block/block")));
+                for (int step = 0; step < Skins.DRILL_STEPS; step++) {
+                    box(model, "arm", modLoc("block/" + Skins.arm(tier)),
+                            Skins.drillBox(side, step));
+                }
             }
             return model;
         }
@@ -246,7 +293,7 @@ public final class CaldariumDataGen {
             BlockModelBuilder model = models().getBuilder(built);
             if (drawn.add(built)) {
                 model.parent(models().getExistingFile(mcLoc("block/block")));
-                box(model, "arm", modLoc("block/" + Skins.arm(tier)), arm(side),
+                box(model, "arm", modLoc("block/" + Skins.arm(tier)), Skins.armBox(side),
                         side.getOpposite());
             }
             return model;
@@ -283,33 +330,6 @@ public final class CaldariumDataGen {
                 }
             }
             element.end();
-        }
-
-        private static int[] middle(Kind kind) {
-            int in = (Skins.SIZE - kind.core()) / 2;
-            int out = in + kind.core();
-            return new int[] { in, in, in, out, out, out };
-        }
-
-        /**
-         * ⚠ The same arithmetic the block shape uses in {@link CarrierBlock}. The two
-         * have to agree: a model drawn where nothing can be bumped into is a block you
-         * can walk through the visible half of.
-         */
-        private static int[] arm(Direction side) {
-            int near = (Skins.SIZE - Skins.ARM_ACROSS) / 2;
-            int far = near + Skins.ARM_ACROSS;
-            int deep = Skins.ARM_DEEP;
-            int back = Skins.SIZE - deep;
-            int size = Skins.SIZE;
-            return switch (side) {
-                case NORTH -> new int[] { near, near, 0, far, far, deep };
-                case SOUTH -> new int[] { near, near, back, far, far, size };
-                case WEST -> new int[] { 0, near, near, deep, far, far };
-                case EAST -> new int[] { back, near, near, size, far, far };
-                case DOWN -> new int[] { near, 0, near, far, deep, far };
-                case UP -> new int[] { near, back, near, far, size, far };
-            };
         }
 
         /**

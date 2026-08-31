@@ -8,6 +8,8 @@ import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.Source;
 import io.github.capsicum0907.caldarium.Tier;
 
+import net.minecraft.core.Direction;
+
 /**
  * Every texture the mod has, as a formula. No PNG is kept in the repository.
  *
@@ -94,10 +96,12 @@ public final class Skins {
     public static final int CORE_CABLE = ARM_ACROSS;
 
     /**
-     * A door is nearly a whole block, because it is a machine and not a length of
-     * wire, and because the arrow on its face has to be readable from a distance.
+     * A door is a fitting on a line rather than a block of its own: wider than the
+     * wire so the arrow on it can be read, and no wider, so that what comes out of it
+     * reads as a drill rather than as a bump. ⚠ It was ten, and at ten the two inner
+     * steps of the drill were buried inside it and only the flange showed.
      */
-    public static final int CORE_DOOR = 10;
+    public static final int CORE_DOOR = 6;
 
     /**
      * ⚠ Exactly as deep as the gap between the face of the block and the middle, so
@@ -108,6 +112,72 @@ public final class Skins {
      * keeping the two out of each other's way.
      */
     public static final int ARM_DEEP = (SIZE - CORE_CABLE) / 2;
+
+    /**
+     * A drill: square steps widening towards the face of the block. It is what says a
+     * door reaches <em>out</em> of the line on that side rather than along it, which is
+     * the one thing about a door that was not visible from anywhere.
+     */
+    public static final int DRILL_STEPS = 3;
+
+    /** How deep one step is. The three together are exactly as deep as an arm. */
+    public static final int DRILL_DEEP = ARM_DEEP / DRILL_STEPS;
+
+    /** The flange, pressed against whatever the door is working on. */
+    public static final int DRILL_ACROSS_MOST = 10;
+
+    /**
+     * How wide the step is, counting out from the middle: the wire's own thickness,
+     * then the door's, then the flange. Two of the three are the sizes above, so the
+     * drill follows the wire when the wire changes.
+     */
+    public static int drillAcross(int step) {
+        return switch (step) {
+            case 0 -> ARM_ACROSS;
+            case 1 -> CORE_DOOR;
+            default -> DRILL_ACROSS_MOST;
+        };
+    }
+
+    /**
+     * One box, as {@code from} and {@code to}, pointed at a side of the block.
+     *
+     * <p>⭐ <b>Here and nowhere else.</b> The shape you bump into and the model you look
+     * at are built by two different classes, and a block whose model is drawn where
+     * nothing can be bumped into is a block you can walk through the visible half of.
+     * They read this instead of each keeping a copy of the arithmetic.
+     */
+    public static int[] box(Direction side, int across, int from, int to) {
+        int near = (SIZE - across) / 2;
+        int far = near + across;
+        int back = SIZE - from;
+        int front = SIZE - to;
+        return switch (side) {
+            case NORTH -> new int[] { near, near, from, far, far, to };
+            case SOUTH -> new int[] { near, near, front, far, far, back };
+            case WEST -> new int[] { from, near, near, to, far, far };
+            case EAST -> new int[] { front, near, near, back, far, far };
+            case DOWN -> new int[] { near, from, near, far, to, far };
+            case UP -> new int[] { near, front, near, far, back, far };
+        };
+    }
+
+    /** The plain post a face on to the line wears. */
+    public static int[] armBox(Direction side) {
+        return box(side, ARM_ACROSS, 0, ARM_DEEP);
+    }
+
+    /** One step of a drill, counting out from the middle. */
+    public static int[] drillBox(Direction side, int step) {
+        int from = (DRILL_STEPS - 1 - step) * DRILL_DEEP;
+        return box(side, drillAcross(step), from, from + DRILL_DEEP);
+    }
+
+    /** The middle of anything that carries, whatever kind it is. */
+    public static int[] middleBox(int core) {
+        int in = (SIZE - core) / 2;
+        return new int[] { in, in, in, in + core, in + core, in + core };
+    }
 
     /** The plain metal an arm is made of — the rung's colour and nothing on it. */
     public static String arm(Tier tier) {
