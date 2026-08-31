@@ -106,8 +106,18 @@ battery, refused at both ends because every block in it belonged to this mod.
 
 **So a door is optional between two of these and required at the edge of the set.** A
 cable laid straight against a burner is fed by it, because the burner pushes; a cable
-laid against another mod's generator is not, because that one waits to be asked, and
-the importer is what asks. Neither arrangement is the wrong one to reach for.
+laid against another mod's generator is not, unless that one pushes as well, and the
+importer is what asks the ones that do not. Neither arrangement is the wrong one to
+reach for.
+
+⚠ **The corridor is one way, and it cannot be made two.** A cable refuses to offer to
+another mod's machine, so laying one past a machine will not power it. It cannot
+refuse to be offered *to*: `receiveEnergy` does not say who is calling, and the
+capability is handed out without regard to which side asked, on purpose — a face that
+behaved differently would be a routing decision, and this mod does not make those. So
+a generator from another mod that pushes what it makes will fill a cable it is
+touching, with no fitting and no arm drawn between them. That is the other mod acting,
+not this one, and there is nowhere in the interface to stand in its way.
 
 An importer is the only thing here that asks; an exporter is the only thing here that
 never does. Its way in is something pushing into it, so an exporter stood between two
