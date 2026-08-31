@@ -42,4 +42,13 @@ public final class Neighbours {
     public static boolean ours(IEnergyStorage neighbour) {
         return neighbour instanceof Store;
     }
+
+    /**
+     * Whether a neighbour is part of the line. ⚠ A different question from
+     * {@link #ours}, and the two are asked in different places on purpose: a cable
+     * refuses what is not ours, a door refuses what is in the line.
+     */
+    public static boolean inLine(IEnergyStorage neighbour) {
+        return neighbour instanceof Store peer && peer.wiring().inLine();
+    }
 }

@@ -1,37 +1,49 @@
 package io.github.capsicum0907.caldarium;
 
 /**
- * Which neighbours a block offers what it holds to, in terms of the only boundary
- * this mod draws: its own blocks, and everybody else's.
+ * Which neighbours a block offers what it holds to.
  *
- * <p><b>The boundary is a rule about pushing and not about connecting.</b> A cable
- * refuses to <em>offer</em> to anything outside the mod, because a cable that gave to
- * whatever it touched would power a machine merely by being laid past it, and then
- * there would be nowhere to run one. It has no matching rule about being offered
- * <em>to</em>: a generator or a battery standing against a cable fills it, which is
- * what leaves the importer with the one job nothing else here can do.
+ * <p><b>There are two boundaries here, and they are not the same one.</b> Getting
+ * that wrong is what made the arrangement everybody builds do nothing at all.
  *
- * <p>⚠ <b>Drawn between the mods rather than around the cable.</b> A line closed even
- * to this mod's own batteries would need an exporter to reach one a block away, and
- * would leave the importer able to draw out of a generator that pushes anyway — two
- * blocks to bridge nothing, and a door where there is no wall. The complaint the rule
- * answers was always about somebody else's machine, so that is where it is drawn, and
- * an importer and an exporter are exactly the two doors through it.
+ * <ul>
+ * <li><b>The cable keeps out of other mods.</b> A cable that gave to whatever it
+ *     touched would power a machine merely by being laid past it, and then there
+ *     would be nowhere to run one. So it offers to this mod's own blocks and to
+ *     nothing else — which also means it reaches a battery of ours directly, with no
+ *     fitting in between.
+ * <li><b>The exporter keeps out of the line.</b> It is the end of one, and what is at
+ *     the end of a line is everything that is not the line: another mod's machine, or
+ *     one of ours. An exporter that could feed a cable would be a cable.
+ * </ul>
+ *
+ * <p>⚠ It has no rule at all about being offered <em>to</em>. A generator or a
+ * battery standing against a cable fills it, which is what keeps the doors optional
+ * between this mod's own blocks rather than required between them.
  */
 public enum Wiring {
-    /** Offers to anything that will take it: a generator, a battery, a charger. */
+    /** Outside the line, and offers to anything that will take it. */
     OPEN,
-    /** Offers only to this mod's own blocks. A cable, and the way in. */
-    INSIDE,
-    /** Offers only to blocks that are not this mod's. The one way out. */
-    OUTSIDE;
+    /** Offers to this mod's own blocks and to no other mod's. A cable, and the way in. */
+    ALONG,
+    /** Offers to everything that is not the line. The one way out of it. */
+    OUT;
 
-    /** Whether a neighbour on the given side of the boundary may be offered to. */
-    public boolean mayOffer(boolean neighbourIsOurs) {
+    /** Whether this block is part of the line rather than something served by one. */
+    public boolean inLine() {
+        return this != OPEN;
+    }
+
+    /**
+     * Whether a neighbour may be offered to. Both facts about it are needed because
+     * the two refusals are drawn in different places: one keeps out of other mods,
+     * the other keeps out of the line.
+     */
+    public boolean mayOffer(boolean neighbourIsOurs, boolean neighbourInLine) {
         return switch (this) {
             case OPEN -> true;
-            case INSIDE -> neighbourIsOurs;
-            case OUTSIDE -> !neighbourIsOurs;
+            case ALONG -> neighbourIsOurs;
+            case OUT -> !neighbourInLine;
         };
     }
 }

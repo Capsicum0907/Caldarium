@@ -14,10 +14,15 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * forever beside a line that only ever offers. An importer asks it.
  *
  * <p>It draws across the same boundary an exporter feeds across, and in the other
- * direction — out of what belongs to another mod. ⚠ Never out of one of ours: a
- * machine of this mod's already pushes, so there is nothing here to ask, and an
- * importer that could take out of a cable would be a second way for energy to move
- * along one — a way that ignores the downhill rule and so has no reason to settle.
+ * direction — out of anything that is not the line, whoever made it. ⚠ Never out of
+ * the line itself: an importer that could take out of a cable would be a second way
+ * for energy to move along one, a way that ignores the downhill rule and so has no
+ * reason ever to settle.
+ *
+ * <p>⚠ Drawing out of this mod's own generators as well is not redundancy. A burner
+ * pushes, so a cable laid against one needs no importer — but an importer laid against
+ * one is the arrangement every mod that has ever had a pipe teaches, and refusing it
+ * left a full generator, an empty battery and no way to tell why.
  */
 public final class Pulling {
     private Pulling() {
@@ -39,7 +44,7 @@ public final class Pulling {
                 break;
             }
             IEnergyStorage neighbour = sides.at(level, pos, side);
-            if (neighbour == null || !neighbour.canExtract() || Neighbours.ours(neighbour)) {
+            if (neighbour == null || !neighbour.canExtract() || Neighbours.inLine(neighbour)) {
                 continue;
             }
             int taken = neighbour.extractEnergy(wanted, false);

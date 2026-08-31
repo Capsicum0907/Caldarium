@@ -7,6 +7,7 @@ import com.mojang.serialization.Codec;
 import io.github.capsicum0907.caldarium.data.Skins;
 
 import net.minecraft.util.StringRepresentable;
+import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
  * The kinds of block whose only axis is {@link Tier}. One kind at one tier is one
@@ -36,18 +37,20 @@ public enum Kind implements StringRepresentable {
      * laid past somebody else's machine without powering it — and so what makes a
      * corridor of cable possible at all.
      */
-    CABLE("cable", Store.Role.BUFFER, Wiring.INSIDE, 0, false, false),
+    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, false),
     /**
-     * The way in, and the only thing here that takes rather than gives. Everything
-     * this mod makes pushes; other mods are full of machines that wait to be asked.
+     * The way in: it draws out of anything that is not the line and hands it to the
+     * line. Other mods are full of machines that wait to be asked, and this is the
+     * only thing here that asks — but it asks this mod's own generators too, because
+     * a fitting at the mouth of a pipe is what everybody reaches for.
      *
      * <p>⚠ A {@link Store.Role#SOURCE}, so nothing can push into it. Energy that
      * went in that way would be energy in the one block whose job is to be where
      * energy starts, and the line would have two ways to move it.
      */
-    IMPORTER("importer", Store.Role.SOURCE, Wiring.INSIDE, 0, false, true),
+    IMPORTER("importer", Store.Role.SOURCE, Wiring.ALONG, 0, false, true),
     /** The way out: the only block here that offers to another mod's machine. */
-    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUTSIDE, 0, false, false);
+    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUT, 0, false, false);
 
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -119,25 +122,35 @@ public enum Kind implements StringRepresentable {
     }
 
     /**
-     * Whether it is one of the two doors through the boundary. Derived: a kind that
-     * draws out of another mod's machine, or offers into one, is standing in the wall.
-     */
-    public boolean door() {
-        return pulls || wiring == Wiring.OUTSIDE;
-    }
-
-    /**
      * Whether energy can cross a face with this on one side and that on the other —
      * and so, for a thing that carries, whether it grows an arm towards it.
      *
      * <p>⭐ <b>The arm is the only thing that says so.</b> These blocks have no window
      * to open and the rule they follow refuses some neighbours on purpose, which
      * leaves nothing to tell a cable that will not talk to what it is touching from a
-     * cable that is simply not carrying anything yet. An arm that grows only where
-     * energy can pass makes the rule something you look at.
+     * cable that is simply not carrying anything yet.
+     *
+     * <p>⚠ Every way across is asked about separately, and the first version of this
+     * did not: it said a door touches everything, drew arms on both faces of an
+     * importer that could not take from the generator behind it, and turned the one
+     * thing meant to make the rule visible into something that lied about it.
      */
-    public boolean touches(boolean neighbourIsOurs) {
-        return neighbourIsOurs || door();
+    public boolean touches(IEnergyStorage neighbour) {
+        boolean ours = Neighbours.ours(neighbour);
+        boolean inLine = Neighbours.inLine(neighbour);
+        // What this one can hand over.
+        if (pushes() && wiring.mayOffer(ours, inLine) && neighbour.canReceive()) {
+            return true;
+        }
+        // What this one can draw out.
+        if (pulls && !inLine && neighbour.canExtract()) {
+            return true;
+        }
+        // What the neighbour can hand over. ⚠ Only asked of this mod's own blocks:
+        // whether another mod pushes what it holds is its business, and guessing would
+        // put an arm on a face nothing ever crosses.
+        return role != Store.Role.SOURCE && neighbour instanceof Store peer
+                && peer.canExtract() && peer.wiring().mayOffer(true, carries());
     }
 
     /**

@@ -82,19 +82,23 @@ one laid past somebody else's machine does not power it and a corridor of cable 
 possible at all. It has no matching rule about being offered *to*: a burner or a
 battery standing against a cable fills it directly.
 
-**The boundary is drawn between the mods rather than around the cable**, and that is
-the whole reason there are two doors and not four. A line closed even to this mod's
-own batteries would want an exporter to reach one a block away, and would leave the
-importer able to draw out of a generator that pushes anyway — two blocks to bridge
-nothing, and a door where there is no wall. The complaint the rule answers was always
-about somebody else's machine. So an importer draws out of another mod's machine and
-never out of one of ours, an exporter feeds one and never one of ours, and everything
-between them simply connects.
+**There are two boundaries, and they are not the same one.** The cable keeps out of
+other mods, because that is what the corridor is for. The doors keep out of the line,
+because they are its ends — an importer draws out of anything that is not the line and
+an exporter feeds anything that is not the line, whoever made it. Drawing both in the
+same place is the mistake this made first, and it made the arrangement everybody
+builds do nothing at all: a generator, an importer, a run of cable, an exporter and a
+battery, refused at both ends because every block in it belonged to this mod.
+
+**So a door is optional between two of these and required at the edge of the set.** A
+cable laid straight against a burner is fed by it, because the burner pushes; a cable
+laid against another mod's generator is not, because that one waits to be asked, and
+the importer is what asks. Neither arrangement is the wrong one to reach for.
 
 An importer is the only thing here that asks; an exporter is the only thing here that
-never does. Its way in is one of ours pushing into it, so an exporter stood between
-two of another mod's machines does nothing at all, and there is no window on it to
-say so.
+never does. Its way in is something pushing into it, so an exporter stood between two
+machines that both wait to be asked does nothing at all, and there is no window on it
+to say so.
 
 **The arm is what says so instead.** A block that carries grows one towards every
 neighbour energy can actually cross to, and towards no others: a cable laid past

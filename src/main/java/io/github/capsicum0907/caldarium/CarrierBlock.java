@@ -111,7 +111,7 @@ public class CarrierBlock extends KindBlock {
     private boolean connects(Level level, BlockPos pos, Direction side) {
         IEnergyStorage neighbour = level.getCapability(Capabilities.EnergyStorage.BLOCK,
                 pos.relative(side), side.getOpposite());
-        return neighbour != null && kind().touches(Neighbours.ours(neighbour));
+        return neighbour != null && kind().touches(neighbour);
     }
 
     private static int joined(BlockState state) {

@@ -66,7 +66,7 @@ public final class Pushing {
      * else to go.
      */
     private static boolean mayOffer(Store from, IEnergyStorage to) {
-        if (!from.wiring().mayOffer(Neighbours.ours(to))) {
+        if (!from.wiring().mayOffer(Neighbours.ours(to), Neighbours.inLine(to))) {
             return false;
         }
         if (!(to instanceof Store peer)) {
