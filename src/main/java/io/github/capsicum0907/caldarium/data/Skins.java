@@ -84,8 +84,15 @@ public final class Skins {
     // the block and once by the shape you bump into. A number written into one of them
     // is a block you can walk through the visible half of.
 
-    /** How wide an arm is, and how far it reaches in from the face of the block. */
-    public static final int ARM_ACROSS = 4;
+    /**
+     * How wide an arm is: the one number the whole of this shape is built out of.
+     * Everything else here follows it, so a cable is made thinner or fatter by
+     * changing this and nothing else.
+     *
+     * <p>⚠ Even numbers only. An odd width cannot sit in the middle of sixteen
+     * pixels, and a cable half a pixel off centre meets the next one with a step in it.
+     */
+    public static final int ARM_ACROSS = 2;
 
     /**
      * ⭐ <b>A cable's middle is exactly as thick as its arms.</b> It was wider, and a
@@ -96,12 +103,16 @@ public final class Skins {
     public static final int CORE_CABLE = ARM_ACROSS;
 
     /**
-     * A door is a fitting on a line rather than a block of its own: wider than the
-     * wire so the arrow on it can be read, and no wider, so that what comes out of it
-     * reads as a drill rather than as a bump. ⚠ It was ten, and at ten the two inner
-     * steps of the drill were buried inside it and only the flange showed.
+     * ⭐ A door's middle is the wire's own thickness, so a run through one is as smooth
+     * as a run without. ⚠ It was wider twice over — ten, then six — and both times it
+     * put a bulge in the line either side of the drill, which is the same lumpiness
+     * that made a plain run of cable look like a string of beads.
+     *
+     * <p>Nothing is lost by it. The middle used to carry the arrow that told an
+     * importer from an exporter; the drill tells them apart now, from any side and at
+     * any distance, which six pixels of arrow never did.
      */
-    public static final int CORE_DOOR = 6;
+    public static final int CORE_DOOR = CORE_CABLE;
 
     /**
      * ⚠ Exactly as deep as the gap between the face of the block and the middle, so
@@ -120,23 +131,27 @@ public final class Skins {
      */
     public static final int DRILL_STEPS = 3;
 
-    /** How deep one step is. The three together are exactly as deep as an arm. */
-    public static final int DRILL_DEEP = ARM_DEEP / DRILL_STEPS;
-
     /** The flange, pressed against whatever the door is working on. */
     public static final int DRILL_ACROSS_MOST = 10;
 
     /**
-     * How wide the step is, counting out from the middle: the wire's own thickness,
-     * then the door's, then the flange. Two of the three are the sizes above, so the
-     * drill follows the wire when the wire changes.
+     * How wide one step is, counting out from the middle: evenly spaced from the
+     * wire's own thickness up to the flange, so the cone stays a cone when the wire
+     * is made thinner.
      */
     public static int drillAcross(int step) {
-        return switch (step) {
-            case 0 -> ARM_ACROSS;
-            case 1 -> CORE_DOOR;
-            default -> DRILL_ACROSS_MOST;
-        };
+        return ARM_ACROSS + (DRILL_ACROSS_MOST - ARM_ACROSS) * step / (DRILL_STEPS - 1);
+    }
+
+    /**
+     * Where one step starts and stops along the arm.
+     *
+     * <p>⚠ Divided rather than multiplied by a fixed depth. The steps have to fill an
+     * arm exactly: a step short of it leaves a gap between the drill and the middle,
+     * and an arm whose depth does not divide by three is what a thinner wire gives.
+     */
+    private static int drillAt(int step) {
+        return step * ARM_DEEP / DRILL_STEPS;
     }
 
     /**
@@ -178,8 +193,7 @@ public final class Skins {
      */
     public static int[] drillBox(Direction side, int step, boolean mouth) {
         int out = mouth ? DRILL_STEPS - 1 - step : step;
-        int from = out * DRILL_DEEP;
-        return box(side, drillAcross(step), from, from + DRILL_DEEP);
+        return box(side, drillAcross(step), drillAt(out), drillAt(out + 1));
     }
 
     /** The middle of anything that carries, whatever kind it is. */
