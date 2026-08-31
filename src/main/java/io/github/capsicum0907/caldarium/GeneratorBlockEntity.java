@@ -130,7 +130,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             case ITEM, FLUID -> generator.burn();
             case SUN -> generator.bask(server, pos);
         }
-        Pushing.push(generator.sides, server, pos, generator.store);
+        Pushing.push(generator.sides, server, pos, generator.store, null);
 
         boolean working = generator.working();
         if (wasWorking != working) {

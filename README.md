@@ -153,10 +153,10 @@ them. The arm makes the rule something you look at rather than something you wor
 **And where a door reaches out of the line, the arm is a drill instead**: three square
 steps between the thickness of the wire and a flange. A door has two jobs at once —
 along the line and across the boundary — and the drill is which of its faces is doing
-the second, and it wears one on every face it has not given to the line — whether or
-not anything is standing there yet, because where it would work is what you aim it by.
-An importer walled in by cable has no drill left on it and nothing it could import
-from, and says so without being asked.
+the second. **A door reaches outside the line on exactly one face**, decided when it is
+placed and never again, and the drill is on that face and no other — standing there
+before anything is built against it, because where it will work is what you aim it by.
+Every other face of it is a plain joint or nothing, the same as a cable's.
 
 ⭐ **The same three steps go on either way round, and which way round is what the block
 does.** An importer is a mouth and puts its widest step against what it draws from; an
@@ -170,7 +170,11 @@ gathered off the sky, or drawn out of somebody else's machine — is not a disti
 anything downstream has to make.
 
 The reason to build these rather than lean on a cable mod is the handling. **No
-wrench**, because the direction is which of the three blocks was placed. **No
+wrench.** A cable has no direction at all; a door has one and is aimed by being put
+down, at whatever it was placed against — the way a hopper faces the block it was set
+on, which is also the block an importer is made out of. ⚠ Except into the line: what
+you clicked there was the cable you were extending, so it turns round, which is where
+the machine is in that arrangement anyway. **No
 upgrade to fit**, because the speed is the tier. **No window to open**, because
 there is nothing to configure — a right-click passes straight through, so a cable is
 something you can build against rather than something that opens. A pipe that needs

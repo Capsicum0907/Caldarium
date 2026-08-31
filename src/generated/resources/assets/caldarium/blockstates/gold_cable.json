@@ -10,7 +10,7 @@
         "model": "caldarium:block/gold_arm_down"
       },
       "when": {
-        "down": "line|outside"
+        "down": "along"
       }
     },
     {
@@ -18,7 +18,7 @@
         "model": "caldarium:block/gold_arm_up"
       },
       "when": {
-        "up": "line|outside"
+        "up": "along"
       }
     },
     {
@@ -26,7 +26,7 @@
         "model": "caldarium:block/gold_arm_north"
       },
       "when": {
-        "north": "line|outside"
+        "north": "along"
       }
     },
     {
@@ -34,7 +34,7 @@
         "model": "caldarium:block/gold_arm_south"
       },
       "when": {
-        "south": "line|outside"
+        "south": "along"
       }
     },
     {
@@ -42,7 +42,7 @@
         "model": "caldarium:block/gold_arm_west"
       },
       "when": {
-        "west": "line|outside"
+        "west": "along"
       }
     },
     {
@@ -50,7 +50,7 @@
         "model": "caldarium:block/gold_arm_east"
       },
       "when": {
-        "east": "line|outside"
+        "east": "along"
       }
     }
   ]

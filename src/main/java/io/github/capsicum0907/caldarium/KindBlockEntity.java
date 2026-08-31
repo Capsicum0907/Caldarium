@@ -1,6 +1,7 @@
 package io.github.capsicum0907.caldarium;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -109,13 +110,16 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
             return;
         }
         Charging.tick(machine.items, machine.store, machine.rates.transfer().get());
+        // Which way a door points. Read off the block rather than kept here: the shape
+        // is where it is decided, and one copy of a fact is enough.
+        Direction aimed = machine.kind.door() ? CarrierBlock.aimed(state) : null;
         // Drawn in before it is handed on, so what arrives this tick leaves this
         // tick: an importer that pushed first would always be one tick behind.
         if (machine.kind.pulls()) {
-            Pulling.pull(machine.sides, server, pos, machine.store);
+            Pulling.pull(machine.sides, server, pos, machine.store, aimed);
         }
         if (machine.kind.pushes()) {
-            Pushing.push(machine.sides, server, pos, machine.store);
+            Pushing.push(machine.sides, server, pos, machine.store, aimed);
         }
     }
 

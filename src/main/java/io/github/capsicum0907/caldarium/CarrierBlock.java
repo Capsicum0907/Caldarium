@@ -95,12 +95,36 @@ public class CarrierBlock extends KindBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        Direction aimed = aim(context);
         BlockState state = defaultBlockState();
         for (Direction side : Direction.values()) {
             state = state.setValue(JOINTS.get(side),
-                    joint(context.getLevel(), context.getClickedPos(), side));
+                    side == aimed ? Joint.AIMED : joint(level, pos, side));
         }
         return state;
+    }
+
+    /**
+     * Which way a door points, decided once and kept.
+     *
+     * <p>⭐ At what you put it against, the way a hopper faces the block it was set on
+     * — which is also the block an importer is made out of. No wrench, because aiming
+     * it is the same act as placing it.
+     *
+     * <p>⚠ Except into the line. What you clicked there was the cable you are
+     * extending, and the one face that reaches outside would be pointed at the inside;
+     * so it turns round, which is where the machine is in that arrangement anyway.
+     */
+    private Direction aim(BlockPlaceContext context) {
+        if (!kind().door()) {
+            return null;
+        }
+        Direction at = context.getClickedFace().getOpposite();
+        return Neighbours.inLine(energy(context.getLevel(), context.getClickedPos(), at))
+                ? at.getOpposite()
+                : at;
     }
 
     /**
@@ -113,9 +137,13 @@ public class CarrierBlock extends KindBlock {
     @Override
     protected BlockState updateShape(BlockState state, Direction side, BlockState neighbour,
             LevelAccessor level, BlockPos pos, BlockPos neighbourPos) {
-        return level instanceof Level whole
-                ? state.setValue(JOINTS.get(side), joint(whole, pos, side))
-                : state;
+        // ⚠ The aimed face is never recomputed. It is where the block was pointed when
+        // it was put down, and a block that re-aimed itself every time something was
+        // built beside it would be a block nobody could aim.
+        if (state.getValue(JOINTS.get(side)) == Joint.AIMED || !(level instanceof Level whole)) {
+            return state;
+        }
+        return state.setValue(JOINTS.get(side), joint(whole, pos, side));
     }
 
     /**
@@ -125,15 +153,30 @@ public class CarrierBlock extends KindBlock {
      * the same as no.
      */
     private Joint joint(Level level, BlockPos pos, Direction side) {
-        IEnergyStorage neighbour = level.getCapability(Capabilities.EnergyStorage.BLOCK,
-                pos.relative(side), side.getOpposite());
-        if (neighbour != null && kind().touches(neighbour)) {
-            return Neighbours.inLine(neighbour) ? Joint.LINE : Joint.OUTSIDE;
+        IEnergyStorage neighbour = energy(level, pos, side);
+        if (neighbour == null || !kind().touches(neighbour)) {
+            return Joint.NONE;
         }
-        // A cable with nothing there has nothing to show. A door does: which of its
-        // faces are the ones that reach out of the line is worth knowing before the
-        // machine is placed, not after, because that is what you are aiming it at.
-        return kind().door() ? Joint.OUTSIDE : Joint.NONE;
+        // ⚠ A door reaches outside the line only where it is aimed, so a plain joint on
+        // any other face of one is a joint with something of ours. An arm drawn at
+        // another mod's machine on a face the block no longer works through would be
+        // the picture claiming something the rule stopped doing.
+        return kind().door() && !Neighbours.ours(neighbour) ? Joint.NONE : Joint.ALONG;
+    }
+
+    private static IEnergyStorage energy(Level level, BlockPos pos, Direction side) {
+        return level.getCapability(Capabilities.EnergyStorage.BLOCK,
+                pos.relative(side), side.getOpposite());
+    }
+
+    /** Which way this one points, or nothing where it does not point anywhere. */
+    public static Direction aimed(BlockState state) {
+        for (Direction side : Direction.values()) {
+            if (state.getValue(JOINTS.get(side)) == Joint.AIMED) {
+                return side;
+            }
+        }
+        return null;
     }
 
     /** The six faces, read as one number: the index of the shape they add up to. */
@@ -173,9 +216,9 @@ public class CarrierBlock extends KindBlock {
             for (int at = Direction.values().length - 1; at >= 0; at--) {
                 Joint joint = joints[rest % joints.length];
                 rest /= joints.length;
-                if (joint == Joint.LINE) {
+                if (joint == Joint.ALONG) {
                     shape = Shapes.or(shape, along[at]);
-                } else if (joint == Joint.OUTSIDE) {
+                } else if (joint == Joint.AIMED) {
                     shape = Shapes.or(shape, outward[at]);
                 }
             }

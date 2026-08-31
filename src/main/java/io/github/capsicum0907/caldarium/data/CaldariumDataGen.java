@@ -226,13 +226,13 @@ public final class CaldariumDataGen {
                     // A cable wears the same arm whichever side of the boundary it is
                     // joined to; only a door has two jobs to tell apart.
                     parts.part().modelFile(arm(tier, side)).addModel()
-                            .condition(joint, Joint.LINE, Joint.OUTSIDE).end();
+                            .condition(joint, Joint.ALONG).end();
                     continue;
                 }
                 parts.part().modelFile(arm(tier, side)).addModel()
-                        .condition(joint, Joint.LINE).end();
+                        .condition(joint, Joint.ALONG).end();
                 parts.part().modelFile(drill(tier, side, kind.mouth())).addModel()
-                        .condition(joint, Joint.OUTSIDE).end();
+                        .condition(joint, Joint.AIMED).end();
             }
             held(kind, tier);
         }

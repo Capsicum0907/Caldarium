@@ -5,30 +5,27 @@ import java.util.Locale;
 import net.minecraft.util.StringRepresentable;
 
 /**
- * What one face of a thing that carries is joined to.
+ * What one face of a thing that carries wears.
  *
- * <p>⭐ Three answers rather than two, because a door does two different jobs and the
- * shape should say which one a face is doing. A face on to the line wears a plain arm;
- * a face on to anything else is where the block reaches out of the line, and that is
- * the face worth putting a drill on.
+ * <p>⭐ A door reaches out of the line on exactly one face, and which one is decided
+ * when it is placed and never again. That face wears the drill; every other face of it,
+ * and every face of a cable, is either a plain joint or nothing at all.
  *
- * <p>A cable has no use for the difference — it wears an arm either way — but it
- * carries the property all the same, so that one class and one rule cover everything
- * laid in a line. ⚠ Six faces of three answers is seven hundred and twenty-nine states
- * per block, which is a lot to look at and nothing at all to a game that gives redstone
- * dust twice as many.
+ * <p>⚠ The aim is kept here rather than in a facing of its own, because it is the same
+ * fact: the face that is aimed is the face that is not joined along the line. Two
+ * properties saying it would be two properties free to disagree.
  */
 public enum Joint implements StringRepresentable {
     /** Nothing energy could cross to. */
     NONE,
-    /** Another part of the line. */
-    LINE,
+    /** Joined, and wearing the plain arm every such joint wears. */
+    ALONG,
     /**
-     * Anything that is not the line, including nothing at all. ⭐ A door wears this on
-     * every face it has not given to the line, whether or not there is yet a machine
-     * on the other side: where it would work is what you aim it by.
+     * The one face a door was aimed at when it was placed. It wears the drill, and it
+     * is the only face that block reaches outside the line on — whether or not there
+     * is anything standing there yet, because where it would work is what you aim it by.
      */
-    OUTSIDE;
+    AIMED;
 
     private final String id = name().toLowerCase(Locale.ROOT);
 

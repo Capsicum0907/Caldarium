@@ -10,7 +10,7 @@
         "model": "caldarium:block/netherite_arm_down"
       },
       "when": {
-        "down": "line"
+        "down": "along"
       }
     },
     {
@@ -18,7 +18,7 @@
         "model": "caldarium:block/netherite_arm_nozzle_down"
       },
       "when": {
-        "down": "outside"
+        "down": "aimed"
       }
     },
     {
@@ -26,7 +26,7 @@
         "model": "caldarium:block/netherite_arm_up"
       },
       "when": {
-        "up": "line"
+        "up": "along"
       }
     },
     {
@@ -34,7 +34,7 @@
         "model": "caldarium:block/netherite_arm_nozzle_up"
       },
       "when": {
-        "up": "outside"
+        "up": "aimed"
       }
     },
     {
@@ -42,7 +42,7 @@
         "model": "caldarium:block/netherite_arm_north"
       },
       "when": {
-        "north": "line"
+        "north": "along"
       }
     },
     {
@@ -50,7 +50,7 @@
         "model": "caldarium:block/netherite_arm_nozzle_north"
       },
       "when": {
-        "north": "outside"
+        "north": "aimed"
       }
     },
     {
@@ -58,7 +58,7 @@
         "model": "caldarium:block/netherite_arm_south"
       },
       "when": {
-        "south": "line"
+        "south": "along"
       }
     },
     {
@@ -66,7 +66,7 @@
         "model": "caldarium:block/netherite_arm_nozzle_south"
       },
       "when": {
-        "south": "outside"
+        "south": "aimed"
       }
     },
     {
@@ -74,7 +74,7 @@
         "model": "caldarium:block/netherite_arm_west"
       },
       "when": {
-        "west": "line"
+        "west": "along"
       }
     },
     {
@@ -82,7 +82,7 @@
         "model": "caldarium:block/netherite_arm_nozzle_west"
       },
       "when": {
-        "west": "outside"
+        "west": "aimed"
       }
     },
     {
@@ -90,7 +90,7 @@
         "model": "caldarium:block/netherite_arm_east"
       },
       "when": {
-        "east": "line"
+        "east": "along"
       }
     },
     {
@@ -98,7 +98,7 @@
         "model": "caldarium:block/netherite_arm_nozzle_east"
       },
       "when": {
-        "east": "outside"
+        "east": "aimed"
       }
     }
   ]

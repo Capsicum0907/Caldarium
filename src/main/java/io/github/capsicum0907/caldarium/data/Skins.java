@@ -131,8 +131,14 @@ public final class Skins {
      */
     public static final int DRILL_STEPS = 3;
 
-    /** The flange, pressed against whatever the door is working on. */
-    public static final int DRILL_ACROSS_MOST = 10;
+    /**
+     * The flange, pressed against whatever the door is working on.
+     *
+     * <p>⚠ Even, and evenly reachable: the steps are spaced from {@link #ARM_ACROSS} up
+     * to here, and every one of them has to come out even or it cannot sit in the middle
+     * of sixteen pixels. From two, that leaves six, ten and fourteen.
+     */
+    public static final int DRILL_ACROSS_MOST = 6;
 
     /**
      * How wide one step is, counting out from the middle: evenly spaced from the

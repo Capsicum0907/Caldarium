@@ -33,8 +33,16 @@ public final class Pushing {
     private Pushing() {
     }
 
-    /** Offers up to the store's transfer rate to each side. Returns what left. */
-    public static int push(Neighbours sides, ServerLevel level, BlockPos pos, Store store) {
+    /**
+     * Offers up to the store's transfer rate to each side. Returns what left.
+     *
+     * <p>{@code aimed} is the one face a door reaches outside the line on, or null for
+     * anything with no such face. ⭐ Only the way <em>out</em> is aimed: what a block
+     * hands along the line it hands on every side, because a fitting halfway down a run
+     * is still part of the run.
+     */
+    public static int push(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
+            Direction aimed) {
         int rate = store.transferRate();
         int moved = 0;
         // ⚠ Nothing that cannot give it up may offer. Without this a sink would hand
@@ -44,6 +52,9 @@ public final class Pushing {
             return 0;
         }
         for (Direction side : Direction.values()) {
+            if (store.wiring() == Wiring.OUT && aimed != null && side != aimed) {
+                continue;
+            }
             IEnergyStorage neighbour = sides.at(level, pos, side);
             if (neighbour == null || !Store.accepts(neighbour) || !mayOffer(store, neighbour)) {
                 continue;

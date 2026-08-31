@@ -28,31 +28,25 @@ public final class Pulling {
     private Pulling() {
     }
 
-    /** Draws up to the store's transfer rate from each side. Returns what arrived. */
-    public static int pull(Neighbours sides, ServerLevel level, BlockPos pos, Store store) {
-        int rate = store.transferRate();
-        int drawn = 0;
-        if (rate <= 0) {
+    /**
+     * Draws up to the store's transfer rate from the one side it is aimed at.
+     *
+     * <p>⭐ One side, because asking is the outward half of what an importer does, and
+     * a door reaches outside the line on the face it was pointed at when it was placed.
+     */
+    public static int pull(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
+            Direction aimed) {
+        // ⚠ Room first, and never more than there is room for. Energy taken out of a
+        // neighbour that then will not fit is energy destroyed, and the only sign of it
+        // would be a machine emptying with nothing filling.
+        int wanted = Math.min(store.transferRate(), store.room());
+        if (aimed == null || wanted <= 0) {
             return 0;
         }
-        for (Direction side : Direction.values()) {
-            // ⚠ Room first, and never more than there is room for. Energy taken out
-            // of a neighbour that then will not fit is energy destroyed, and the only
-            // sign of it would be a machine emptying with nothing filling.
-            int wanted = Math.min(rate, store.room());
-            if (wanted <= 0) {
-                break;
-            }
-            IEnergyStorage neighbour = sides.at(level, pos, side);
-            if (neighbour == null || !neighbour.canExtract() || Neighbours.inLine(neighbour)) {
-                continue;
-            }
-            int taken = neighbour.extractEnergy(wanted, false);
-            if (taken > 0) {
-                store.fill(taken);
-                drawn += taken;
-            }
+        IEnergyStorage neighbour = sides.at(level, pos, aimed);
+        if (neighbour == null || !neighbour.canExtract() || Neighbours.inLine(neighbour)) {
+            return 0;
         }
-        return drawn;
+        return store.fill(neighbour.extractEnergy(wanted, false));
     }
 }
