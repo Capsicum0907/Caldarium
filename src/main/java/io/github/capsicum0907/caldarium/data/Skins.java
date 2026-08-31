@@ -82,8 +82,16 @@ public final class Skins {
     // the block and once by the shape you bump into. A number written into one of them
     // is a block you can walk through the visible half of.
 
-    /** A cable is mostly arm: enough middle to hold the face that says what it is. */
-    public static final int CORE_CABLE = 8;
+    /** How wide an arm is, and how far it reaches in from the face of the block. */
+    public static final int ARM_ACROSS = 4;
+
+    /**
+     * ⭐ <b>A cable's middle is exactly as thick as its arms.</b> It was wider, and a
+     * straight run of it came out lumpy — wide, narrow, wide, narrow — because every
+     * block showed its middle between two thinner arms. Matched, a run is one smooth
+     * square tube and the joins are invisible, which is what a length of cable is.
+     */
+    public static final int CORE_CABLE = ARM_ACROSS;
 
     /**
      * A door is nearly a whole block, because it is a machine and not a length of
@@ -91,15 +99,15 @@ public final class Skins {
      */
     public static final int CORE_DOOR = 10;
 
-    /** How wide an arm is, and how far it reaches in from the face of the block. */
-    public static final int ARM_ACROSS = 6;
-
     /**
-     * ⚠ One pixel further than the widest core is deep, on purpose. An arm that
-     * stopped exactly on the face of a core would put two surfaces in the same plane,
-     * and the two of them would flicker against each other at every distance.
+     * ⚠ Exactly as deep as the gap between the face of the block and the middle, so
+     * an arm meets a cable's middle edge to edge rather than overlapping it. Two
+     * surfaces in the same plane that <em>overlap</em> flicker against each other at
+     * every distance; two that merely touch along an edge do not. ⭐ The face where an
+     * arm meets the middle is left off the model instead, which is the other half of
+     * keeping the two out of each other's way.
      */
-    public static final int ARM_DEEP = (16 - CORE_CABLE) / 2 + 1;
+    public static final int ARM_DEEP = (SIZE - CORE_CABLE) / 2;
 
     /** The plain metal an arm is made of — the rung's colour and nothing on it. */
     public static String arm(Tier tier) {

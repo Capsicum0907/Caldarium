@@ -224,7 +224,8 @@ public final class CaldariumDataGen {
                     .parent(models().getExistingFile(mcLoc("block/block")));
             box(held, "middle", modLoc("block/" + name), middle(kind));
             for (Direction side : Direction.values()) {
-                box(held, "arm", modLoc("block/" + Skins.arm(tier)), arm(side));
+                box(held, "arm", modLoc("block/" + Skins.arm(tier)), arm(side),
+                        side.getOpposite());
             }
         }
 
@@ -245,7 +246,8 @@ public final class CaldariumDataGen {
             BlockModelBuilder model = models().getBuilder(built);
             if (drawn.add(built)) {
                 model.parent(models().getExistingFile(mcLoc("block/block")));
-                box(model, "arm", modLoc("block/" + Skins.arm(tier)), arm(side));
+                box(model, "arm", modLoc("block/" + Skins.arm(tier)), arm(side),
+                        side.getOpposite());
             }
             return model;
         }
@@ -261,12 +263,26 @@ public final class CaldariumDataGen {
          */
         private static <T extends ModelBuilder<T>> void box(T model, String slot,
                 ResourceLocation texture, int[] corners) {
-            model.texture("particle", texture).texture(slot, texture)
+            box(model, slot, texture, corners, null);
+        }
+
+        /**
+         * ⚠ {@code leaveOff} is the face an arm presses against the middle. Drawn, it
+         * would sit in the same plane as the middle's own face and the two would
+         * flicker; it is also a face nobody can see, being inside the block.
+         */
+        private static <T extends ModelBuilder<T>> void box(T model, String slot,
+                ResourceLocation texture, int[] corners, Direction leaveOff) {
+            var element = model.texture("particle", texture).texture(slot, texture)
                     .element()
                     .from(corners[0], corners[1], corners[2])
-                    .to(corners[3], corners[4], corners[5])
-                    .allFaces((face, built) -> built.texture("#" + slot))
-                    .end();
+                    .to(corners[3], corners[4], corners[5]);
+            for (Direction face : Direction.values()) {
+                if (face != leaveOff) {
+                    element.face(face).texture("#" + slot).end();
+                }
+            }
+            element.end();
         }
 
         private static int[] middle(Kind kind) {
