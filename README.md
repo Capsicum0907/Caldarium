@@ -11,13 +11,19 @@ floor keeps warm.
 > level shows in a tooltip. Both blocks open a screen — a bar for the charge, a
 > flame for the fuel, and the exact figures on hover — watched working the same day.
 >
-> **The line carries, between this mod's own blocks.** A burner, an importer, three
-> cables, an exporter and a netherite battery, watched working on 2026-08-31: the
-> burner holds nothing because what it makes leaves the same tick, each cable holds
-> one tick of it in transit, and the battery climbed from nothing to 200.36 kFE. Every
-> block in the line had grown an arm towards the next. ⚠ **The other half is not
-> watched yet** — a cable laid past another mod's machine, which is what the whole
-> boundary exists for, and an exporter feeding one, which is what an exporter is for.
+> **The line carries, and it carries across the boundary.** Watched working on
+> 2026-08-31. Between this mod's own blocks first: a burner, an importer, three
+> cables, an exporter and a netherite battery — the burner holds nothing because what
+> it makes leaves the same tick, each cable holds one tick of it in transit, and the
+> battery climbed from nothing to 200.36 kFE. Then across it, with two other mods: an
+> importer held a Generator Galore netherite generator at nothing while a diamond
+> battery of ours climbed to 151.04 kFE, and an exporter filled an Acervus energy
+> heap. Every block in the line had grown an arm towards the next, and the doors had
+> grown one towards the other mod as well.
+>
+> ⚠ **The refusal itself is still not watched** — a cable laid straight against
+> another mod's machine, showing no arm and leaving it unpowered. That is what the
+> boundary is drawn for, and it is the one claim here nobody has seen hold.
 
 ## Target
 
