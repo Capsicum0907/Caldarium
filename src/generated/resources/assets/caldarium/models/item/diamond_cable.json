@@ -210,7 +210,7 @@
   ],
   "textures": {
     "arm": "caldarium:block/diamond_arm",
-    "middle": "caldarium:block/diamond_cable",
+    "middle": "caldarium:block/diamond_arm",
     "particle": "caldarium:block/diamond_arm"
   }
 }

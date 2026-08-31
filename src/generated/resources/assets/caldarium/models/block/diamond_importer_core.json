@@ -35,7 +35,7 @@
     }
   ],
   "textures": {
-    "middle": "caldarium:block/diamond_importer",
-    "particle": "caldarium:block/diamond_importer"
+    "middle": "caldarium:block/diamond_arm",
+    "particle": "caldarium:block/diamond_arm"
   }
 }

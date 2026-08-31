@@ -127,14 +127,18 @@ public final class CaldariumDataGen {
                 }
             }
             for (Kind kind : Kind.values()) {
+                if (kind.carries()) {
+                    continue;
+                }
                 for (Tier tier : Tier.values()) {
                     draw(output, writing, Skins.kindSkin(kind, tier), Skins.kind(kind, tier));
                 }
             }
-            // The arms are the metal of the rung and nothing else: what says which of
-            // the three a block is belongs on the middle, where every side can read it.
+            // Two pictures for the things laid in lines, each drawn for the strip of
+            // itself that a shape that thin actually shows.
             for (Tier tier : Tier.values()) {
-                draw(output, writing, Skins.plainSkin(tier), Skins.arm(tier));
+                draw(output, writing, Skins.armSkin(tier), Skins.arm(tier));
+                draw(output, writing, Skins.drillSkin(tier), Skins.drill(tier));
             }
             Path panel = screens.file(
                     ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, Skins.GUI), "png");
@@ -196,7 +200,7 @@ public final class CaldariumDataGen {
                 for (Tier tier : Tier.values()) {
                     String name = Skins.kind(kind, tier);
                     if (kind.carries()) {
-                        carrier(kind, tier, name);
+                        carrier(kind, tier);
                         continue;
                     }
                     simpleBlock(CaldariumRegistry.block(kind, tier).get(),
@@ -213,9 +217,9 @@ public final class CaldariumDataGen {
          * arms are the same six pictures however they are combined, and a variant list
          * would be the same model named sixty-four times over.
          */
-        private void carrier(Kind kind, Tier tier, String name) {
+        private void carrier(Kind kind, Tier tier) {
             var parts = getMultipartBuilder(CaldariumRegistry.block(kind, tier).get());
-            parts.part().modelFile(core(name, kind)).addModel().end();
+            parts.part().modelFile(core(kind, tier)).addModel().end();
             for (Direction side : Direction.values()) {
                 EnumProperty<Joint> joint = CarrierBlock.JOINTS.get(side);
                 if (!kind.door()) {
@@ -230,7 +234,7 @@ public final class CaldariumDataGen {
                 parts.part().modelFile(drill(tier, side, kind.mouth())).addModel()
                         .condition(joint, Joint.OUTSIDE).end();
             }
-            held(kind, tier, name);
+            held(kind, tier);
         }
 
         /**
@@ -241,15 +245,17 @@ public final class CaldariumDataGen {
          * drill and one arm instead, which is the shape of what it is for: a fitting
          * with a line on one side of it and something else on the other.
          */
-        private void held(Kind kind, Tier tier, String name) {
-            var held = itemModels().getBuilder(name)
+        private void held(Kind kind, Tier tier) {
+            var held = itemModels().getBuilder(Skins.kind(kind, tier))
                     .parent(models().getExistingFile(mcLoc("block/block")));
-            box(held, "middle", modLoc("block/" + name), Skins.middleBox(kind.core()));
             ResourceLocation metal = modLoc("block/" + Skins.arm(tier));
+            box(held, "middle", metal, Skins.middleBox(kind.core()));
             if (kind.door()) {
                 box(held, "arm", metal, Skins.armBox(Direction.SOUTH), Direction.NORTH);
+                ResourceLocation steps = modLoc("block/" + Skins.drill(tier));
                 for (int step = 0; step < Skins.DRILL_STEPS; step++) {
-                    box(held, "arm", metal, Skins.drillBox(Direction.NORTH, step, kind.mouth()));
+                    box(held, "drill", steps,
+                            Skins.drillBox(Direction.NORTH, step, kind.mouth()));
                 }
                 return;
             }
@@ -259,12 +265,18 @@ public final class CaldariumDataGen {
         }
 
         /** The middle, wearing the face that says which of the three it is. */
-        private ModelFile core(String name, Kind kind) {
-            String built = name + "_core";
+        /**
+         * The middle. ⭐ The same plain metal as the arms, so a run through a door has
+         * neither a bulge nor a seam in it: at this thickness a middle shows two pixels
+         * of picture, and two pixels cannot say anything a shape does not say better.
+         */
+        private ModelFile core(Kind kind, Tier tier) {
+            String built = Skins.kind(kind, tier) + "_core";
             BlockModelBuilder model = models().getBuilder(built);
             if (drawn.add(built)) {
                 model.parent(models().getExistingFile(mcLoc("block/block")));
-                box(model, "middle", modLoc("block/" + name), Skins.middleBox(kind.core()));
+                box(model, "middle", modLoc("block/" + Skins.arm(tier)),
+                        Skins.middleBox(kind.core()));
             }
             return model;
         }
@@ -281,7 +293,7 @@ public final class CaldariumDataGen {
             if (drawn.add(built)) {
                 model.parent(models().getExistingFile(mcLoc("block/block")));
                 for (int step = 0; step < Skins.DRILL_STEPS; step++) {
-                    box(model, "arm", modLoc("block/" + Skins.arm(tier)),
+                    box(model, "drill", modLoc("block/" + Skins.drill(tier)),
                             Skins.drillBox(side, step, mouth));
                 }
             }

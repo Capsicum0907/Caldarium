@@ -150,7 +150,18 @@ public final class Skins {
      * arm exactly: a step short of it leaves a gap between the drill and the middle,
      * and an arm whose depth does not divide by three is what a thinner wire gives.
      */
-    private static int drillAt(int step) {
+    /**
+     * Where one step starts and stops along the arm.
+     *
+     * <p>⚠ Divided rather than multiplied by a fixed depth. The steps have to fill an
+     * arm exactly: a step short of it leaves a gap between the drill and the middle,
+     * and an arm whose depth does not divide by three is what a thinner wire gives.
+     *
+     * <p>⭐ Read by the picture as well as by the shape. The side of a step shows the
+     * rows of the texture between the same two numbers, so a ring drawn here is a band
+     * on that step and the two cannot fall out of step with each other.
+     */
+    public static int drillAt(int step) {
         return step * ARM_DEEP / DRILL_STEPS;
     }
 
@@ -202,9 +213,87 @@ public final class Skins {
         return new int[] { in, in, in, in + core, in + core, in + core };
     }
 
-    /** The plain metal an arm is made of — the rung's colour and nothing on it. */
+    /** The metal a length of wire is made of, in the colour of its rung. */
     public static String arm(Tier tier) {
         return tier.id() + "_arm";
+    }
+
+    /** The metal a drill is made of. Banded, where an arm is not. */
+    public static String drill(Tier tier) {
+        return tier.id() + "_drill";
+    }
+
+    /** How much brighter the lit side of a wire is than the shaded one. */
+    private static final int ROUND_LIT = 20;
+
+    /** How much brighter the outermost band of a drill is, and how dark a joint. */
+    private static final int EDGE_LIT = 14;
+    private static final int SCORE = 26;
+
+    /**
+     * A length of wire.
+     *
+     * <p>⭐ <b>Drawn for where it is read, which is two rows and two columns.</b> No UV
+     * is named on the models, so the game cuts the picture out of the shape: the four
+     * long sides of a two-pixel post show the middle two columns of this, and the
+     * middle two rows, and nothing else — not the edge, not a corner, not the middle of
+     * the face. A picture drawn for a whole block face is a picture this size never
+     * shows, which is what the plate was, and why a run of cable came out as a smear.
+     *
+     * <p>So the shading is put exactly there: one side of the span light and the other
+     * dark, which is what makes a square post read as a round wire from any side.
+     */
+    public static int[][] armSkin(Tier tier) {
+        int body = mix(BODY, tier.colour(), EDGE_TINT);
+        int[][] pixels = new int[SIZE][SIZE];
+        for (int y = 0; y < SIZE; y++) {
+            for (int x = 0; x < SIZE; x++) {
+                pixels[y][x] = 0xFF000000 | shift(grain(body, x, y), round(x) + round(y));
+            }
+        }
+        return pixels;
+    }
+
+    /** Light on the near edge of the wire's own span, dark on the far one, flat outside. */
+    private static int round(int at) {
+        int near = (SIZE - ARM_ACROSS) / 2;
+        if (at < near || at >= near + ARM_ACROSS) {
+            return 0;
+        }
+        return ROUND_LIT - 2 * ROUND_LIT * (at - near) / Math.max(1, ARM_ACROSS - 1);
+    }
+
+    /**
+     * A drill.
+     *
+     * <p>⭐ <b>Square rings, because square rings are what a drill shows.</b> Each step
+     * is a box a little wider than the last, and the side of a box that wide shows the
+     * rows of the picture at exactly its own depth — so the ring at {@link #drillAt} is
+     * a band on the step that meets there. The steps are scored apart by that, and the
+     * outermost ring is lifted, which is the edge you see against whatever it works on.
+     *
+     * <p>Four-fold symmetric on purpose: every step has four sides and they have to be
+     * the same picture, which a gradient across the square would not give.
+     */
+    public static int[][] drillSkin(Tier tier) {
+        int body = mix(BODY, tier.colour(), EDGE_TINT);
+        int[][] pixels = new int[SIZE][SIZE];
+        for (int y = 0; y < SIZE; y++) {
+            for (int x = 0; x < SIZE; x++) {
+                int ring = Math.min(Math.min(x, y), Math.min(SIZE - 1 - x, SIZE - 1 - y));
+                pixels[y][x] = 0xFF000000 | shift(grain(body, x, y), band(ring));
+            }
+        }
+        return pixels;
+    }
+
+    private static int band(int ring) {
+        for (int step = 1; step < DRILL_STEPS; step++) {
+            if (ring == drillAt(step)) {
+                return -SCORE;
+            }
+        }
+        return ring < drillAt(1) ? EDGE_LIT : 0;
     }
 
     /** The name of the texture for a generator, resting or working. */
@@ -244,12 +333,16 @@ public final class Skins {
             }
         }
         for (Kind kind : Kind.values()) {
+            if (kind.carries()) {
+                continue;
+            }
             for (Tier tier : Tier.values()) {
                 names.add(kind(kind, tier));
             }
         }
         for (Tier tier : Tier.values()) {
             names.add(arm(tier));
+            names.add(drill(tier));
         }
         return names;
     }
@@ -315,19 +408,12 @@ public final class Skins {
                         Math.min(span - 1 - across, span - 1 - down));
                 yield in == 1 || in == 3;
             }
-            // A crossing: the line goes through, whichever way it was laid.
-            case CABLE -> middle(across) || middle(down);
-            // Pointing in, at the block. What comes this way is being drawn in.
-            case IMPORTER -> Math.abs(2 * across - (span - 1)) <= span - down;
-            // The same arrow turned over: this is where it leaves.
-            case EXPORTER -> Math.abs(2 * across - (span - 1)) <= down + 1;
+            // ⭐ Nothing at all. These have no face to put a window in: two pixels of
+            // wire shows two pixels of picture, and what they are is said by the shape
+            // instead — a drill that widens towards what it draws from, or narrows
+            // towards what it feeds. An arrow here was read by nobody.
+            case CABLE, IMPORTER, EXPORTER -> false;
         };
-    }
-
-    /** The two columns, or rows, that run through the centre of the window. */
-    private static boolean middle(int at) {
-        int span = WINDOW_TO - WINDOW_FROM;
-        return at == span / 2 - 1 || at == span / 2;
     }
 
     /**

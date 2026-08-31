@@ -35,7 +35,7 @@
     }
   ],
   "textures": {
-    "middle": "caldarium:block/netherite_cable",
-    "particle": "caldarium:block/netherite_cable"
+    "middle": "caldarium:block/netherite_arm",
+    "particle": "caldarium:block/netherite_arm"
   }
 }

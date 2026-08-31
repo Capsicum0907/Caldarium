@@ -35,7 +35,7 @@
     }
   ],
   "textures": {
-    "middle": "caldarium:block/gold_importer",
-    "particle": "caldarium:block/gold_importer"
+    "middle": "caldarium:block/gold_arm",
+    "particle": "caldarium:block/gold_arm"
   }
 }

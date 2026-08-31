@@ -65,22 +65,22 @@
     {
       "faces": {
         "down": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "east": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "north": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "south": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "up": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "west": {
-          "texture": "#arm"
+          "texture": "#drill"
         }
       },
       "from": [
@@ -97,22 +97,22 @@
     {
       "faces": {
         "down": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "east": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "north": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "south": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "up": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "west": {
-          "texture": "#arm"
+          "texture": "#drill"
         }
       },
       "from": [
@@ -129,22 +129,22 @@
     {
       "faces": {
         "down": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "east": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "north": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "south": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "up": {
-          "texture": "#arm"
+          "texture": "#drill"
         },
         "west": {
-          "texture": "#arm"
+          "texture": "#drill"
         }
       },
       "from": [
@@ -161,7 +161,8 @@
   ],
   "textures": {
     "arm": "caldarium:block/gold_arm",
-    "middle": "caldarium:block/gold_exporter",
-    "particle": "caldarium:block/gold_arm"
+    "drill": "caldarium:block/gold_drill",
+    "middle": "caldarium:block/gold_arm",
+    "particle": "caldarium:block/gold_drill"
   }
 }

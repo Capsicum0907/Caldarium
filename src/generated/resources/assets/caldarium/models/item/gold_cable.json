@@ -210,7 +210,7 @@
   ],
   "textures": {
     "arm": "caldarium:block/gold_arm",
-    "middle": "caldarium:block/gold_cable",
+    "middle": "caldarium:block/gold_arm",
     "particle": "caldarium:block/gold_arm"
   }
 }
