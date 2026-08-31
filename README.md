@@ -115,6 +115,11 @@ through it, an importer draws out of what is there, an exporter gives to it. Eve
 else about them is the same block, so all three join to each other and to a battery of
 ours the way any two cables do.
 
+⭐ **And that face is the end of the line rather than part of it.** Through it a door
+reaches anything that is not the line and nothing that is, so a cable behind a drill is
+not joined to it — from either side, because a door offers nothing to be read on that
+face at all. A line that carried on past its own end would have no end.
+
 ⚠ The doors had a boundary of their own before this — an importer that accepted
 nothing, an exporter that would not offer to the line — and it was true to its own
 rules and impossible to hold in your head: two exporters side by side would not join,

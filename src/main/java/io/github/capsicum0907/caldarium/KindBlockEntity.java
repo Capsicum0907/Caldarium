@@ -93,6 +93,22 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         return kind;
     }
 
+    /**
+     * Whether energy can be got at from this side at all.
+     *
+     * <p>⚠ Not on the face a door is aimed at. That face is the end of the line, and
+     * anything that could read the block there would join to it from that side — a
+     * cable would grow an arm into the back of a drill and push through it, which is
+     * the line carrying on past its own end.
+     *
+     * <p>The block still reaches <em>out</em> through that face, because reaching out
+     * is asking the neighbour rather than answering it.
+     */
+    public boolean reachable(Direction side) {
+        return side == null || !kind.door()
+                || getBlockState().getValue(CarrierBlock.JOINTS.get(side)) != Joint.AIMED;
+    }
+
     /** Nothing here burns. A kind that did would be a row of {@link Generator}. */
     @Override
     public boolean burns() {
@@ -121,8 +137,8 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
             Pulling.pull(machine.sides, server, pos, machine.store, aimed);
         }
         if (machine.kind.pushes()) {
-            Pushing.push(machine.sides, server, pos, machine.store,
-                    machine.kind.gives() ? aimed : null);
+            Pushing.push(machine.sides, server, pos, machine.store, aimed,
+                    machine.kind.gives());
         }
     }
 

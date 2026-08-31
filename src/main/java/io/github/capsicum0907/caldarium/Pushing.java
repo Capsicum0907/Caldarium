@@ -36,13 +36,14 @@ public final class Pushing {
     /**
      * Offers up to the store's transfer rate to each side. Returns what left.
      *
-     * <p>{@code aimed} is the one face a door gives through, or null for anything that
-     * gives through none. ⭐ It widens the rule rather than narrowing it: a block offers
-     * to its own mod's blocks on every side, and through that one face to anything at
-     * all. Which is the whole of what an exporter is.
+     * <p>{@code aimed} is the face a door was pointed at, or null for anything that
+     * points nowhere, and {@code gives} says whether it hands anything through it.
+     * ⭐ That face is the end of the line and not part of it: through it a block reaches
+     * anything that is <em>not</em> the line, and on every other side it offers to this
+     * mod's own blocks the way a cable does.
      */
     public static int push(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
-            Direction aimed) {
+            Direction aimed, boolean gives) {
         int rate = store.transferRate();
         int moved = 0;
         // ⚠ Nothing that cannot give it up may offer. Without this a sink would hand
@@ -54,7 +55,7 @@ public final class Pushing {
         for (Direction side : Direction.values()) {
             IEnergyStorage neighbour = sides.at(level, pos, side);
             if (neighbour == null || !Store.accepts(neighbour)
-                    || !mayOffer(store, neighbour, side == aimed)) {
+                    || !mayOffer(store, neighbour, side == aimed, gives)) {
                 continue;
             }
             int offered = Math.min(rate, store.getEnergyStored());
@@ -82,8 +83,12 @@ public final class Pushing {
      * {@link Store.Role#SOURCE} and so is never held back: what it makes has nowhere
      * else to go.
      */
-    private static boolean mayOffer(Store from, IEnergyStorage to, boolean aimedAt) {
-        if (!aimedAt && !from.wiring().mayOffer(Neighbours.ours(to))) {
+    private static boolean mayOffer(Store from, IEnergyStorage to, boolean aimedAt,
+            boolean gives) {
+        boolean reaches = aimedAt
+                ? gives && !Neighbours.inLine(to)
+                : from.wiring().mayOffer(Neighbours.ours(to));
+        if (!reaches) {
             return false;
         }
         if (!(to instanceof Store peer)) {
