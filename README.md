@@ -258,4 +258,4 @@ none of the others: [Fodina](https://github.com/Capsicum0907/Fodina),
 
 ## License
 
-Not decided yet. Until it is, the metadata says All Rights Reserved.
+MIT, the same as the rest of the set. See [LICENSE](LICENSE).
