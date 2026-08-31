@@ -153,8 +153,10 @@ them. The arm makes the rule something you look at rather than something you wor
 **And where a door reaches out of the line, the arm is a drill instead**: three square
 steps between the thickness of the wire and a flange. A door has two jobs at once —
 along the line and across the boundary — and the drill is which of its faces is doing
-the second. An importer standing in a run of cable with no drill on it has nothing to
-import from, and says so without being asked.
+the second, and it wears one on every face it has not given to the line — whether or
+not anything is standing there yet, because where it would work is what you aim it by.
+An importer walled in by cable has no drill left on it and nothing it could import
+from, and says so without being asked.
 
 ⭐ **The same three steps go on either way round, and which way round is what the block
 does.** An importer is a mouth and puts its widest step against what it draws from; an

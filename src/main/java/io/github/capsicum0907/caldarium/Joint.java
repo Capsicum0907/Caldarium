@@ -23,7 +23,11 @@ public enum Joint implements StringRepresentable {
     NONE,
     /** Another part of the line. */
     LINE,
-    /** Anything that is not the line: this is where a door does its work. */
+    /**
+     * Anything that is not the line, including nothing at all. ⭐ A door wears this on
+     * every face it has not given to the line, whether or not there is yet a machine
+     * on the other side: where it would work is what you aim it by.
+     */
     OUTSIDE;
 
     private final String id = name().toLowerCase(Locale.ROOT);

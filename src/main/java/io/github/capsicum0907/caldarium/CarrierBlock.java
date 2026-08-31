@@ -127,10 +127,13 @@ public class CarrierBlock extends KindBlock {
     private Joint joint(Level level, BlockPos pos, Direction side) {
         IEnergyStorage neighbour = level.getCapability(Capabilities.EnergyStorage.BLOCK,
                 pos.relative(side), side.getOpposite());
-        if (neighbour == null || !kind().touches(neighbour)) {
-            return Joint.NONE;
+        if (neighbour != null && kind().touches(neighbour)) {
+            return Neighbours.inLine(neighbour) ? Joint.LINE : Joint.OUTSIDE;
         }
-        return Neighbours.inLine(neighbour) ? Joint.LINE : Joint.OUTSIDE;
+        // A cable with nothing there has nothing to show. A door does: which of its
+        // faces are the ones that reach out of the line is worth knowing before the
+        // machine is placed, not after, because that is what you are aiming it at.
+        return kind().door() ? Joint.OUTSIDE : Joint.NONE;
     }
 
     /** The six faces, read as one number: the index of the shape they add up to. */
