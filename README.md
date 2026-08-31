@@ -172,9 +172,9 @@ anything downstream has to make.
 The reason to build these rather than lean on a cable mod is the handling. **No
 wrench.** A cable has no direction at all; a door has one and is aimed by being put
 down, at whatever it was placed against — the way a hopper faces the block it was set
-on, which is also the block an importer is made out of. ⚠ Except into the line: what
-you clicked there was the cable you were extending, so it turns round, which is where
-the machine is in that arrangement anyway. **No
+on, which is also the block an importer is made out of. With no exception: a door
+aimed somewhere useless shows it in the drill the moment it lands, which is one break
+and one place to put right, and cheaper than a rule with an "except" in it. **No
 upgrade to fit**, because the speed is the tier. **No window to open**, because
 there is nothing to configure — a right-click passes straight through, so a cable is
 something you can build against rather than something that opens. A pipe that needs

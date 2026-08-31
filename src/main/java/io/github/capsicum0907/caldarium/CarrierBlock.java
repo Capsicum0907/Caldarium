@@ -107,24 +107,23 @@ public class CarrierBlock extends KindBlock {
     }
 
     /**
-     * Which way a door points, decided once and kept.
+     * Which way a door points, decided once and kept: at what you put it against, the
+     * way a hopper faces the block it was set on — which is also the block an importer
+     * is made out of. No wrench, because aiming it is the same act as placing it.
      *
-     * <p>⭐ At what you put it against, the way a hopper faces the block it was set on
-     * — which is also the block an importer is made out of. No wrench, because aiming
-     * it is the same act as placing it.
+     * <p>⚠ <b>And with no exception, deliberately.</b> This turned round when it was
+     * aimed into the line, on the grounds that what you had clicked was the cable you
+     * were extending. It was helpful in that one arrangement and baffling everywhere
+     * else — a door aimed at a door reversed, because a door is part of the line too —
+     * and a rule you cannot state without an "except" is a rule nobody can aim by.
      *
-     * <p>⚠ Except into the line. What you clicked there was the cable you are
-     * extending, and the one face that reaches outside would be pointed at the inside;
-     * so it turns round, which is where the machine is in that arrangement anyway.
+     * <p>Aimed somewhere useless it is not stuck: the drill is drawn the moment it is
+     * placed, so a wrong aim is a thing you see rather than a thing you find out about,
+     * and it is one break and one place to fix. That is what a shape that tells the
+     * truth buys, and it is cheaper than being clever.
      */
     private Direction aim(BlockPlaceContext context) {
-        if (!kind().door()) {
-            return null;
-        }
-        Direction at = context.getClickedFace().getOpposite();
-        return Neighbours.inLine(energy(context.getLevel(), context.getClickedPos(), at))
-                ? at.getOpposite()
-                : at;
+        return kind().door() ? context.getClickedFace().getOpposite() : null;
     }
 
     /**
