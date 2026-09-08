@@ -1,0 +1,105 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "caldarium:block/copper_importer_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_down"
+      },
+      "when": {
+        "down": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_mouth_down"
+      },
+      "when": {
+        "down": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_up"
+      },
+      "when": {
+        "up": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_mouth_up"
+      },
+      "when": {
+        "up": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_north"
+      },
+      "when": {
+        "north": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_mouth_north"
+      },
+      "when": {
+        "north": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_south"
+      },
+      "when": {
+        "south": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_mouth_south"
+      },
+      "when": {
+        "south": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_west"
+      },
+      "when": {
+        "west": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_mouth_west"
+      },
+      "when": {
+        "west": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_east"
+      },
+      "when": {
+        "east": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_mouth_east"
+      },
+      "when": {
+        "east": "aimed"
+      }
+    }
+  ]
+}

@@ -20,12 +20,19 @@ import net.minecraft.util.StringRepresentable;
  * kept somewhere else is a table that can quietly run out and start repeating.
  */
 public enum Tier implements StringRepresentable {
+    COPPER(0xE07C57),
     IRON(0xD5DBE0),
     GOLD(0xF0C246),
     DIAMOND(0x5BE0D6),
     // ⚠ The ingot highlight rather than the block face. Netherite drawn true came out
     // at 0x5B4E52 against a 0x51565A window: a top tier that looked like a blank plate.
-    NETHERITE(0xB0A2A5);
+    NETHERITE(0xB0A2A5),
+    // The three star rungs are one family and still have to be told apart, so they walk
+    // one hue: ivory, then violet as they compress. ⚠ The first is close to iron in
+    // lightness and is told apart by being warm where iron is cold.
+    NETHER_STAR(0xF3EFD8),
+    COMPRESSED_NETHER_STAR(0xCBBCE8),
+    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF);
 
     public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 
@@ -47,6 +54,23 @@ public enum Tier implements StringRepresentable {
     /** The metal this rung is made of, for anything that has to look like it. */
     public int colour() {
         return colour;
+    }
+
+    /**
+     * The rungs up to and including that one, or none at all for a row that has no
+     * tiers.
+     *
+     * <p>⚠ <b>Rows do not all reach the same height.</b> The ladder is declared here in
+     * full and each row says how far up it goes — the same shape as a generator saying
+     * whether it has rungs at all. A row that stopped where the ladder stops would have
+     * to be edited every time the ladder grew, which is the arrangement that lets a
+     * block appear on a rung nobody meant it to be on.
+     */
+    public static java.util.List<Tier> upTo(Tier top) {
+        if (top == null) {
+            return java.util.List.of();
+        }
+        return java.util.List.of(values()).subList(0, top.ordinal() + 1);
     }
 
     /** The one below, or nothing when this is the first rung. */

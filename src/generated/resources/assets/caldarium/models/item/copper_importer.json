@@ -1,0 +1,168 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#middle"
+        },
+        "east": {
+          "texture": "#middle"
+        },
+        "north": {
+          "texture": "#middle"
+        },
+        "south": {
+          "texture": "#middle"
+        },
+        "up": {
+          "texture": "#middle"
+        },
+        "west": {
+          "texture": "#middle"
+        }
+      },
+      "from": [
+        7,
+        7,
+        7
+      ],
+      "to": [
+        9,
+        9,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        7,
+        9
+      ],
+      "to": [
+        9,
+        9,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        7,
+        7,
+        4
+      ],
+      "to": [
+        9,
+        9,
+        7
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        6,
+        6,
+        2
+      ],
+      "to": [
+        10,
+        10,
+        4
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        5,
+        5,
+        0
+      ],
+      "to": [
+        11,
+        11,
+        2
+      ]
+    }
+  ],
+  "textures": {
+    "arm": "caldarium:block/copper_arm",
+    "drill": "caldarium:block/copper_drill",
+    "middle": "caldarium:block/copper_arm",
+    "particle": "caldarium:block/copper_drill"
+  }
+}

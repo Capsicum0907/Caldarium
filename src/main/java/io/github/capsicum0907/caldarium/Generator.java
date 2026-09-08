@@ -20,13 +20,13 @@ import com.mojang.serialization.Codec;
  * <p>Numbers are not here — see {@link CaldariumConfig}. A row says what a generator
  * <em>is</em>; how much it makes is a setting.
  */
-public record Generator(String id, Source source, boolean tiered) {
+public record Generator(String id, Source source, Tier top) {
     /** Whatever a furnace would burn, put in a slot by hand or by a hopper. */
-    public static final Generator BURNER = new Generator("burner", Source.ITEM, false);
+    public static final Generator BURNER = new Generator("burner", Source.ITEM, null);
     /** The same fuels, molten, kept in a tank a pipe or a bucket can fill. */
-    public static final Generator CRUCIBLE = new Generator("crucible", Source.FLUID, false);
+    public static final Generator CRUCIBLE = new Generator("crucible", Source.FLUID, null);
     /** Daylight. Nothing goes in, so the only way to get more is a better panel. */
-    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, true);
+    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.NETHER_STAR);
 
     private static final List<Generator> ALL = List.of(BURNER, CRUCIBLE, SOLAR);
 
@@ -52,11 +52,11 @@ public record Generator(String id, Source source, boolean tiered) {
     private static List<Made> expand() {
         List<Made> made = new ArrayList<>();
         for (Generator generator : ALL) {
-            if (!generator.tiered) {
+            if (generator.top == null) {
                 made.add(new Made(generator, null));
                 continue;
             }
-            for (Tier tier : Tier.values()) {
+            for (Tier tier : Tier.upTo(generator.top)) {
                 made.add(new Made(generator, tier));
             }
         }

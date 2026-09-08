@@ -2,20 +2,17 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
-    "B": {
-      "item": "minecraft:redstone_block"
-    },
-    "I": {
+    "M": {
       "item": "minecraft:iron_ingot"
     },
-    "R": {
-      "item": "minecraft:redstone"
+    "P": {
+      "item": "caldarium:copper_battery"
     }
   },
   "pattern": [
-    "IRI",
-    "RBR",
-    "IRI"
+    " M ",
+    "MPM",
+    " M "
   ],
   "result": {
     "count": 1,

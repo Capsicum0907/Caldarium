@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_hopper": {
+    "has_copper_importer": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:hopper"
+            "items": "caldarium:copper_importer"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_hopper"
+      "has_copper_importer"
     ]
   ],
   "rewards": {

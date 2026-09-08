@@ -1,0 +1,41 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#middle"
+        },
+        "east": {
+          "texture": "#middle"
+        },
+        "north": {
+          "texture": "#middle"
+        },
+        "south": {
+          "texture": "#middle"
+        },
+        "up": {
+          "texture": "#middle"
+        },
+        "west": {
+          "texture": "#middle"
+        }
+      },
+      "from": [
+        7,
+        7,
+        7
+      ],
+      "to": [
+        9,
+        9,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "middle": "caldarium:block/nether_star_arm",
+    "particle": "caldarium:block/nether_star_arm"
+  }
+}

@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_glass": {
+    "has_copper_solar_panel": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:glass"
+            "items": "caldarium:copper_solar_panel"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_glass"
+      "has_copper_solar_panel"
     ]
   ],
   "rewards": {

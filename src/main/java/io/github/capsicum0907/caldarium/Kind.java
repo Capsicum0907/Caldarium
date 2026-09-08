@@ -29,15 +29,15 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  */
 public enum Kind implements StringRepresentable {
     /** Holds energy and hands it on. A row of these is a line that carries. */
-    BATTERY("battery", Store.Role.BUFFER, Wiring.OPEN, 1, false, Aim.NONE),
+    BATTERY("battery", Store.Role.BUFFER, Wiring.OPEN, 1, false, Aim.NONE, Tier.NETHER_STAR),
     /** Takes energy in and puts it into what is held in it. Wider at every tier. */
-    CHARGER("charger", Store.Role.SINK, Wiring.OPEN, 3, true, Aim.NONE),
+    CHARGER("charger", Store.Role.SINK, Wiring.OPEN, 3, true, Aim.NONE, Tier.NETHER_STAR),
     /**
      * Distance. It offers only to this mod's own blocks, which is what lets one be
      * laid past somebody else's machine without powering it — and so what makes a
      * corridor of cable possible at all.
      */
-    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.NONE),
+    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.NONE, Tier.NETHER_STAR),
     /**
      * The way in: it draws out of anything that is not the line and hands it to the
      * line. Other mods are full of machines that wait to be asked, and this is the
@@ -48,9 +48,9 @@ public enum Kind implements StringRepresentable {
      * went in that way would be energy in the one block whose job is to be where
      * energy starts, and the line would have two ways to move it.
      */
-    IMPORTER("importer", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.DRAWS),
+    IMPORTER("importer", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.DRAWS, Tier.NETHER_STAR),
     /** The way out: the only block here that offers to another mod's machine. */
-    EXPORTER("exporter", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.GIVES);
+    EXPORTER("exporter", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.GIVES, Tier.NETHER_STAR);
 
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -63,14 +63,25 @@ public enum Kind implements StringRepresentable {
     private final boolean widens;
     private final Aim aim;
 
+    /**
+     * The highest rung this one is made on.
+     *
+     * <p>⚠ <b>Not every kind climbs the whole ladder.</b> Compressing a star is worth
+     * doing for something that holds — it is the same block holding eight times as much
+     * — and worthless for something that carries, because a line is already limited by
+     * what is at each end of it rather than by the line.
+     */
+    private final Tier top;
+
     Kind(String suffix, Store.Role role, Wiring wiring, int slots, boolean widens,
-            Aim aim) {
+            Aim aim, Tier top) {
         this.suffix = suffix;
         this.role = role;
         this.wiring = wiring;
         this.slots = slots;
         this.widens = widens;
         this.aim = aim;
+        this.top = top;
     }
 
     /** The name in the registry, the model, the recipe and the language file. */
@@ -129,6 +140,28 @@ public enum Kind implements StringRepresentable {
     /** Whether it is a thing that carries rather than a thing that is served. */
     public boolean carries() {
         return wiring != Wiring.OPEN;
+    }
+
+    /** The highest rung this one is made on. See {@link Tier#upTo}. */
+    public Tier top() {
+        return top;
+    }
+
+    /**
+     * The highest rung anything laid in a line reaches.
+     *
+     * <p>The arm and the drill are drawn once per rung and shared by every kind that
+     * carries, so the pictures stop where the last of those stops rather than where the
+     * ladder does.
+     */
+    public static Tier highestCarried() {
+        Tier highest = null;
+        for (Kind kind : values()) {
+            if (kind.carries() && (highest == null || kind.top.ordinal() > highest.ordinal())) {
+                highest = kind.top;
+            }
+        }
+        return highest;
     }
 
     /** Whether it is aimed at all, and so wears a drill on the face it points at. */

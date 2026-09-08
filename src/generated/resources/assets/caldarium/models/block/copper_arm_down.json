@@ -1,0 +1,38 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        7,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "arm": "caldarium:block/copper_arm",
+    "particle": "caldarium:block/copper_arm"
+  }
+}

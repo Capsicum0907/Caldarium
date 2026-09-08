@@ -342,11 +342,11 @@ public final class Skins {
             if (kind.carries()) {
                 continue;
             }
-            for (Tier tier : Tier.values()) {
+            for (Tier tier : Tier.upTo(kind.top())) {
                 names.add(kind(kind, tier));
             }
         }
-        for (Tier tier : Tier.values()) {
+        for (Tier tier : Tier.upTo(Kind.highestCarried())) {
             names.add(arm(tier));
             names.add(drill(tier));
         }

@@ -44,17 +44,17 @@ public final class CaldariumConfig {
         return switch (kind) {
             // A battery is capacity; a charger is a doorway, so it is quicker and
             // holds only enough to keep working while it waits for more.
-            case BATTERY -> new First(400_000, 2_000);
-            case CHARGER -> new First(100_000, 4_000);
+            case BATTERY -> new First(50_000, 250);
+            case CHARGER -> new First(12_500, 500);
             // Four times what a battery moves, and a fiftieth of what one holds.
-            case CABLE, IMPORTER, EXPORTER -> new First(16_000, 8_000);
+            case CABLE, IMPORTER, EXPORTER -> new First(2_000, 1_000);
         };
     }
 
     /** A generator holds little: it is a source, not a store. */
-    private static final int GENERATOR_CAPACITY = 40_000;
-    private static final int GENERATOR_TRANSFER = 1_000;
-    private static final int GENERATOR_PER_TICK = 40;
+    private static final int GENERATOR_CAPACITY = 5_000;
+    private static final int GENERATOR_TRANSFER = 125;
+    private static final int GENERATOR_PER_TICK = 5;
 
     /** Ten buckets, which is what a tank the size of the block ought to feel like. */
     private static final int TANK = 10_000;
@@ -126,7 +126,7 @@ public final class CaldariumConfig {
             Map<Tier, Rates> tiers = new LinkedHashMap<>();
             builder.comment("One section per tier, in the order the tiers are declared.")
                     .push(kind.getSerializedName());
-            for (Tier tier : Tier.values()) {
+            for (Tier tier : Tier.upTo(kind.top())) {
                 builder.push(tier.id());
                 tiers.put(tier, new Rates(
                         builder.comment("Forge Energy it holds.")
@@ -152,9 +152,15 @@ public final class CaldariumConfig {
      * whatever the numbers are. Meeting it is not an error — it is the largest
      * battery that can honestly report itself.
      */
-    /** The same, for something that may or may not stand on a rung at all. */
+    /**
+     * The same, for something that may or may not stand on a rung at all.
+     *
+     * <p>⚠ <b>A machine with no rung of its own stands where iron stands.</b> Not on the
+     * first rung: copper was added under iron and a burner did not get worse for it. The
+     * numbers above are written for iron, and the untiered ones are the same numbers.
+     */
     private static int atRung(int first, Tier tier) {
-        return tier == null ? first : stepped(first, tier);
+        return stepped(first, tier == null ? Tier.IRON : tier);
     }
 
     private static int stepped(int first, Tier tier) {

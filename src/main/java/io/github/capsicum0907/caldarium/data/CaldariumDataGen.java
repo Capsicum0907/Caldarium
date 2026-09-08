@@ -130,13 +130,13 @@ public final class CaldariumDataGen {
                 if (kind.carries()) {
                     continue;
                 }
-                for (Tier tier : Tier.values()) {
+                for (Tier tier : Tier.upTo(kind.top())) {
                     draw(output, writing, Skins.kindSkin(kind, tier), Skins.kind(kind, tier));
                 }
             }
             // Two pictures for the things laid in lines, each drawn for the strip of
             // itself that a shape that thin actually shows.
-            for (Tier tier : Tier.values()) {
+            for (Tier tier : Tier.upTo(Kind.highestCarried())) {
                 draw(output, writing, Skins.armSkin(tier), Skins.arm(tier));
                 draw(output, writing, Skins.drillSkin(tier), Skins.drill(tier));
             }
@@ -197,7 +197,7 @@ public final class CaldariumDataGen {
                 itemModels().withExistingParent(cold, modLoc("block/" + cold));
             }
             for (Kind kind : Kind.values()) {
-                for (Tier tier : Tier.values()) {
+                for (Tier tier : Tier.upTo(kind.top())) {
                     String name = Skins.kind(kind, tier);
                     if (kind.carries()) {
                         carrier(kind, tier);
@@ -403,7 +403,7 @@ public final class CaldariumDataGen {
                 add(CaldariumRegistry.generators().get(made).get(), titled(made.id()));
             }
             for (Kind kind : Kind.values()) {
-                for (Tier tier : Tier.values()) {
+                for (Tier tier : Tier.upTo(kind.top())) {
                     add(CaldariumRegistry.block(kind, tier).get(),
                             titled(tier.id()) + " " + titled(kind.getSerializedName()));
                 }
@@ -447,7 +447,7 @@ public final class CaldariumDataGen {
         List<Block> blocks = new ArrayList<>();
         CaldariumRegistry.generators().values().forEach(block -> blocks.add(block.get()));
         for (Kind kind : Kind.values()) {
-            for (Tier tier : Tier.values()) {
+            for (Tier tier : Tier.upTo(kind.top())) {
                 blocks.add(CaldariumRegistry.block(kind, tier).get());
             }
         }
@@ -552,7 +552,7 @@ public final class CaldariumDataGen {
             // below in a frame of its own metal, so a tier added to the table brings
             // its recipe with it and the ladder cannot grow a missing step.
             for (Kind kind : Kind.values()) {
-                for (Tier tier : Tier.values()) {
+                for (Tier tier : Tier.upTo(kind.top())) {
                     recipe(output, kind, tier);
                 }
             }
@@ -659,10 +659,19 @@ public final class CaldariumDataGen {
         /** What a rung is made of. The ladder is the vanilla one everybody knows. */
         private static ItemLike metal(Tier tier) {
             return switch (tier) {
+                case COPPER -> Items.COPPER_INGOT;
                 case IRON -> Items.IRON_INGOT;
                 case GOLD -> Items.GOLD_INGOT;
                 case DIAMOND -> Items.DIAMOND;
                 case NETHERITE -> Items.NETHERITE_INGOT;
+                case NETHER_STAR -> Items.NETHER_STAR;
+                // ⚠ No block stands on these yet, so there is nothing to make one out
+                // of. A compressed star is not a thing the game has - whoever puts a
+                // machine on one of these rungs is adding the item in the same breath,
+                // and this is here to say so out loud rather than to pick a stand-in.
+                case COMPRESSED_NETHER_STAR, SUPER_COMPRESSED_NETHER_STAR ->
+                        throw new IllegalStateException("no material for " + tier.id()
+                                + " - add the item when a machine first reaches it");
             };
         }
     }

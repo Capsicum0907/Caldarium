@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_netherite_importer": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:netherite_importer"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:nether_star_importer"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_netherite_importer"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:nether_star_importer"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "minecraft:dropper"
+    },
+    "M": {
+      "item": "minecraft:copper_ingot"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MCM",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "caldarium:copper_exporter"
+  }
+}

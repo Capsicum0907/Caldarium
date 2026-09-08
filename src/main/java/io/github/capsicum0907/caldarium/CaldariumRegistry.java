@@ -76,7 +76,7 @@ public final class CaldariumRegistry {
         }
         for (Kind kind : Kind.values()) {
             Map<Tier, DeferredBlock<KindBlock>> tiers = new LinkedHashMap<>();
-            for (Tier tier : Tier.values()) {
+            for (Tier tier : Tier.upTo(kind.top())) {
                 // ⚠ noOcclusion for anything laid in lines: a block that declares
                 // itself solid has its neighbours' faces culled against it, and a
                 // six-pixel post that did that would leave holes around itself.

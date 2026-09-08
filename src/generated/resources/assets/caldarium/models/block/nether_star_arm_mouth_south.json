@@ -1,0 +1,105 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        7,
+        7,
+        9
+      ],
+      "to": [
+        9,
+        9,
+        12
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        6,
+        6,
+        12
+      ],
+      "to": [
+        10,
+        10,
+        14
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        5,
+        5,
+        14
+      ],
+      "to": [
+        11,
+        11,
+        16
+      ]
+    }
+  ],
+  "textures": {
+    "drill": "caldarium:block/nether_star_drill",
+    "particle": "caldarium:block/nether_star_drill"
+  }
+}

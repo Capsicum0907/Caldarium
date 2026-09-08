@@ -1,0 +1,105 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        0,
+        7,
+        7
+      ],
+      "to": [
+        2,
+        9,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        2,
+        6,
+        6
+      ],
+      "to": [
+        4,
+        10,
+        10
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#drill"
+        },
+        "east": {
+          "texture": "#drill"
+        },
+        "north": {
+          "texture": "#drill"
+        },
+        "south": {
+          "texture": "#drill"
+        },
+        "up": {
+          "texture": "#drill"
+        },
+        "west": {
+          "texture": "#drill"
+        }
+      },
+      "from": [
+        4,
+        5,
+        5
+      ],
+      "to": [
+        7,
+        11,
+        11
+      ]
+    }
+  ],
+  "textures": {
+    "drill": "caldarium:block/copper_drill",
+    "particle": "caldarium:block/copper_drill"
+  }
+}

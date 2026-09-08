@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_redstone_block": {
+    "has_copper_charger": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:redstone_block"
+            "items": "caldarium:copper_charger"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_redstone_block"
+      "has_copper_charger"
     ]
   ],
   "rewards": {

@@ -1,0 +1,57 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "caldarium:block/copper_cable_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_down"
+      },
+      "when": {
+        "down": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_up"
+      },
+      "when": {
+        "up": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_north"
+      },
+      "when": {
+        "north": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_south"
+      },
+      "when": {
+        "south": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_west"
+      },
+      "when": {
+        "west": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/copper_arm_east"
+      },
+      "when": {
+        "east": "along"
+      }
+    }
+  ]
+}

@@ -1,5 +1,11 @@
-// 1.21.1	2026-08-31T06:21:02.1765358	Loot Tables
+// 1.21.1	2026-09-08T16:06:56.8617494	Loot Tables
 2be1d9530a340b9fbd65f3dd4f1344b7d75c7173 data/caldarium/loot_table/blocks/burner.json
+cd5c77023a955958f633e3951b62e8e8f12040ce data/caldarium/loot_table/blocks/copper_battery.json
+92813ff7bbc98d1b2fb1abc6883dffa64e854cfd data/caldarium/loot_table/blocks/copper_cable.json
+349d7ea0ae7e9be846f5769a077a1b309d6f4cec data/caldarium/loot_table/blocks/copper_charger.json
+e6e526964d2ac15f0a967c049894aee70a25962a data/caldarium/loot_table/blocks/copper_exporter.json
+98ac52f5e94896b0785f07225907d33986c7aa97 data/caldarium/loot_table/blocks/copper_importer.json
+f37c9eac622d7b1205b97f3156d7f5c87c8058f4 data/caldarium/loot_table/blocks/copper_solar_panel.json
 636e576d528eef6b263aff93b2e0017bca950a95 data/caldarium/loot_table/blocks/crucible.json
 2dbdf81e32cc02935712e01a5f94b3f8931d02da data/caldarium/loot_table/blocks/diamond_battery.json
 ccf8cff9d9e68a760ec33397a7702059989df7ca data/caldarium/loot_table/blocks/diamond_cable.json
@@ -25,3 +31,9 @@ ee3a59326a88eb8d3fb91f117964c638bed8f228 data/caldarium/loot_table/blocks/nether
 8e4b6ff519d932e6bbb4a978d2f787212412a367 data/caldarium/loot_table/blocks/netherite_exporter.json
 8c47ec9e8d319b046f446f1eff8fc929120e73fa data/caldarium/loot_table/blocks/netherite_importer.json
 09fc9a363a13d77a09e2dc5280f1763e1df0ac58 data/caldarium/loot_table/blocks/netherite_solar_panel.json
+00ce1037b0eeee14d22f5530f98dda637aadd6c8 data/caldarium/loot_table/blocks/nether_star_battery.json
+29edd82f99e31825f30f309d4b9a1f554edf37e8 data/caldarium/loot_table/blocks/nether_star_cable.json
+e679876a77c784e24fc6fe0226c44c335a91d6ed data/caldarium/loot_table/blocks/nether_star_charger.json
+ba5eb9b54d97a0c13c75e04a30adb17e22d76b97 data/caldarium/loot_table/blocks/nether_star_exporter.json
+5fc76bd597085e03062795bc22093bf4ab5b27e4 data/caldarium/loot_table/blocks/nether_star_importer.json
+c9664b3353b8aa530015b18e991581e69d751d1f data/caldarium/loot_table/blocks/nether_star_solar_panel.json

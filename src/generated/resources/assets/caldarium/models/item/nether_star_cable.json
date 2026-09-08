@@ -1,0 +1,216 @@
+{
+  "parent": "minecraft:block/block",
+  "elements": [
+    {
+      "faces": {
+        "down": {
+          "texture": "#middle"
+        },
+        "east": {
+          "texture": "#middle"
+        },
+        "north": {
+          "texture": "#middle"
+        },
+        "south": {
+          "texture": "#middle"
+        },
+        "up": {
+          "texture": "#middle"
+        },
+        "west": {
+          "texture": "#middle"
+        }
+      },
+      "from": [
+        7,
+        7,
+        7
+      ],
+      "to": [
+        9,
+        9,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        0,
+        7
+      ],
+      "to": [
+        9,
+        7,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        9,
+        7
+      ],
+      "to": [
+        9,
+        16,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        7,
+        0
+      ],
+      "to": [
+        9,
+        9,
+        7
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        7,
+        9
+      ],
+      "to": [
+        9,
+        9,
+        16
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        0,
+        7,
+        7
+      ],
+      "to": [
+        7,
+        9,
+        9
+      ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "south": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        9,
+        7,
+        7
+      ],
+      "to": [
+        16,
+        9,
+        9
+      ]
+    }
+  ],
+  "textures": {
+    "arm": "caldarium:block/nether_star_arm",
+    "middle": "caldarium:block/nether_star_arm",
+    "particle": "caldarium:block/nether_star_arm"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/copper_solar_panel"
+    },
+    "lit=true": {
+      "model": "caldarium:block/copper_solar_panel_on"
+    }
+  }
+}

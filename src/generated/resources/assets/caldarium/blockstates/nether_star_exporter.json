@@ -1,0 +1,105 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_exporter_core"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_down"
+      },
+      "when": {
+        "down": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_nozzle_down"
+      },
+      "when": {
+        "down": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_up"
+      },
+      "when": {
+        "up": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_nozzle_up"
+      },
+      "when": {
+        "up": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_north"
+      },
+      "when": {
+        "north": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_nozzle_north"
+      },
+      "when": {
+        "north": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_south"
+      },
+      "when": {
+        "south": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_nozzle_south"
+      },
+      "when": {
+        "south": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_west"
+      },
+      "when": {
+        "west": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_nozzle_west"
+      },
+      "when": {
+        "west": "aimed"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_east"
+      },
+      "when": {
+        "east": "along"
+      }
+    },
+    {
+      "apply": {
+        "model": "caldarium:block/nether_star_arm_nozzle_east"
+      },
+      "when": {
+        "east": "aimed"
+      }
+    }
+  ]
+}
