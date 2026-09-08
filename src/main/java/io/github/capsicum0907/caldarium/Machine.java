@@ -15,4 +15,9 @@ public interface Machine {
 
     /** The machine's own slots \u2014 fuel, or things being charged. */
     IItemHandler machineSlots();
+
+    /** Whether experience can be poured into it, and so whether the screen offers to. */
+    default boolean pours() {
+        return false;
+    }
 }

@@ -29,8 +29,12 @@ public record Generator(String id, Source source, Tier top) {
     public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.NETHER_STAR);
     /** Hot on one face, cold on the one opposite. Placement is the whole of it. */
     public static final Generator HYPOCAUSTUM = new Generator("hypocaustum", Source.HEAT, null);
+    /** What a player earned, poured in by hand. No better experience exists, so it tiers. */
+    public static final Generator EXPERIENTIA =
+            new Generator("experientia", Source.EXPERIENCE, Tier.NETHER_STAR);
 
-    private static final List<Generator> ALL = List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM);
+    private static final List<Generator> ALL =
+            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA);
 
     /**
      * One generator block: a row, and the rung it stands on if it stands on one.

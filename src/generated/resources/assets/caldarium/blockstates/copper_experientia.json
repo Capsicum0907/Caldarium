@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/copper_experientia"
+    },
+    "lit=true": {
+      "model": "caldarium:block/copper_experientia_on"
+    }
+  }
+}

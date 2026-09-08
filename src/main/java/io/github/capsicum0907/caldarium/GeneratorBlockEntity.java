@@ -110,6 +110,28 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     }
 
     @Override
+    public boolean pours() {
+        return row.source() == Source.EXPERIENCE;
+    }
+
+    /** Levels off the player and into the fire. A negative count means all of it. */
+    public int pour(Player player, int levels) {
+        if (!pours()) {
+            return 0;
+        }
+        int wanted = levels < 0 ? Experience.points(player) : Experience.down(player, levels);
+        int taken = Experience.take(player, wanted);
+        if (taken <= 0) {
+            return 0;
+        }
+        long added = (long) taken * CaldariumConfig.ticksPerPoint();
+        burning = (int) Math.min(Integer.MAX_VALUE, burning + added);
+        burnLength = Math.max(burnLength, burning);
+        setChanged();
+        return taken;
+    }
+
+    @Override
     public boolean burns() {
         return row.source().burns();
     }
@@ -128,6 +150,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
+            case EXPERIENCE -> generator.burn();
             case SUN, HEAT -> generator.soak(server, pos);
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
@@ -140,7 +163,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
     /** Whether it is doing its work, whatever that work is. */
     private boolean working() {
-        return row.source().burns() ? burning > 0 : reaching > 0.0F;
+        return row.source().stored() ? burning > 0 : reaching > 0.0F;
     }
 
     /**
@@ -159,7 +182,11 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     }
 
     private void light() {
-        int ticks = row.source() == Source.FLUID ? draw() : take();
+        int ticks = switch (row.source()) {
+            case FLUID -> draw();
+            case ITEM -> take();
+            default -> 0;
+        };
         if (ticks <= 0) {
             return;
         }
@@ -224,7 +251,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new MachineMenu(id, inventory,
-                ContainerLevelAccess.create(level, worldPosition), burns(), fuel, data);
+                ContainerLevelAccess.create(level, worldPosition), burns(), fuel, pours(), data);
     }
 
     @Override

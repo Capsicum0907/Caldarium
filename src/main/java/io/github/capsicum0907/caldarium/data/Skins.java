@@ -541,6 +541,11 @@ public final class Skins {
      * rather than a number of ours. Drawn here it came out a tapering orange block
      * that read as a traffic cone, and the recess around it never lined up with it.
      */
+    public static final int POUR_W = 44;
+    public static final int POUR_H = 16;
+    public static final int POUR_Y = 44;
+    public static final int POUR_GAP = 2;
+
     public static final int FLAME_X = GUI_WIDTH / 2 - 7;
     public static final int FLAME_Y = 53;
     public static final int FLAME_W = 14;

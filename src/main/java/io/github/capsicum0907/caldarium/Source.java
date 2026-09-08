@@ -10,24 +10,29 @@ package io.github.capsicum0907.caldarium;
  */
 public enum Source {
     /** Something solid, put in a slot. Whatever a furnace would burn. */
-    ITEM(true),
+    ITEM(true, false, true),
     /** Something molten, kept in a tank. Whatever a furnace would burn by the bucket. */
-    FLUID(true),
+    FLUID(true, false, true),
     /** Daylight, and nothing overhead. Nothing is consumed and nothing is stored. */
-    SUN(false, true),
+    SUN(false, true, false),
     /** The difference between what is on one face and what is on the one opposite. */
-    HEAT(false);
+    HEAT(false, false, false),
+    /** What a player has earned, poured in by hand. Held and spent, but not alight. */
+    EXPERIENCE(false, false, true);
 
     private final boolean burns;
     private final boolean flat;
+    private final boolean stored;
 
-    Source(boolean burns) {
-        this(burns, false);
-    }
-
-    Source(boolean burns, boolean flat) {
+    Source(boolean burns, boolean flat, boolean stored) {
         this.burns = burns;
         this.flat = flat;
+        this.stored = stored;
+    }
+
+    /** Whether it holds what it draws on and spends it over time. */
+    public boolean stored() {
+        return stored;
     }
 
     /** Whether there is a fire: a flame on the screen, and a light on the block. */

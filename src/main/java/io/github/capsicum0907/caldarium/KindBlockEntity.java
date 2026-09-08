@@ -150,7 +150,7 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
     @Override
     public AbstractContainerMenu createMenu(int id, Inventory inventory, Player player) {
         return new MachineMenu(id, inventory, ContainerLevelAccess.create(level, worldPosition),
-                false, items, data);
+                false, items, false, data);
     }
 
     @Override

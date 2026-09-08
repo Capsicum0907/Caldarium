@@ -38,6 +38,31 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
 
 
 
+    @Override
+    protected void init() {
+        super.init();
+        if (!menu.pours()) {
+            return;
+        }
+        int step = Skins.POUR_W + Skins.POUR_GAP;
+        int left = leftPos + (imageWidth - (step * 3 - Skins.POUR_GAP)) / 2;
+        int y = topPos + Skins.POUR_Y;
+        pour(left, y, 0, "gui.caldarium.pour.one");
+        pour(left + step, y, 1, "gui.caldarium.pour.ten");
+        pour(left + step * 2, y, 2, "gui.caldarium.pour.all");
+    }
+
+    private void pour(int x, int y, int id, String key) {
+        addRenderableWidget(net.minecraft.client.gui.components.Button
+                .builder(Component.translatable(key), pressed -> {
+                    if (minecraft != null && minecraft.gameMode != null) {
+                        minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id);
+                    }
+                })
+                .bounds(x, y, Skins.POUR_W, Skins.POUR_H)
+                .build());
+    }
+
     public MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         this.imageWidth = Skins.GUI_WIDTH;
@@ -102,6 +127,13 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        if (menu.pours()) {
+            Component left = Component.translatable("gui.caldarium.burning",
+                    menu.burningTicks() / 20);
+            graphics.drawString(font, left,
+                    leftPos + (imageWidth - font.width(left)) / 2,
+                    topPos + Skins.POUR_Y + Skins.POUR_H + 4, 0x404040, false);
+        }
         if (over(mouseX, mouseY, Skins.BAR_X, Skins.BAR_Y, Skins.BAR_W, Skins.BAR_H)) {
             // The exact numbers, because the bar only ever says roughly.
             graphics.renderTooltip(font, Component.translatable("gui.caldarium.stored",

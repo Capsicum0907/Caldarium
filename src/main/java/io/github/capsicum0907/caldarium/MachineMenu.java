@@ -31,21 +31,23 @@ public class MachineMenu extends AbstractContainerMenu {
     private final ContainerLevelAccess access;
     private final ContainerData data;
     private final boolean burns;
+    private final boolean pours;
     private final int machineSlots;
 
     /** The client's side: what the screen has to know arrives in the buffer. */
     public MachineMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
         this(id, inventory, ContainerLevelAccess.NULL, buffer.readBoolean(),
-                new ItemStackHandler(buffer.readByte()),
+                new ItemStackHandler(buffer.readByte()), buffer.readBoolean(),
                 new SimpleContainerData(MachineData.SIZE));
     }
 
     public MachineMenu(int id, Inventory inventory, ContainerLevelAccess access, boolean burns,
-            IItemHandler machine, ContainerData data) {
+            IItemHandler machine, boolean pours, ContainerData data) {
         super(CaldariumRegistry.MACHINE_MENU.get(), id);
         this.access = access;
         this.data = data;
         this.burns = burns;
+        this.pours = pours;
         this.machineSlots = machine.getSlots();
 
         for (int slot = 0; slot < machineSlots; slot++) {
@@ -69,6 +71,29 @@ public class MachineMenu extends AbstractContainerMenu {
 
     public boolean burns() {
         return burns;
+    }
+
+    public boolean pours() {
+        return pours;
+    }
+
+    @Override
+    public boolean clickMenuButton(Player player, int id) {
+        int levels = switch (id) {
+            case 0 -> 1;
+            case 1 -> 10;
+            case 2 -> -1;
+            default -> 0;
+        };
+        if (levels == 0) {
+            return false;
+        }
+        access.execute((level, pos) -> {
+            if (level.getBlockEntity(pos) instanceof GeneratorBlockEntity generator) {
+                generator.pour(player, levels);
+            }
+        });
+        return true;
     }
 
     public int machineSlots() {
@@ -172,6 +197,7 @@ public class MachineMenu extends AbstractContainerMenu {
             player.openMenu(provider, buffer -> {
                 buffer.writeBoolean(machine.burns());
                 buffer.writeByte(machine.machineSlots().getSlots());
+                buffer.writeBoolean(machine.pours());
             });
         }
         return InteractionResult.CONSUME;

@@ -412,6 +412,9 @@ public final class CaldariumDataGen {
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");
             add("gui.caldarium.burning", "Burning: %s");
+            add("gui.caldarium.pour.one", "1 Level");
+            add("gui.caldarium.pour.ten", "10 Levels");
+            add("gui.caldarium.pour.all", "All");
         }
     }
 
@@ -542,6 +545,14 @@ public final class CaldariumDataGen {
                             .define('R', Items.REDSTONE)
                             .define('I', Items.IRON_INGOT)
                             .unlockedBy("has_glass", has(Blocks.GLASS));
+                    case EXPERIENCE -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("CCC")
+                            .pattern("CBC")
+                            .pattern("CRC")
+                            .define('C', Items.COPPER_INGOT)
+                            .define('B', Blocks.BOOKSHELF)
+                            .define('R', Items.REDSTONE)
+                            .unlockedBy("has_bookshelf", has(Blocks.BOOKSHELF));
                     case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("IBI")
                             .pattern("BRB")

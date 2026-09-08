@@ -81,3 +81,19 @@ itself, and it is why the sixth face was not left out.
 
 It has no tiers, by the same rule the rest of the table follows: the input can be made
 better by placing it better, so the machine is not the only lever.
+
+## The one that runs on what a player earned
+
+Experience is the one resource in the game that a machine cannot make. Something has
+to go and get it, which is why it can be worth a great deal without breaking anything:
+there is no rate to optimise, only a person deciding to spend what they have.
+
+**It is a burner whose fuel is not a thing.** Levels are poured in from the screen,
+turned into burning time at a rate the config sets, and spent the way a log is spent.
+There is no slot, no tank, no flame and no glow — the block holds a number.
+
+**It has tiers**, by the same rule as the panel and for the same reason: there is no
+better experience to feed it, so a better machine is the only way it gets better.
+
+⚠ Pouring is three buttons rather than a click on the block. A block that drank
+experience when you touched it would take it while you were building.

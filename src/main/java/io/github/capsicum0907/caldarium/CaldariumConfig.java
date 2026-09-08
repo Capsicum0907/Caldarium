@@ -87,6 +87,9 @@ public final class CaldariumConfig {
     /** What is left of the sun through one block that light passes through. */
     public static ModConfigSpec.IntValue SUN_THROUGH;
     public static ModConfigSpec.DoubleValue HEAT_SPAN;
+    public static ModConfigSpec.IntValue TICKS_PER_POINT;
+
+    private static final int PER_POINT = 20;
     public static ModConfigSpec.ConfigValue<List<? extends String>> TEMPERATURES;
 
     private static final double SPAN = 11.0;
@@ -139,6 +142,10 @@ public final class CaldariumConfig {
                 .defineInRange("through", SUN_PERCENT, 0, 100);
         builder.pop();
 
+        builder.push("experience");
+        TICKS_PER_POINT = builder.defineInRange("ticksPerPoint", PER_POINT, 1, 20_000);
+        builder.pop();
+
         builder.push("heat");
         HEAT_SPAN = builder.defineInRange("span", SPAN, 0.01, 1000.0);
         TEMPERATURES = builder.defineList("temperatures", WARMTH,
@@ -186,6 +193,10 @@ public final class CaldariumConfig {
             }
         }
         return (int) value;
+    }
+
+    public static int ticksPerPoint() {
+        return TICKS_PER_POINT.get();
     }
 
     public static float heatSpan() {

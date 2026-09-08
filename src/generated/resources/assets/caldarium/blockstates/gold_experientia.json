@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/gold_experientia"
+    },
+    "lit=true": {
+      "model": "caldarium:block/gold_experientia_on"
+    }
+  }
+}

@@ -17,6 +17,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `transferRate` | How much crosses its boundary per tick, each way and each side. Also how fast a charger fills what is in its slots, and what a generator offers each neighbour. |
 | `generates` | Forge Energy made per tick while a generator is working. |
 | `tank` | Millibuckets of fuel a crucible holds. A bucket is spent at a time. |
+| `experience.ticksPerPoint` | How long one point of experience burns for. What that is worth depends on the tier, since the tier decides what is made per tick. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |
 | `heat.span` | The difference across one axis that counts as a full one. Three axes add up, so a hypocaustum built out on all three makes three times what one pair makes. |
 | `sun.through` | What percentage of the sun is left after one block that light passes through. Anything solid overhead stops it entirely, whatever this is set to. |
