@@ -665,10 +665,6 @@ public final class CaldariumDataGen {
                 case DIAMOND -> Items.DIAMOND;
                 case NETHERITE -> Items.NETHERITE_INGOT;
                 case NETHER_STAR -> Items.NETHER_STAR;
-                // ⚠ No block stands on these yet, so there is nothing to make one out
-                // of. A compressed star is not a thing the game has - whoever puts a
-                // machine on one of these rungs is adding the item in the same breath,
-                // and this is here to say so out loud rather than to pick a stand-in.
                 case COMPRESSED_NETHER_STAR, SUPER_COMPRESSED_NETHER_STAR ->
                         throw new IllegalStateException("no material for " + tier.id()
                                 + " - add the item when a machine first reaches it");

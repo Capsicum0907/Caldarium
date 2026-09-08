@@ -89,23 +89,18 @@ public final class CaldariumConfig {
     static {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
-        builder.comment("Generators, a section each. A type is what it burns; these are its numbers.")
-                .push("generator");
+        builder.push("generator");
         for (Generator.Made made : Generator.made()) {
             builder.push(made.id());
             GENERATORS.put(made, new Rates(
-                    builder.comment("Forge Energy it can hold before it has to stop and wait.")
-                            .defineInRange("capacity", atRung(GENERATOR_CAPACITY, made.tier()),
+                    builder.defineInRange("capacity", atRung(GENERATOR_CAPACITY, made.tier()),
                                     1, Integer.MAX_VALUE),
-                    builder.comment("How much it offers each neighbour per tick.")
-                            .defineInRange("transferRate", atRung(GENERATOR_TRANSFER, made.tier()),
+                    builder.defineInRange("transferRate", atRung(GENERATOR_TRANSFER, made.tier()),
                                     1, Integer.MAX_VALUE),
-                    builder.comment("Forge Energy made per tick while it is working.")
-                            .defineInRange("generates", atRung(GENERATOR_PER_TICK, made.tier()),
+                    builder.defineInRange("generates", atRung(GENERATOR_PER_TICK, made.tier()),
                                     1, Integer.MAX_VALUE)));
             if (made.source() == Source.FLUID) {
                 TANKS.put(made, builder
-                        .comment("Millibuckets of fuel it holds. A bucket is spent at a time.")
                         .defineInRange("tank", TANK, 1_000, Integer.MAX_VALUE));
             }
             builder.pop();
@@ -113,28 +108,20 @@ public final class CaldariumConfig {
         builder.pop();
 
         SUN_THROUGH = builder
-                .comment("Generators that draw on daylight.")
                 .push("sun")
-                .comment("What percentage of the sun is left after one block that light",
-                        "passes through. Anything solid overhead stops it entirely, whatever",
-                        "this is set to.")
                 .defineInRange("through", SUN_PERCENT, 0, 100);
         builder.pop();
 
         for (Kind kind : Kind.values()) {
             First first = first(kind);
             Map<Tier, Rates> tiers = new LinkedHashMap<>();
-            builder.comment("One section per tier, in the order the tiers are declared.")
-                    .push(kind.getSerializedName());
+            builder.push(kind.getSerializedName());
             for (Tier tier : Tier.upTo(kind.top())) {
                 builder.push(tier.id());
                 tiers.put(tier, new Rates(
-                        builder.comment("Forge Energy it holds.")
-                                .defineInRange("capacity", stepped(first.capacity(), tier),
+                        builder.defineInRange("capacity", stepped(first.capacity(), tier),
                                         1, Integer.MAX_VALUE),
-                        builder.comment("How much crosses its boundary per tick, each way and each side.",
-                                        "Also how fast it fills what is in its slots.")
-                                .defineInRange("transferRate", stepped(first.transfer(), tier),
+                        builder.defineInRange("transferRate", stepped(first.transfer(), tier),
                                         1, Integer.MAX_VALUE),
                         null));
                 builder.pop();
@@ -152,13 +139,7 @@ public final class CaldariumConfig {
      * whatever the numbers are. Meeting it is not an error — it is the largest
      * battery that can honestly report itself.
      */
-    /**
-     * The same, for something that may or may not stand on a rung at all.
-     *
-     * <p>⚠ <b>A machine with no rung of its own stands where iron stands.</b> Not on the
-     * first rung: copper was added under iron and a burner did not get worse for it. The
-     * numbers above are written for iron, and the untiered ones are the same numbers.
-     */
+    /** Untiered machines stand on the iron rung; the numbers above are written for it. */
     private static int atRung(int first, Tier tier) {
         return stepped(first, tier == null ? Tier.IRON : tier);
     }

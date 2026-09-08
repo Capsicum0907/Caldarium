@@ -61,10 +61,26 @@ sun gives the same everywhere, so a better panel is the only way that one gets
 better; a burner gets better by being fed something better, and has no ladder at
 all. The table stays flat by default and one row is allowed to be a ladder.
 
+**The ladder has eight rungs**: copper, iron, gold, diamond, netherite, nether star,
+and two compressed stars above that. Nothing is built on the last two yet — they are
+the shape of the ladder rather than blocks. A compressed nether star is not a thing
+the game has, so whoever first puts a machine up there is adding the item in the same
+breath, and the recipes say so rather than choosing a stand-in.
+
+**A row says how far it climbs, not only whether it climbs.** Cables, importers and
+exporters stop at the nether star. Compressing is worth doing for something that
+holds, because it is the same block holding eight times as much, and worth nothing
+for something that carries: a line is limited by what is at each end of it rather
+than by the line.
+
 **The ladder is expected to grow.** Nothing counts the rungs: the numbers come from
 where a tier sits in the list, the slots from the same, the recipe from the rung
 below, and the colour from the tier itself. A rung added to the list needs a colour
 on its line and a metal in the recipes, and the compiler asks for the second one.
+
+**A rung added underneath moves nothing above it.** The starting figures are written
+for iron rather than for the first rung, so copper arriving below left every other
+rung where it was, and a machine with no rung of its own reads iron by name.
 
 **The one that draws on the sky is a panel rather than a box** — three pixels of
 it, because all it needs is the face it points upwards, and a full cube of
@@ -221,6 +237,25 @@ restyled the furnace with a resource pack has restyled this too.
 Capacity, transfer rates and generation rate are settings. There is no defensible
 number to write into the code here: what is right depends entirely on what else is
 installed.
+
+## Config
+
+The file is `config/caldarium-server.toml`, one section per generator and one per
+kind per tier. **It carries no prose**: what a setting is for is here, and the file
+itself is the settings and the range each one accepts, so the values are not buried
+in paragraphs about them. Every number is a starting point the player then owns.
+
+| Setting | |
+|---|---|
+| `capacity` | Forge Energy it holds. A generator stops and waits when it is full. |
+| `transferRate` | How much crosses its boundary per tick, each way and each side. Also how fast a charger fills what is in its slots, and what a generator offers each neighbour. |
+| `generates` | Forge Energy made per tick while a generator is working. |
+| `tank` | Millibuckets of fuel a crucible holds. A bucket is spent at a time. |
+| `sun.through` | What percentage of the sun is left after one block that light passes through. Anything solid overhead stops it entirely, whatever this is set to. |
+
+Defaults are derived rather than written out: a rung is worth eight times the one
+below it, so a ladder cannot end up with a step out of proportion and a new rung
+never arrives with no numbers at all.
 
 ## Build
 

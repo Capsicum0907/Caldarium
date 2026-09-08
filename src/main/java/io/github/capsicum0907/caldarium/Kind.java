@@ -63,14 +63,6 @@ public enum Kind implements StringRepresentable {
     private final boolean widens;
     private final Aim aim;
 
-    /**
-     * The highest rung this one is made on.
-     *
-     * <p>⚠ <b>Not every kind climbs the whole ladder.</b> Compressing a star is worth
-     * doing for something that holds — it is the same block holding eight times as much
-     * — and worthless for something that carries, because a line is already limited by
-     * what is at each end of it rather than by the line.
-     */
     private final Tier top;
 
     Kind(String suffix, Store.Role role, Wiring wiring, int slots, boolean widens,
@@ -142,18 +134,12 @@ public enum Kind implements StringRepresentable {
         return wiring != Wiring.OPEN;
     }
 
-    /** The highest rung this one is made on. See {@link Tier#upTo}. */
+    /** The highest rung this one is made on. */
     public Tier top() {
         return top;
     }
 
-    /**
-     * The highest rung anything laid in a line reaches.
-     *
-     * <p>The arm and the drill are drawn once per rung and shared by every kind that
-     * carries, so the pictures stop where the last of those stops rather than where the
-     * ladder does.
-     */
+    /** The highest rung anything laid in a line reaches; the arms are drawn to it. */
     public static Tier highestCarried() {
         Tier highest = null;
         for (Kind kind : values()) {
