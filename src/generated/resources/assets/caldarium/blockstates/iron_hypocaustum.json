@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/iron_hypocaustum"
+    },
+    "lit=true": {
+      "model": "caldarium:block/iron_hypocaustum_on"
+    }
+  }
+}

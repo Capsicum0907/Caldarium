@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/nether_star_hypocaustum"
+    },
+    "lit=true": {
+      "model": "caldarium:block/nether_star_hypocaustum_on"
+    }
+  }
+}

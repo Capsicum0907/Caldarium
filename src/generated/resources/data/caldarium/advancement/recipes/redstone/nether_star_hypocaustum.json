@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_netherite_hypocaustum": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:netherite_hypocaustum"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:nether_star_hypocaustum"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_netherite_hypocaustum"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:nether_star_hypocaustum"
+    ]
+  }
+}

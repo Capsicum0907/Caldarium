@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/copper_hypocaustum"
+    },
+    "lit=true": {
+      "model": "caldarium:block/copper_hypocaustum_on"
+    }
+  }
+}

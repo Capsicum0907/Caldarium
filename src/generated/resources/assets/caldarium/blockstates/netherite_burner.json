@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/netherite_burner"
+    },
+    "lit=true": {
+      "model": "caldarium:block/netherite_burner_on"
+    }
+  }
+}

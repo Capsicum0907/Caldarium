@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/gold_crucible"
+    },
+    "lit=true": {
+      "model": "caldarium:block/gold_crucible_on"
+    }
+  }
+}

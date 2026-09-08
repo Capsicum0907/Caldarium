@@ -13,19 +13,14 @@ A tier is how much and how fast, and a kind is what a thing does with what it
 holds: a battery hands it on, a charger puts it into what is in its slots. One kind
 at one tier is one block, so a kind or a tier added later is a row and not a class.
 
-**A generator may say that it comes in tiers, and only then is it multiplied.** The
-sun gives the same everywhere, so a better panel is the only way that one gets
-better; a burner gets better by being fed something better, and has no ladder at
-all. The table stays flat by default and one row is allowed to be a ladder.
-
 **The ladder has eight rungs**: copper, iron, gold, diamond, netherite, nether star,
 and two compressed stars above that. Nothing is built on the last two yet — they are
 the shape of the ladder rather than blocks. A compressed nether star is not a thing
 the game has, so whoever first puts a machine up there is adding the item in the same
 breath, and the recipes say so rather than choosing a stand-in.
 
-**A row says how far it climbs, not only whether it climbs.** Cables, importers and
-exporters stop at the nether star. Compressing is worth doing for something that
+**Every row says how far it climbs.** Generators climb to the top of the ladder, and
+cables, importers and exporters stop at the nether star. Compressing is worth doing for something that
 holds, because it is the same block holding eight times as much, and worth nothing
 for something that carries: a line is limited by what is at each end of it rather
 than by the line.
@@ -79,8 +74,8 @@ itself, and it is why the sixth face was not left out.
 ⚠ And the nether, where lava is free, is the worst place to run one: the biome reads
 2.0, so a bare face there is nearly as hot as the lava on the other side.
 
-It has no tiers, by the same rule the rest of the table follows: the input can be made
-better by placing it better, so the machine is not the only lever.
+It climbs the ladder like every other generator. Placing it better is a second lever
+on top of that one, not instead of it.
 
 ## The one that runs on what a player earned
 

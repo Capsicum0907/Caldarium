@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/netherite_hypocaustum"
+    },
+    "lit=true": {
+      "model": "caldarium:block/netherite_hypocaustum_on"
+    }
+  }
+}
