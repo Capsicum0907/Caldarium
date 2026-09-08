@@ -20,26 +20,33 @@ import net.minecraft.util.StringRepresentable;
  * kept somewhere else is a table that can quietly run out and start repeating.
  */
 public enum Tier implements StringRepresentable {
-    COPPER(0xE07C57, false),
-    IRON(0xD5DBE0, false),
-    GOLD(0xF0C246, false),
-    DIAMOND(0x5BE0D6, false),
+    COPPER(0xE07C57, false, 1),
+    IRON(0xD5DBE0, false, 8),
+    GOLD(0xF0C246, false, 8),
+    DIAMOND(0x5BE0D6, false, 16),
     // ⚠ The ingot highlight rather than the block face. Netherite drawn true came out
     // at 0x5B4E52 against a 0x51565A window: a top tier that looked like a blank plate.
-    NETHERITE(0xB0A2A5, false),
-    NETHER_STAR(0xF3EFD8, false),
-    COMPRESSED_NETHER_STAR(0xCBBCE8, true),
-    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true);
+    NETHERITE(0xB0A2A5, false, 16),
+    NETHER_STAR(0xF3EFD8, false, 32),
+    COMPRESSED_NETHER_STAR(0xCBBCE8, true, 32),
+    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true, 64);
 
     public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 
     private final String id = name().toLowerCase(Locale.ROOT);
     private final int colour;
     private final boolean compressed;
+    private final int step;
 
-    Tier(int colour, boolean compressed) {
+    Tier(int colour, boolean compressed, int step) {
         this.colour = colour;
         this.compressed = compressed;
+        this.step = step;
+    }
+
+    /** How much bigger this rung is than the one under it. One on the first rung. */
+    public int step() {
+        return step;
     }
 
     /** Whether this rung is nine of the one below rather than the one below in a frame. */

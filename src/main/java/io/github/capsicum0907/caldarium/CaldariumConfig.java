@@ -32,7 +32,7 @@ public final class CaldariumConfig {
      * The proportions the ladder is built from — the only numbers in the mod, and
      * only ever the starting point of a file the player then owns.
      */
-    private static final int PER_TIER = 8;
+    private static final int FIRST_TRANSFER = 4_096;
 
     /** What the first tier of each kind is worth. Every tier above is derived. */
     private record First(int capacity, int transfer) {
@@ -53,16 +53,16 @@ public final class CaldariumConfig {
         return switch (kind) {
             // A battery is capacity; a charger is a doorway, so it is quicker and
             // holds only enough to keep working while it waits for more.
-            case BATTERY -> new First(50_000, 250);
-            case CHARGER -> new First(12_500, 500);
+            case BATTERY -> new First(128_000, FIRST_TRANSFER);
+            case CHARGER -> new First(16_000, FIRST_TRANSFER);
             // Four times what a battery moves, and a fiftieth of what one holds.
-            case CABLE, IMPORTER, EXPORTER -> new First(2_000, 1_000);
+            case CABLE, IMPORTER, EXPORTER -> new First(FIRST_TRANSFER * 2, FIRST_TRANSFER);
         };
     }
 
     /** A generator holds little: it is a source, not a store. */
     private static final int GENERATOR_CAPACITY = 5_000;
-    private static final int GENERATOR_TRANSFER = 125;
+    private static final int GENERATOR_TRANSFER = FIRST_TRANSFER;
     private static final int GENERATOR_PER_TICK = 5;
 
     /** Ten buckets, which is what a tank the size of the block ought to feel like. */
@@ -186,8 +186,8 @@ public final class CaldariumConfig {
 
     private static int stepped(int first, Tier tier) {
         long value = first;
-        for (int rung = 0; rung < tier.ordinal(); rung++) {
-            value *= PER_TIER;
+        for (Tier rung : Tier.upTo(tier)) {
+            value *= rung.step();
             if (value >= Integer.MAX_VALUE) {
                 return Integer.MAX_VALUE;
             }

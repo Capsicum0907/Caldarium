@@ -22,6 +22,18 @@ holds, because it is the same block holding eight times as much, and worth nothi
 for something that carries: a line is limited by what is at each end of it rather
 than by the line.
 
+**A rung says how much bigger it is than the one under it**, and the steps grow:
+eight, eight, sixteen, sixteen, thirty-two. Every row's transfer rate starts at 4,096
+and lands exactly on 2,147,483,647 at the nether star, which is not a number anyone
+picked - it is the largest an int carries, and `IEnergyStorage` passes energy through
+`int receiveEnergy(int, boolean)`, so it is the most that can cross in one call
+whatever either side would like. Capacity is set to reach the same ceiling on the
+same rung.
+
+⚠ Two things give way there. A cable is supposed to hold two ticks of its own rate
+and can only hold one at the top, since twice the ceiling does not fit. And a
+generator on the last rung holds one tick of what it makes.
+
 **A rung says how it is built.** The first six are the rung below inside a frame of
 their own metal. The last two are nine of the rung below and nothing else, which is
 why they need no material of their own: there is no compressed nether star in the
