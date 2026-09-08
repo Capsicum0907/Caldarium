@@ -14,7 +14,9 @@ public enum Source {
     /** Something molten, kept in a tank. Whatever a furnace would burn by the bucket. */
     FLUID(true),
     /** Daylight, and nothing overhead. Nothing is consumed and nothing is stored. */
-    SUN(false, true);
+    SUN(false, true),
+    /** The difference between what is on one face and what is on the one opposite. */
+    HEAT(false);
 
     private final boolean burns;
     private final boolean flat;

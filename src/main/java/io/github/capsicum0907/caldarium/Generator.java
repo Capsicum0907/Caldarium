@@ -27,8 +27,10 @@ public record Generator(String id, Source source, Tier top) {
     public static final Generator CRUCIBLE = new Generator("crucible", Source.FLUID, null);
     /** Daylight. Nothing goes in, so the only way to get more is a better panel. */
     public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.NETHER_STAR);
+    /** Hot on one face, cold on the one opposite. Placement is the whole of it. */
+    public static final Generator HYPOCAUSTUM = new Generator("hypocaustum", Source.HEAT, null);
 
-    private static final List<Generator> ALL = List.of(BURNER, CRUCIBLE, SOLAR);
+    private static final List<Generator> ALL = List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM);
 
     /**
      * One generator block: a row, and the rung it stands on if it stands on one.

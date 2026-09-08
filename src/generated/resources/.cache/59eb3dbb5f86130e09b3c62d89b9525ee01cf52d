@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-08T16:06:56.8617494	Loot Tables
+// 1.21.1	2026-09-08T18:34:10.0129273	Loot Tables
 2be1d9530a340b9fbd65f3dd4f1344b7d75c7173 data/caldarium/loot_table/blocks/burner.json
 cd5c77023a955958f633e3951b62e8e8f12040ce data/caldarium/loot_table/blocks/copper_battery.json
 92813ff7bbc98d1b2fb1abc6883dffa64e854cfd data/caldarium/loot_table/blocks/copper_cable.json
@@ -19,6 +19,7 @@ c03181069b7c5897965b61e1c605d2ab2ae7ac92 data/caldarium/loot_table/blocks/diamon
 d4d4dfb88ae5c49acca594b4c65b1f0d8eaed661 data/caldarium/loot_table/blocks/gold_exporter.json
 dee6a9129caee59bc51de6a5ec49ae07ec85466a data/caldarium/loot_table/blocks/gold_importer.json
 3b703af0bbdef91f469f806df2d915682b196710 data/caldarium/loot_table/blocks/gold_solar_panel.json
+d3d8dcc054fa5fa2ea489c251c30bf04ee44a941 data/caldarium/loot_table/blocks/hypocaustum.json
 38ee5a6a8b5e27107aa99434fd544c3575a3fa0b data/caldarium/loot_table/blocks/iron_battery.json
 5c36f3a6d735e6dc5c68edab9fae566d98d15879 data/caldarium/loot_table/blocks/iron_cable.json
 cf4f4f8acb0edb09a4f61bb070754efcd56dab21 data/caldarium/loot_table/blocks/iron_charger.json

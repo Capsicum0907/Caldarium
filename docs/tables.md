@@ -52,3 +52,32 @@ coal straight back out of it; a pipe set to extract would empty a tank the same
 way. Both refuse. What is left over is not fuel and may still be taken, which is
 how the bucket a lava bucket leaves behind gets collected — a tank has no such
 leftovers, so fuel put in one by mistake stays there until the block is broken.
+
+## The one that draws on a difference
+
+Heat is not energy; a difference in heat is. A single hot thing has nowhere to send
+its heat, so nothing passes through anything, and a generator that made energy from
+being next to lava would be making it out of nothing. **Hypocaustum sits between a hot
+thing and a cold one and takes a share of what crosses it.**
+
+**Every face has a temperature, and a face with nothing on it reads the biome.** The
+game already keeps one number per biome — 0.0 in a snowy plain, 0.8 in plains, 2.0 in
+a desert or the nether — and blocks are given values on the same scale in the config.
+That one decision folds two machines into one: lava on one face and bare air on the
+other is a hot machine, ice on one face and bare air the other is a cold one, and both
+are the same block put down differently.
+
+**Three axes, read separately and added.** The block holds three elements, one per
+pair of opposite faces, because heat crosses from a face to the one facing it and not
+to the one beside it. So every face counts for something, and how much work went into
+the arrangement is how much it makes.
+
+⚠ It also means **burying one in lava produces nothing at all**: every axis then has
+lava against lava, and the difference on each is zero. That is the rule teaching
+itself, and it is why the sixth face was not left out.
+
+⚠ And the nether, where lava is free, is the worst place to run one: the biome reads
+2.0, so a bare face there is nearly as hot as the lava on the other side.
+
+It has no tiers, by the same rule the rest of the table follows: the input can be made
+better by placing it better, so the machine is not the only lever.

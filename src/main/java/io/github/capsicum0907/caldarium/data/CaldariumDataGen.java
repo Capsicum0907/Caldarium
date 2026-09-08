@@ -517,7 +517,7 @@ public final class CaldariumDataGen {
                             "has_" + new Generator.Made(made.generator(), under).id());
                     continue;
                 }
-                switch (made.source()) {
+                ShapedRecipeBuilder built = switch (made.source()) {
                     case ITEM -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("III")
                             .pattern("IFI")
@@ -525,8 +525,7 @@ public final class CaldariumDataGen {
                             .define('I', Items.IRON_INGOT)
                             .define('F', Blocks.FURNACE)
                             .define('R', Items.REDSTONE)
-                            .unlockedBy("has_furnace", has(Blocks.FURNACE))
-                            .save(output);
+                            .unlockedBy("has_furnace", has(Blocks.FURNACE));
                     case FLUID -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("III")
                             .pattern("ICI")
@@ -534,8 +533,7 @@ public final class CaldariumDataGen {
                             .define('I', Items.IRON_INGOT)
                             .define('C', Blocks.CAULDRON)
                             .define('R', Items.REDSTONE)
-                            .unlockedBy("has_cauldron", has(Blocks.CAULDRON))
-                            .save(output);
+                            .unlockedBy("has_cauldron", has(Blocks.CAULDRON));
                     case SUN -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("GGG")
                             .pattern("RRR")
@@ -543,9 +541,17 @@ public final class CaldariumDataGen {
                             .define('G', Blocks.GLASS)
                             .define('R', Items.REDSTONE)
                             .define('I', Items.IRON_INGOT)
-                            .unlockedBy("has_glass", has(Blocks.GLASS))
-                            .save(output);
-                }
+                            .unlockedBy("has_glass", has(Blocks.GLASS));
+                    case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("IBI")
+                            .pattern("BRB")
+                            .pattern("IBI")
+                            .define('I', Items.IRON_INGOT)
+                            .define('B', Blocks.BRICKS)
+                            .define('R', Items.REDSTONE)
+                            .unlockedBy("has_bricks", has(Blocks.BRICKS));
+                };
+                built.save(output);
             }
 
             // The first rung is built from parts. Every rung above it is the rung

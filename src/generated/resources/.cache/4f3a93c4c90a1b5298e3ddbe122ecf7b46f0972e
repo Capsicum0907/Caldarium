@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-08T16:06:56.8652733	Block States: caldarium
+// 1.21.1	2026-09-08T18:34:10.0159433	Block States: caldarium
 6b1675d6c65db763f4073777cc286f0f1c58642d assets/caldarium/blockstates/burner.json
 fa7cec0f18e5f5e0761f881894d4fca30ec6b667 assets/caldarium/blockstates/copper_battery.json
 422b0306af1a6f782eefd7184c06eeaca9bbd7a4 assets/caldarium/blockstates/copper_cable.json
@@ -19,6 +19,7 @@ c8960b850b675ad969a5f680f7da91e3ed7f736b assets/caldarium/blockstates/gold_charg
 77fb33c5b0e4ba67860c6e6393d4715b0b03d508 assets/caldarium/blockstates/gold_exporter.json
 3165a12b31acba8224566857e12e3d13ecb1bc0b assets/caldarium/blockstates/gold_importer.json
 919dc32b59bbce54149c13698548c5492d87d231 assets/caldarium/blockstates/gold_solar_panel.json
+6ef2fbf579ecb24e9a22122c52a885c919533ed9 assets/caldarium/blockstates/hypocaustum.json
 f244c5fda98a257f746c19c7baf6039c7d968c3e assets/caldarium/blockstates/iron_battery.json
 1fd5ded8ed740089640f801b13c5a72ec423efcc assets/caldarium/blockstates/iron_cable.json
 370ef11b99f88cfb45e6d99ad7c84ced6edb9233 assets/caldarium/blockstates/iron_charger.json
@@ -116,6 +117,8 @@ ef8a360ed89dbdad0da125fcd05469a4a4ce65d3 assets/caldarium/models/block/gold_char
 21f9d7217e9fdcc0d1bc51eb0f14f6bd98c5700c assets/caldarium/models/block/gold_importer_core.json
 ea7c0db2e9dbefb37ef39ab25cfe409a19c549c7 assets/caldarium/models/block/gold_solar_panel.json
 ffc03dce4298126c8998bf7dd03f3f3826be3d7f assets/caldarium/models/block/gold_solar_panel_on.json
+111c034768d7a9e349d5387ffdaf1643efdcf550 assets/caldarium/models/block/hypocaustum.json
+515dae0597b9299b68a4a445c642480175925ee2 assets/caldarium/models/block/hypocaustum_on.json
 6b849169d0bb54396712fb2a47826efece6ce739 assets/caldarium/models/block/iron_arm_down.json
 078f955ea84e9fa7a2a437ec289f6021813ff239 assets/caldarium/models/block/iron_arm_east.json
 684fe10efa12c43b491a604221fce058f8de2fd2 assets/caldarium/models/block/iron_arm_mouth_down.json
@@ -211,6 +214,7 @@ ee62415daf18b9ddb84e988b57a70ea5f5866def assets/caldarium/models/item/gold_batte
 0f3c8b49ed0ea5a4561886177abc99c2ed65e29c assets/caldarium/models/item/gold_exporter.json
 4e4e94a0e755630d809261512fa73a3a736606c2 assets/caldarium/models/item/gold_importer.json
 ee3915f3c55a324cb4606987871bc2c1fa42b4f4 assets/caldarium/models/item/gold_solar_panel.json
+e46041f011a7ae41a6757014aa6a2faf9a64f40a assets/caldarium/models/item/hypocaustum.json
 a63df0f713e92e2c7893d59f8c9402e229b59c8d assets/caldarium/models/item/iron_battery.json
 55669cc522173d289be0dd976b58e77d2b4092b2 assets/caldarium/models/item/iron_cable.json
 6735496dd7d5f1d95ca7ee7b80d5e8e145f6d888 assets/caldarium/models/item/iron_charger.json

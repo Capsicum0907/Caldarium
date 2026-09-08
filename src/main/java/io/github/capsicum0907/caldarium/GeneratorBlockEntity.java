@@ -128,7 +128,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
-            case SUN -> generator.bask(server, pos);
+            case SUN, HEAT -> generator.soak(server, pos);
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
 
@@ -140,7 +140,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
     /** Whether it is doing its work, whatever that work is. */
     private boolean working() {
-        return row.source() == Source.SUN ? reaching > 0.0F : burning > 0;
+        return row.source().burns() ? burning > 0 : reaching > 0.0F;
     }
 
     /**
@@ -204,10 +204,12 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         return ticks;
     }
 
-    private void bask(ServerLevel level, BlockPos pos) {
+    private void soak(ServerLevel level, BlockPos pos) {
         if (--lookAgain <= 0) {
             lookAgain = SUN_EVERY;
-            reaching = Sunlight.reaching(level, pos);
+            reaching = row.source() == Source.SUN
+                    ? Sunlight.reaching(level, pos)
+                    : Heat.reaching(level, pos);
         }
         if (reaching > 0.0F) {
             store.fill(Math.round(rates.perTick().get() * reaching));

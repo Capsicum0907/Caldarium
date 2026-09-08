@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/hypocaustum"
+    },
+    "lit=true": {
+      "model": "caldarium:block/hypocaustum_on"
+    }
+  }
+}

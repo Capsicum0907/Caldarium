@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-08T16:06:56.8702707	Recipes
+// 1.21.1	2026-09-08T18:35:19.4604498	Recipes
 576b34e9b721292355914177dcb6ceedc12083cd data/caldarium/advancement/recipes/redstone/burner.json
 7ef4a36fb488426f12975d9a6254048aeee80ca0 data/caldarium/advancement/recipes/redstone/copper_battery.json
 2f76e48f4cbee12fbed39549302f4190a7e45bc6 data/caldarium/advancement/recipes/redstone/copper_cable.json
@@ -19,6 +19,7 @@ c858b597acb7ae76ed7ce03c665458d0f7a6e667 data/caldarium/advancement/recipes/reds
 284d0f21743e3a2eea2af8fd96d7de64e9450950 data/caldarium/advancement/recipes/redstone/gold_exporter.json
 359f37e84a2c637cc20461d19ecf36742b5b980f data/caldarium/advancement/recipes/redstone/gold_importer.json
 f9c62384d6d87812832ace9b0a98cbc2aafb8532 data/caldarium/advancement/recipes/redstone/gold_solar_panel.json
+5c90039057546bb36327690c428ecd6bd9d3c6b3 data/caldarium/advancement/recipes/redstone/hypocaustum.json
 d4aec95eaf81a0fef9ea13474b22e4dffe823726 data/caldarium/advancement/recipes/redstone/iron_battery.json
 94570e25456cab465cc4f75da7d1daab136f010d data/caldarium/advancement/recipes/redstone/iron_cable.json
 f4729e4ed3ee6eff3b6329404ff98f7c2cd66a96 data/caldarium/advancement/recipes/redstone/iron_charger.json
@@ -57,6 +58,7 @@ dd5b085882204db0ba227981941a37b3d1791fa8 data/caldarium/recipe/diamond_exporter.
 b4e388649576c071ba1ee4ac9a8c293eb80948c1 data/caldarium/recipe/gold_exporter.json
 1e4d0555ec425b73bfd80288f4e55264ec40d3f3 data/caldarium/recipe/gold_importer.json
 80da6aa8e5f9f53fe6d5e7619ad60224de10c200 data/caldarium/recipe/gold_solar_panel.json
+3e0a2f3141ba3f39b48278f9cd2ef5d8d2d589ec data/caldarium/recipe/hypocaustum.json
 3db76422e5e94adc212caf6c653106d9a6962310 data/caldarium/recipe/iron_battery.json
 62bdb44006d188eea4f01923250d4d62fb2c7388 data/caldarium/recipe/iron_cable.json
 79ca7bfb8626fd7856eeb152e164b82bda22cba2 data/caldarium/recipe/iron_charger.json

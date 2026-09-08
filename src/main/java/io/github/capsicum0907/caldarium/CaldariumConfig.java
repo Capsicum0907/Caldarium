@@ -1,8 +1,17 @@
 package io.github.capsicum0907.caldarium;
 
+import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.neoforged.neoforge.common.ModConfigSpec;
 
@@ -77,6 +86,24 @@ public final class CaldariumConfig {
 
     /** What is left of the sun through one block that light passes through. */
     public static ModConfigSpec.IntValue SUN_THROUGH;
+    public static ModConfigSpec.DoubleValue HEAT_SPAN;
+    public static ModConfigSpec.ConfigValue<List<? extends String>> TEMPERATURES;
+
+    private static final double SPAN = 11.0;
+
+    private static final List<String> WARMTH = List.of(
+            "minecraft:lava=10.0",
+            "minecraft:fire=5.0",
+            "minecraft:magma_block=4.0",
+            "minecraft:soul_fire=3.0",
+            "minecraft:campfire=3.0",
+            "minecraft:soul_campfire=2.5",
+            "#minecraft:ice=-1.0",
+            "minecraft:powder_snow=-1.0",
+            "minecraft:snow_block=-0.5");
+
+    private static Map<Block, Float> named;
+    private static List<Map.Entry<TagKey<Block>, Float>> tagged;
     private static final Map<Kind, Map<Tier, Rates>> KINDS = new EnumMap<>(Kind.class);
 
     /** The numbers for one block that is sized by its tier. */
@@ -110,6 +137,12 @@ public final class CaldariumConfig {
         SUN_THROUGH = builder
                 .push("sun")
                 .defineInRange("through", SUN_PERCENT, 0, 100);
+        builder.pop();
+
+        builder.push("heat");
+        HEAT_SPAN = builder.defineInRange("span", SPAN, 0.01, 1000.0);
+        TEMPERATURES = builder.defineList("temperatures", WARMTH,
+                () -> "minecraft:lava=10.0", entry -> entry instanceof String);
         builder.pop();
 
         for (Kind kind : Kind.values()) {
@@ -153,6 +186,56 @@ public final class CaldariumConfig {
             }
         }
         return (int) value;
+    }
+
+    public static float heatSpan() {
+        return HEAT_SPAN.get().floatValue();
+    }
+
+    public static Float temperature(BlockState state) {
+        if (named == null) {
+            read();
+        }
+        Float given = named.get(state.getBlock());
+        if (given != null) {
+            return given;
+        }
+        for (Map.Entry<TagKey<Block>, Float> entry : tagged) {
+            if (state.is(entry.getKey())) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
+    private static void read() {
+        named = new HashMap<>();
+        tagged = new ArrayList<>();
+        for (String line : TEMPERATURES.get()) {
+            int split = line.lastIndexOf('=');
+            if (split < 1) {
+                continue;
+            }
+            float value;
+            try {
+                value = Float.parseFloat(line.substring(split + 1).trim());
+            } catch (NumberFormatException wrong) {
+                continue;
+            }
+            String what = line.substring(0, split).trim();
+            if (what.startsWith("#")) {
+                ResourceLocation id = ResourceLocation.tryParse(what.substring(1));
+                if (id != null) {
+                    tagged.add(Map.entry(TagKey.create(BuiltInRegistries.BLOCK.key(), id), value));
+                }
+                continue;
+            }
+            ResourceLocation id = ResourceLocation.tryParse(what);
+            if (id != null) {
+                BuiltInRegistries.BLOCK.getOptional(id)
+                        .ifPresent(block -> named.put(block, value));
+            }
+        }
     }
 
     private CaldariumConfig() {
