@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_nether_star_crucible": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:nether_star_crucible"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:compressed_nether_star_crucible"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_nether_star_crucible"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:compressed_nether_star_crucible"
+    ]
+  }
+}

@@ -14,21 +14,24 @@ holds: a battery hands it on, a charger puts it into what is in its slots. One k
 at one tier is one block, so a kind or a tier added later is a row and not a class.
 
 **The ladder has eight rungs**: copper, iron, gold, diamond, netherite, nether star,
-and two compressed stars above that. Nothing is built on the last two yet — they are
-the shape of the ladder rather than blocks. A compressed nether star is not a thing
-the game has, so whoever first puts a machine up there is adding the item in the same
-breath, and the recipes say so rather than choosing a stand-in.
+and two compressed stars above that.
 
-**Every row says how far it climbs.** Generators climb to the top of the ladder, and
-cables, importers and exporters stop at the nether star. Compressing is worth doing for something that
+**Every row says how far it climbs.** Generators climb all eight; cables, importers
+and exporters stop at the nether star. Compressing is worth doing for something that
 holds, because it is the same block holding eight times as much, and worth nothing
 for something that carries: a line is limited by what is at each end of it rather
 than by the line.
 
+**A rung says how it is built.** The first six are the rung below inside a frame of
+their own metal. The last two are nine of the rung below and nothing else, which is
+why they need no material of their own: there is no compressed nether star in the
+game and none has to be invented.
+
 **The ladder is expected to grow.** Nothing counts the rungs: the numbers come from
 where a tier sits in the list, the slots from the same, the recipe from the rung
 below, and the colour from the tier itself. A rung added to the list needs a colour
-on its line and a metal in the recipes, and the compiler asks for the second one.
+on its line and, if it is built from a frame, a metal in the recipes - and the
+compiler asks for the second one.
 
 **A rung added underneath moves nothing above it.** The starting figures are written
 for iron rather than for the first rung, so copper arriving below left every other

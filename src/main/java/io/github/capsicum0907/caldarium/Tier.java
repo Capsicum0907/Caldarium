@@ -20,24 +20,31 @@ import net.minecraft.util.StringRepresentable;
  * kept somewhere else is a table that can quietly run out and start repeating.
  */
 public enum Tier implements StringRepresentable {
-    COPPER(0xE07C57),
-    IRON(0xD5DBE0),
-    GOLD(0xF0C246),
-    DIAMOND(0x5BE0D6),
+    COPPER(0xE07C57, false),
+    IRON(0xD5DBE0, false),
+    GOLD(0xF0C246, false),
+    DIAMOND(0x5BE0D6, false),
     // ⚠ The ingot highlight rather than the block face. Netherite drawn true came out
     // at 0x5B4E52 against a 0x51565A window: a top tier that looked like a blank plate.
-    NETHERITE(0xB0A2A5),
-    NETHER_STAR(0xF3EFD8),
-    COMPRESSED_NETHER_STAR(0xCBBCE8),
-    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF);
+    NETHERITE(0xB0A2A5, false),
+    NETHER_STAR(0xF3EFD8, false),
+    COMPRESSED_NETHER_STAR(0xCBBCE8, true),
+    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true);
 
     public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 
     private final String id = name().toLowerCase(Locale.ROOT);
     private final int colour;
+    private final boolean compressed;
 
-    Tier(int colour) {
+    Tier(int colour, boolean compressed) {
         this.colour = colour;
+        this.compressed = compressed;
+    }
+
+    /** Whether this rung is nine of the one below rather than the one below in a frame. */
+    public boolean compressed() {
+        return compressed;
     }
 
     /**

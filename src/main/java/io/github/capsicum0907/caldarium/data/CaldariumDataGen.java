@@ -659,17 +659,21 @@ public final class CaldariumDataGen {
                     "has_" + kind.id(tier.under()));
         }
 
-        /** One rung: the thing below it, in a frame of the metal this rung is made of. */
         private void upgrade(RecipeOutput output, ItemLike result, ItemLike under, Tier tier,
                 String unlocked) {
-            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, result)
-                    .pattern(" M ")
-                    .pattern("MPM")
-                    .pattern(" M ")
-                    .define('M', metal(tier))
-                    .define('P', under)
-                    .unlockedBy(unlocked, has(under))
-                    .save(output);
+            ShapedRecipeBuilder built = tier.compressed()
+                    ? ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, result)
+                            .pattern("PPP")
+                            .pattern("PPP")
+                            .pattern("PPP")
+                            .define('P', under)
+                    : ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, result)
+                            .pattern(" M ")
+                            .pattern("MPM")
+                            .pattern(" M ")
+                            .define('M', metal(tier))
+                            .define('P', under);
+            built.unlockedBy(unlocked, has(under)).save(output);
         }
 
         /** What a rung is made of. The ladder is the vanilla one everybody knows. */
@@ -682,8 +686,8 @@ public final class CaldariumDataGen {
                 case NETHERITE -> Items.NETHERITE_INGOT;
                 case NETHER_STAR -> Items.NETHER_STAR;
                 case COMPRESSED_NETHER_STAR, SUPER_COMPRESSED_NETHER_STAR ->
-                        throw new IllegalStateException("no material for " + tier.id()
-                                + " - add the item when a machine first reaches it");
+                        throw new IllegalStateException(tier.id()
+                                + " is nine of the rung below, so it asks for no metal");
             };
         }
     }

@@ -23,18 +23,18 @@ import com.mojang.serialization.Codec;
 public record Generator(String id, Source source, Tier top) {
     /** Whatever a furnace would burn, put in a slot by hand or by a hopper. */
     public static final Generator BURNER =
-            new Generator("burner", Source.ITEM, Tier.NETHER_STAR);
+            new Generator("burner", Source.ITEM, Tier.SUPER_COMPRESSED_NETHER_STAR);
     /** The same fuels, molten, kept in a tank a pipe or a bucket can fill. */
     public static final Generator CRUCIBLE =
-            new Generator("crucible", Source.FLUID, Tier.NETHER_STAR);
+            new Generator("crucible", Source.FLUID, Tier.SUPER_COMPRESSED_NETHER_STAR);
     /** Daylight. Nothing goes in, so the only way to get more is a better panel. */
-    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.NETHER_STAR);
+    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.SUPER_COMPRESSED_NETHER_STAR);
     /** Hot on one face, cold on the one opposite. Placement is the whole of it. */
     public static final Generator HYPOCAUSTUM =
-            new Generator("hypocaustum", Source.HEAT, Tier.NETHER_STAR);
+            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR);
     /** What a player earned, poured in by hand. No better experience exists, so it tiers. */
     public static final Generator EXPERIENTIA =
-            new Generator("experientia", Source.EXPERIENCE, Tier.NETHER_STAR);
+            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR);
 
     private static final List<Generator> ALL =
             List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA);
