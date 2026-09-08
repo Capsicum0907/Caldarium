@@ -664,9 +664,10 @@ public final class CaldariumDataGen {
             ShapedRecipeBuilder built = tier.compressed()
                     ? ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, result)
                             .pattern("PPP")
-                            .pattern("PPP")
+                            .pattern("PMP")
                             .pattern("PPP")
                             .define('P', under)
+                            .define('M', medium(tier))
                     : ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, result)
                             .pattern(" M ")
                             .pattern("MPM")
@@ -674,6 +675,27 @@ public final class CaldariumDataGen {
                             .define('M', metal(tier))
                             .define('P', under);
             built.unlockedBy(unlocked, has(under)).save(output);
+        }
+
+        /**
+         * What squeezes eight of the rung below into one. Eight blocks and one of these.
+         *
+         * <p>Neither is picked for being dear. Sixty-four of the sixth rung go into one of
+         * the eighth and each of those took four nether stars, so the withers are the
+         * price and a tear is a rounding error against them. What these choose is which
+         * places you have to have been.
+         *
+         * <p>A tear rather than anything newer because it has been in the game since the
+         * beta, and this mod may be carried back to older versions.
+         */
+        private static ItemLike medium(Tier tier) {
+            return switch (tier) {
+                case COMPRESSED_NETHER_STAR -> Items.GHAST_TEAR;
+                case SUPER_COMPRESSED_NETHER_STAR -> Items.TOTEM_OF_UNDYING;
+                case COPPER, IRON, GOLD, DIAMOND, NETHERITE, NETHER_STAR ->
+                        throw new IllegalStateException(tier.id()
+                                + " is built from a frame, so it squeezes nothing");
+            };
         }
 
         /** What a rung is made of. The ladder is the vanilla one everybody knows. */

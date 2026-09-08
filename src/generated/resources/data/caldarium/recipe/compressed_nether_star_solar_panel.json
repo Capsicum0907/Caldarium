@@ -2,13 +2,16 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
+    "M": {
+      "item": "minecraft:ghast_tear"
+    },
     "P": {
       "item": "caldarium:nether_star_solar_panel"
     }
   },
   "pattern": [
     "PPP",
-    "PPP",
+    "PMP",
     "PPP"
   ],
   "result": {

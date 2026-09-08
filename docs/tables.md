@@ -39,9 +39,18 @@ and can only hold one at the top, since twice the ceiling does not fit. And a
 generator on the last rung holds one tick of what it makes.
 
 **A rung says how it is built.** The first six are the rung below inside a frame of
-their own metal. The last two are nine of the rung below and nothing else, which is
-why they need no material of their own: there is no compressed nether star in the
-game and none has to be invented.
+their own metal. The last two are eight of the rung below squeezed around one thing in
+the middle, so they need no material of their own: there is no compressed nether star
+in the game and none has to be invented.
+
+The thing in the middle is a ghast tear on the seventh rung and a totem of undying on
+the eighth. **Neither is chosen for being dear.** Sixty-four sixth-rung blocks go into
+one eighth-rung block and every one of those took four nether stars, so two hundred
+and fifty-six withers are the price and a tear beside them is nothing. What the middle
+chooses is which places you have to have been - and both of those are places the
+withers already took you past, which is why nothing newer is asked for. ⚠ A tear also
+predates every version this might be carried back to, which a breeze rod and a heavy
+core do not.
 
 **The ladder is expected to grow.** Nothing counts the rungs: the numbers come from
 where a tier sits in the list, the slots from the same, the recipe from the rung
