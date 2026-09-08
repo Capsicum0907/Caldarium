@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-08T18:42:19.9484729	Recipes
+// 1.21.1	2026-09-08T18:55:53.9793276	Recipes
 576b34e9b721292355914177dcb6ceedc12083cd data/caldarium/advancement/recipes/redstone/burner.json
 7ef4a36fb488426f12975d9a6254048aeee80ca0 data/caldarium/advancement/recipes/redstone/copper_battery.json
 2f76e48f4cbee12fbed39549302f4190a7e45bc6 data/caldarium/advancement/recipes/redstone/copper_cable.json
@@ -51,7 +51,7 @@ e4a475c4716d228c67ec23d4c80f03e6c28f8326 data/caldarium/advancement/recipes/reds
 72cd8859bd2f3484a96798578393b0b542778e18 data/caldarium/recipe/copper_experientia.json
 9aa1335a1988d40c83c8baa93cd48247d469383c data/caldarium/recipe/copper_exporter.json
 f6f2630ce2c90b10c277160e6e5521ddf2e1456e data/caldarium/recipe/copper_importer.json
-3f3cb90fdb95c424b46c10381bfb509a01376b7b data/caldarium/recipe/copper_solar_panel.json
+f93da266deba8f59032be1be8bcca164a5a7f6a4 data/caldarium/recipe/copper_solar_panel.json
 d6246fdad5c9ab419c1b4e33f1acb5659bfe4045 data/caldarium/recipe/crucible.json
 06fb6df6c1257f4e4b91ede974d108a6fb97325d data/caldarium/recipe/diamond_battery.json
 6b4d26f654d1f9b54d1905c56be365f9ec8a5085 data/caldarium/recipe/diamond_cable.json

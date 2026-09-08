@@ -505,11 +505,9 @@ public final class CaldariumDataGen {
 
         @Override
         protected void buildRecipes(RecipeOutput output) {
-            // Each generator is iron and redstone around the vanilla thing that
-            // already does its job by hand: a furnace to burn, a cauldron to hold
-            // something molten, and glass to face the sky. A generator that stands on
-            // a ladder is built from parts on its first rung and from the rung below
-            // on every one after, the same as everything else that has tiers.
+            // A generator is its own metal and redstone around the vanilla thing that
+            // already does its job by hand. A row with no rung of its own is iron, the
+            // same rung its numbers are written for.
             for (Generator.Made made : Generator.made()) {
                 Block block = CaldariumRegistry.generators().get(made).get();
                 Tier under = made.tier() == null ? null : made.tier().under();
@@ -520,12 +518,13 @@ public final class CaldariumDataGen {
                             "has_" + new Generator.Made(made.generator(), under).id());
                     continue;
                 }
+                ItemLike own = made.tier() == null ? Items.IRON_INGOT : metal(made.tier());
                 ShapedRecipeBuilder built = switch (made.source()) {
                     case ITEM -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("III")
                             .pattern("IFI")
                             .pattern("IRI")
-                            .define('I', Items.IRON_INGOT)
+                            .define('I', own)
                             .define('F', Blocks.FURNACE)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_furnace", has(Blocks.FURNACE));
@@ -533,7 +532,7 @@ public final class CaldariumDataGen {
                             .pattern("III")
                             .pattern("ICI")
                             .pattern("IRI")
-                            .define('I', Items.IRON_INGOT)
+                            .define('I', own)
                             .define('C', Blocks.CAULDRON)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_cauldron", has(Blocks.CAULDRON));
@@ -543,13 +542,13 @@ public final class CaldariumDataGen {
                             .pattern("III")
                             .define('G', Blocks.GLASS)
                             .define('R', Items.REDSTONE)
-                            .define('I', Items.IRON_INGOT)
+                            .define('I', own)
                             .unlockedBy("has_glass", has(Blocks.GLASS));
                     case EXPERIENCE -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("CCC")
                             .pattern("CBC")
                             .pattern("CRC")
-                            .define('C', Items.COPPER_INGOT)
+                            .define('C', own)
                             .define('B', Blocks.BOOKSHELF)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_bookshelf", has(Blocks.BOOKSHELF));
@@ -557,7 +556,7 @@ public final class CaldariumDataGen {
                             .pattern("IBI")
                             .pattern("BRB")
                             .pattern("IBI")
-                            .define('I', Items.IRON_INGOT)
+                            .define('I', own)
                             .define('B', Blocks.BRICKS)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_bricks", has(Blocks.BRICKS));
