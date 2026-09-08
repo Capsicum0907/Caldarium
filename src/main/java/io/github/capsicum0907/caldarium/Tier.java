@@ -28,8 +28,8 @@ public enum Tier implements StringRepresentable {
     // at 0x5B4E52 against a 0x51565A window: a top tier that looked like a blank plate.
     NETHERITE(0xB0A2A5, false, 16),
     NETHER_STAR(0xF3EFD8, false, 32),
-    COMPRESSED_NETHER_STAR(0xCBBCE8, true, 32),
-    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true, 64);
+    COMPRESSED_NETHER_STAR(0xCBBCE8, true, 8),
+    SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true, 8);
 
     public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 

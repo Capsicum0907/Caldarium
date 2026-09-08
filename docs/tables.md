@@ -22,8 +22,12 @@ holds, because it is the same block holding eight times as much, and worth nothi
 for something that carries: a line is limited by what is at each end of it rather
 than by the line.
 
-**A rung says how much bigger it is than the one under it**, and the steps grow:
-eight, eight, sixteen, sixteen, thirty-two. Every row's transfer rate starts at 4,096
+**A rung says how much bigger it is than the one under it**, and the steps grow while
+the ladder is climbed: eight, eight, sixteen, sixteen, thirty-two. The two compressed
+rungs step by eight, which is how many blocks go into one of them - so compressing
+trades eight blocks for one holding exactly what they held. What it buys is the space
+and the tick cost of seven fewer blocks, and it costs a medium; it does not make
+energy out of arithmetic. Every row's transfer rate starts at 4,096
 and lands exactly on 2,147,483,647 at the nether star, which is not a number anyone
 picked - it is the largest an int carries, and `IEnergyStorage` passes energy through
 `int receiveEnergy(int, boolean)`, so it is the most that can cross in one call
