@@ -49,6 +49,10 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     private int lookAgain;
     private float reaching;
 
+    private static final long FINE = 4_096L;
+
+    private long spare;
+
     public GeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(CaldariumRegistry.GENERATOR_ENTITY.get(), pos, state);
         this.row = ((GeneratorBlock) state.getBlock()).row();
@@ -175,7 +179,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
             case EXPERIENCE, LIFE -> generator.burn();
-            case SUN, HEAT -> generator.soak(server, pos);
+            case SUN, HEAT, LAMP -> generator.soak(server, pos);
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
 
@@ -203,7 +207,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     private void burn() {
         if (burning > 0) {
             burning--;
-            store.fill(rates.perTick().get());
+            give(1.0F);
         }
         if (burning <= 0 && !store.isFull()) {
             light();
@@ -263,12 +267,36 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     private void soak(ServerLevel level, BlockPos pos) {
         if (--lookAgain <= 0) {
             lookAgain = SUN_EVERY;
-            reaching = row.source() == Source.SUN
-                    ? Sunlight.reaching(level, pos)
-                    : Heat.reaching(level, pos);
+            reaching = switch (row.source()) {
+                case SUN -> Sunlight.reaching(level, pos);
+                case HEAT -> Heat.reaching(level, pos);
+                case LAMP -> Lamplight.reaching(level, pos);
+                default -> 0.0F;
+            };
         }
         if (reaching > 0.0F) {
-            store.fill(Math.round(rates.perTick().get() * reaching));
+            give(reaching);
+        }
+    }
+
+    /**
+     * A share of one helping.
+     *
+     * <p>A row says it makes so much every so many ticks, which is how a rate below one
+     * a tick gets written down at all while the amount stays a whole number.
+     *
+     * <p>Nothing is ever rounded up, and the one place anything is dropped is here, on
+     * the way out. Truncating each tick instead would leave the panel that reads
+     * lamplight making nothing at all below full light.
+     */
+    private void give(float share) {
+        long rate = rates.makes().get();
+        long every = Math.max(1, rates.every().get());
+        spare += (long) (rate * (double) share * FINE / every);
+        long whole = spare / FINE;
+        if (whole > 0) {
+            store.fill((int) Math.min(Integer.MAX_VALUE, whole));
+            spare -= whole * FINE;
         }
     }
 

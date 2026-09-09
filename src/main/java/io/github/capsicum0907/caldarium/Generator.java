@@ -20,27 +20,32 @@ import com.mojang.serialization.Codec;
  * <p>Numbers are not here — see {@link CaldariumConfig}. A row says what a generator
  * <em>is</em>; how much it makes is a setting.
  */
-public record Generator(String id, Source source, Tier top) {
+public record Generator(String id, Source source, Tier top, int makes, int every) {
+
     /** Whatever a furnace would burn, put in a slot by hand or by a hopper. */
     public static final Generator BURNER =
-            new Generator("burner", Source.ITEM, Tier.SUPER_COMPRESSED_NETHER_STAR);
+            new Generator("burner", Source.ITEM, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
     /** The same fuels, molten, kept in a tank a pipe or a bucket can fill. */
     public static final Generator CRUCIBLE =
-            new Generator("crucible", Source.FLUID, Tier.SUPER_COMPRESSED_NETHER_STAR);
+            new Generator("crucible", Source.FLUID, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
     /** Daylight. Nothing goes in, so the only way to get more is a better panel. */
-    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.SUPER_COMPRESSED_NETHER_STAR);
+    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.SUPER_COMPRESSED_NETHER_STAR, 2, 1);
     /** Hot on one face, cold on the one opposite. Placement is the whole of it. */
     public static final Generator HYPOCAUSTUM =
-            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR);
+            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
     /** What a player earned, poured in by hand. No better experience exists, so it tiers. */
     public static final Generator EXPERIENTIA =
-            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR);
+            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
     /** Where the dead were taken out of the arena. Stand on it and it takes yours. */
+    /** Lamplight rather than daylight. Weakest of them, and the only one you can light. */
+    public static final Generator LUCERNARIUM =
+            new Generator("lucernarium", Source.LAMP, Tier.SUPER_COMPRESSED_NETHER_STAR, 1, 8);
+
     public static final Generator SPOLIARIUM =
-            new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR);
+            new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
 
     private static final List<Generator> ALL =
-            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM);
+            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM, LUCERNARIUM);
 
     /**
      * One generator block: a row, and the rung it stands on if it stands on one.

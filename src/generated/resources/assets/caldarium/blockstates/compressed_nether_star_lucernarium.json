@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/compressed_nether_star_lucernarium"
+    },
+    "lit=true": {
+      "model": "caldarium:block/compressed_nether_star_lucernarium_on"
+    }
+  }
+}

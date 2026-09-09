@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_diamond_lucernarium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:diamond_lucernarium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:netherite_lucernarium"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_diamond_lucernarium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:netherite_lucernarium"
+    ]
+  }
+}

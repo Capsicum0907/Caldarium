@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/copper_lucernarium"
+    },
+    "lit=true": {
+      "model": "caldarium:block/copper_lucernarium_on"
+    }
+  }
+}

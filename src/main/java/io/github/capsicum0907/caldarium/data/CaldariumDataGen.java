@@ -561,6 +561,14 @@ public final class CaldariumDataGen {
                             .define('S', Blocks.SOUL_SAND)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_soul_sand", has(Blocks.SOUL_SAND));
+                    case LAMP -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("GGG")
+                            .pattern("RRR")
+                            .pattern("CCC")
+                            .define('G', Blocks.GLASS)
+                            .define('R', Items.REDSTONE)
+                            .define('C', own)
+                            .unlockedBy("has_redstone", has(Items.REDSTONE));
                     case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("IBI")
                             .pattern("BRB")

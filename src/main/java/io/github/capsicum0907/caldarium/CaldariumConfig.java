@@ -63,7 +63,6 @@ public final class CaldariumConfig {
     /** A generator holds little: it is a source, not a store. */
     private static final int GENERATOR_CAPACITY = 5_000;
     private static final int GENERATOR_TRANSFER = FIRST_TRANSFER;
-    private static final int GENERATOR_PER_TICK = 5;
 
     /** Ten buckets, which is what a tank the size of the block ought to feel like. */
     private static final int TANK = 10_000;
@@ -73,7 +72,7 @@ public final class CaldariumConfig {
 
     /** What one block's numbers are, whatever kind of block it is. */
     public record Rates(ModConfigSpec.IntValue capacity, ModConfigSpec.IntValue transfer,
-                        ModConfigSpec.IntValue perTick) {
+                        ModConfigSpec.IntValue makes, ModConfigSpec.IntValue every) {
     }
 
     public static final Map<Generator.Made, Rates> GENERATORS = new LinkedHashMap<>();
@@ -131,8 +130,11 @@ public final class CaldariumConfig {
                                     1, Integer.MAX_VALUE),
                     builder.defineInRange("transferRate", atRung(GENERATOR_TRANSFER, made.tier()),
                                     1, Integer.MAX_VALUE),
-                    builder.defineInRange("generates", atRung(GENERATOR_PER_TICK, made.tier()),
-                                    1, Integer.MAX_VALUE)));
+                    builder.defineInRange("generates",
+                            atRung(made.generator().makes(), made.tier()),
+                                    1, Integer.MAX_VALUE),
+                    builder.defineInRange("everyTicks", made.generator().every(),
+                            1, 20 * 60 * 60)));
             if (made.source() == Source.FLUID) {
                 TANKS.put(made, builder
                         .defineInRange("tank", TANK, 1_000, Integer.MAX_VALUE));
@@ -171,7 +173,7 @@ public final class CaldariumConfig {
                                         1, Integer.MAX_VALUE),
                         builder.defineInRange("transferRate", stepped(first.transfer(), tier),
                                         1, Integer.MAX_VALUE),
-                        null));
+                        null, null));
                 builder.pop();
             }
             builder.pop();

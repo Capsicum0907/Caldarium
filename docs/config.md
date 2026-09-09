@@ -15,7 +15,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 |---|---|
 | `capacity` | Forge Energy it holds. A generator stops and waits when it is full. |
 | `transferRate` | How much crosses its boundary per tick, each way and each side. Also how fast a charger fills what is in its slots, and what a generator offers each neighbour. |
-| `generates` | Forge Energy made per tick while a generator is working. |
+| `generatesPerEightTicks` | Forge Energy a generator makes every eight ticks while it is working. Eight rather than one so a rate below one a tick can be written down: the panel that reads lamplight makes two of these, which is a quarter of a unit a tick, and the block keeps the eighths rather than rounding them away. |
 | `tank` | Millibuckets of fuel a crucible holds. A bucket is spent at a time. |
 | `experience.ticksPerPoint` | How long one point of experience burns for. What that is worth depends on the tier, since the tier decides what is made per tick. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |

@@ -20,7 +20,9 @@ public enum Source {
     /** What a player has earned, poured in by hand. Held and spent, but not alight. */
     EXPERIENCE(false, false, true),
     /** The health of whatever stands on it, and only what actually left. */
-    LIFE(false, false, true);
+    LIFE(false, false, true),
+    /** Whatever light is falling on it, from lamps rather than from the sky. */
+    LAMP(false, true, false);
 
     private final boolean burns;
     private final boolean flat;

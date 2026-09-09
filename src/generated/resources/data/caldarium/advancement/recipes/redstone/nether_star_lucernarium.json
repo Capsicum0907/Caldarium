@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_netherite_lucernarium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:netherite_lucernarium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:nether_star_lucernarium"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_netherite_lucernarium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:nether_star_lucernarium"
+    ]
+  }
+}

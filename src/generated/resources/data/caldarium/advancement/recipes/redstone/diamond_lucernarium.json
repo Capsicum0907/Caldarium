@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_gold_lucernarium": {
+      "conditions": {
+        "items": [
+          {
+            "items": "caldarium:gold_lucernarium"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "caldarium:diamond_lucernarium"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_gold_lucernarium"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "caldarium:diamond_lucernarium"
+    ]
+  }
+}
