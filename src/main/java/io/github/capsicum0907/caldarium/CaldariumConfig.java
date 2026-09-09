@@ -91,6 +91,15 @@ public final class CaldariumConfig {
     private static final int PER_POINT = 20;
 
     public static ModConfigSpec.IntValue TICKS_PER_HEALTH;
+    public static ModConfigSpec.IntValue SOL_DURABILITY;
+    public static ModConfigSpec.IntValue SOL_WEATHER;
+    public static ModConfigSpec.IntValue SOL_REACH;
+    public static ModConfigSpec.IntValue SOL_BURNS;
+    public static ModConfigSpec.IntValue SOL_BURN_SECONDS;
+    public static ModConfigSpec.DoubleValue SOL_BURN_DAMAGE;
+
+    private static final int MC_DAY = 24_000;
+    private static final int SOL_DAYS = 30;
 
     private static final int PER_HEALTH = 200;
     public static ModConfigSpec.ConfigValue<List<? extends String>> TEMPERATURES;
@@ -152,6 +161,16 @@ public final class CaldariumConfig {
         TICKS_PER_POINT = builder.defineInRange("ticksPerPoint", PER_POINT, 1, 20_000);
         builder.pop();
 
+        builder.push("sol");
+        SOL_DURABILITY = builder.defineInRange("durability", MC_DAY * SOL_DAYS,
+                1, Integer.MAX_VALUE);
+        SOL_WEATHER = builder.defineInRange("weatherCost", 5, 1, 1_000);
+        SOL_REACH = builder.defineInRange("reach", 1, 0, 32);
+        SOL_BURNS = builder.defineInRange("burnReach", 3, 0, 32);
+        SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
+        SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
+        builder.pop();
+
         builder.push("life");
         TICKS_PER_HEALTH = builder.defineInRange("ticksPerHealth", PER_HEALTH, 1, 200_000);
         builder.pop();
@@ -203,6 +222,30 @@ public final class CaldariumConfig {
             }
         }
         return (int) value;
+    }
+
+    public static int solDurability() {
+        return SOL_DURABILITY.get();
+    }
+
+    public static int solWeather() {
+        return SOL_WEATHER.get();
+    }
+
+    public static int solReach() {
+        return SOL_REACH.get();
+    }
+
+    public static int solBurns() {
+        return SOL_BURNS.get();
+    }
+
+    public static int solBurnSeconds() {
+        return SOL_BURN_SECONDS.get();
+    }
+
+    public static float solBurnDamage() {
+        return SOL_BURN_DAMAGE.get().floatValue();
     }
 
     public static int ticksPerHealth() {

@@ -126,3 +126,22 @@ better experience to feed it, so a better machine is the only way it gets better
 
 ⚠ Pouring is three buttons rather than a click on the block. A block that drank
 experience when you touched it would take it while you were building.
+
+## Sol, which makes no energy at all
+
+Not a generator: it is a sun, and what a sun does is shine on the panels somebody else
+put down. Inside its reach a solar panel is told it is midday with a clear sky, so a
+field of them keeps working at night and underground.
+
+**It is paid for in durability rather than in energy.** A sun that ate energy to let
+panels make energy would be either free power or pointless, depending on which way the
+sum came out. So it has none: it is crafted whole, it burns for thirty in-game days -
+720,000 ticks, at 24,000 a day - and then it is gone. ⚠ **Rain and snow spend it five
+times as fast**, which takes those thirty days down to six.
+
+**It is a light and it is hot.** Brightest light the game has, dimming by a third of
+its range for each quarter of its durability spent, so how far through it is can be
+read off the room. And standing near it sets you alight - a sun that was only bright
+would not be a sun.
+
+⚠ Its reach is one block and that is a placeholder rather than a decision.

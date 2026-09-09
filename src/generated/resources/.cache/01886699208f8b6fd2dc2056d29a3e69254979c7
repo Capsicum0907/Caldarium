@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-09T13:08:42.6985662	Caldarium textures
+// 1.21.1	2026-09-09T14:52:41.2163731	Caldarium textures
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/compressed_nether_star_burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/compressed_nether_star_burner_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/compressed_nether_star_crucible.png
@@ -135,6 +135,7 @@ a6b38a7e6023aa4a1f2e288b0f8b6dac88393b8b assets/caldarium/textures/block/nether_
 42d02cd91a8faea281a087262320659db50572e3 assets/caldarium/textures/block/nether_star_solar_panel_top_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/nether_star_spoliarium.png
 941b4e8385c2a41b53f21d688ffeb9d401f2bf70 assets/caldarium/textures/block/nether_star_spoliarium_on.png
+562acd19f9e9e248bba1bd565fe5504caff85893 assets/caldarium/textures/block/sol.png
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/super_compressed_nether_star_burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/super_compressed_nether_star_burner_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/super_compressed_nether_star_crucible.png

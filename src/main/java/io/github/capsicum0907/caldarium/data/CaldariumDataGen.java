@@ -112,6 +112,7 @@ public final class CaldariumDataGen {
         @Override
         public CompletableFuture<?> run(CachedOutput output) {
             List<CompletableFuture<?>> writing = new ArrayList<>();
+            draw(output, writing, Skins.solSkin(), Skins.SOL);
             for (Generator.Made made : Generator.made()) {
                 if (made.source().flat()) {
                     for (boolean lit : new boolean[] { false, true }) {
@@ -197,6 +198,8 @@ public final class CaldariumDataGen {
                 // The item is the cold one: a generator in a hand is not burning.
                 itemModels().withExistingParent(cold, modLoc("block/" + cold));
             }
+            simpleBlockWithItem(CaldariumRegistry.SOL.get(),
+                    models().cubeAll(Skins.SOL, modLoc("block/" + Skins.SOL)));
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     String name = Skins.kind(kind, tier);
@@ -409,6 +412,7 @@ public final class CaldariumDataGen {
                             titled(tier.id()) + " " + titled(kind.getSerializedName()));
                 }
             }
+            add(CaldariumRegistry.SOL.get(), "Sol");
             add("itemGroup." + Caldarium.MODID, "Caldarium");
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");
@@ -449,6 +453,7 @@ public final class CaldariumDataGen {
 
     private static List<Block> ours() {
         List<Block> blocks = new ArrayList<>();
+        blocks.add(CaldariumRegistry.SOL.get());
         CaldariumRegistry.generators().values().forEach(block -> blocks.add(block.get()));
         for (Kind kind : Kind.values()) {
             for (Tier tier : Tier.upTo(kind.top())) {
@@ -584,6 +589,16 @@ public final class CaldariumDataGen {
             // The first rung is built from parts. Every rung above it is the rung
             // below in a frame of its own metal, so a tier added to the table brings
             // its recipe with it and the ladder cannot grow a missing step.
+            ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, CaldariumRegistry.SOL.get())
+                    .pattern("FNF")
+                    .pattern("NSN")
+                    .pattern("FNF")
+                    .define('F', Items.FIRE_CHARGE)
+                    .define('N', Items.NETHERITE_INGOT)
+                    .define('S', Items.NETHER_STAR)
+                    .unlockedBy("has_nether_star", has(Items.NETHER_STAR))
+                    .save(output);
+
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     recipe(output, kind, tier);

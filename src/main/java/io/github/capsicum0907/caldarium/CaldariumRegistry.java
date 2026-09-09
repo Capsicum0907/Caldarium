@@ -94,6 +94,19 @@ public final class CaldariumRegistry {
         }
     }
 
+    public static final DeferredBlock<SolBlock> SOL = BLOCKS.registerBlock("sol",
+            SolBlock::new, metal().lightLevel(SolBlock::light).hasPostProcess((a, b, c) -> true));
+
+    public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerSimpleBlockItem(SOL);
+
+    static {
+        ITEM_ORDER.add(SOL_ITEM);
+    }
+
+    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolBlockEntity>>
+            SOL_ENTITY = BLOCK_ENTITIES.register("sol",
+                    () -> BlockEntityType.Builder.of(SolBlockEntity::new, SOL.get()).build(null));
+
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorBlockEntity>>
             GENERATOR_ENTITY = BLOCK_ENTITIES.register("generator",
                     () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new,

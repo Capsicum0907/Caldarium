@@ -18,6 +18,10 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `generatesPerEightTicks` | Forge Energy a generator makes every eight ticks while it is working. Eight rather than one so a rate below one a tick can be written down: the panel that reads lamplight makes two of these, which is a quarter of a unit a tick, and the block keeps the eighths rather than rounding them away. |
 | `tank` | Millibuckets of fuel a crucible holds. A bucket is spent at a time. |
 | `experience.ticksPerPoint` | How long one point of experience burns for. What that is worth depends on the tier, since the tier decides what is made per tick. |
+| `sol.durability` | Ticks an artificial sun lasts. The default is thirty in-game days, at 24,000 ticks to a day. |
+| `sol.weatherCost` | Ticks of durability spent per tick while rain or snow is falling on it. |
+| `sol.reach` | How far its light counts as daylight for a solar panel. ⚠ Provisional. |
+| `sol.burnReach` / `burnSeconds` / `burnDamage` | How close is too close, and what that costs. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |
 | `heat.span` | The difference across one axis that counts as a full one. Three axes add up, so a hypocaustum built out on all three makes three times what one pair makes. |
 | `sun.through` | What percentage of the sun is left after one block that light passes through. Anything solid overhead stops it entirely, whatever this is set to. |

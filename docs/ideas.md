@@ -20,15 +20,11 @@ be worked out from the attacker's attack damage and swing cooldown.
 **Steam.** Water and heat, two inputs. Left for later: it needs either two tanks or a
 heat side, and if it takes the heat side it should take it the way hypocaustum does.
 
-## A panel that runs on something other than daylight, and an artificial sun
+## A panel that runs on something other than daylight
 
-This used to be recorded as arguing with why the panel has tiers. It does not any
-more: every generator climbs the ladder now, and the sentence that made solar the
-exception was dropped on 2026-09-08. Nothing stands in the way of it.
-
-What is left is a plain question of what the panel reads. Daylight is the one thing
-the game hands a block for free; an artificial sun is a block that had to be paid
-for, so the two are not one source wearing different hats.
+Built: the panel is `lucernarium` and the artificial sun is `sol`. What is left of the
+idea is a question nobody has asked yet - whether a panel should read something else
+again - and it is not open work.
 
 ## A relay: same frequency, any distance, any dimension
 

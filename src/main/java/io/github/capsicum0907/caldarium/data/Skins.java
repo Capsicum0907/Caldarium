@@ -328,6 +328,7 @@ public final class Skins {
      */
     public static List<String> names() {
         List<String> names = new ArrayList<>();
+        names.add(SOL);
         for (Generator.Made made : Generator.made()) {
             if (made.source().flat()) {
                 names.add(generatorTop(made, false));
@@ -466,6 +467,23 @@ public final class Skins {
     }
 
     /** The edge and underside of a panel: metal, in the colour of its rung. */
+    public static final String SOL = "sol";
+
+    /** Bright in the middle and falling to the colour of a flame at the rim. */
+    public static int[][] solSkin() {
+        int[][] pixels = new int[SIZE][SIZE];
+        float half = (SIZE - 1) / 2.0F;
+        for (int y = 0; y < SIZE; y++) {
+            for (int x = 0; x < SIZE; x++) {
+                float dx = (x - half) / half;
+                float dy = (y - half) / half;
+                float out = Math.min(1.0F, (float) Math.sqrt(dx * dx + dy * dy));
+                pixels[y][x] = mix(0xFFF6D8, 0xE0561A, out * out);
+            }
+        }
+        return pixels;
+    }
+
     public static int[][] plainSkin(Tier tier) {
         return plate(mix(BODY, tier.colour(), EDGE_TINT));
     }
