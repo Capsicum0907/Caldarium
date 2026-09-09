@@ -23,20 +23,26 @@ for something that carries: a line is limited by what is at each end of it rathe
 than by the line.
 
 **A rung says how much bigger it is than the one under it**, and the steps grow while
-the ladder is climbed: eight, eight, sixteen, sixteen, thirty-two. The two compressed
-rungs step by eight, which is how many blocks go into one of them - so compressing
-trades eight blocks for one holding exactly what they held. What it buys is the space
-and the tick cost of seven fewer blocks, and it costs a medium; it does not make
-energy out of arithmetic. Every row's transfer rate starts at 4,096
-and lands exactly on 2,147,483,647 at the nether star, which is not a number anyone
-picked - it is the largest an int carries, and `IEnergyStorage` passes energy through
-`int receiveEnergy(int, boolean)`, so it is the most that can cross in one call
-whatever either side would like. Capacity is set to reach the same ceiling on the
-same rung.
+the ladder is climbed: two, two, three, four, six. Their geometric mean is about three
+- the right average for steps that multiply, since what they have to add up to is a
+product rather than a sum. The two compressed rungs step by eight, which is how many
+blocks go into one of them, so compressing trades eight blocks for one holding exactly
+what they held: what it buys is the space and the tick cost of seven fewer blocks, and
+it costs a medium, and none of it is energy made out of arithmetic.
 
-⚠ Two things give way there. A cable is supposed to hold two ticks of its own rate
-and can only hold one at the top, since twice the ceiling does not fit. And a
-generator on the last rung holds one tick of what it makes.
+**The height of the ladder was measured against other mods rather than chosen.** The
+sixth rung is meant to stand beside what a mod of the same effort offers - Caldarium's
+generators are single blocks laid by the handful, so that comparison is Powah's
+furnator and panel rather than a multiblock reactor - and the two compressed rungs are
+what goes past them. What that came out as, and what it used to be, is in
+[2026-09-09/1330 in Atrium](../../Atrium/2026-09-09/1330_fe-scale-comparison/) if that
+is to hand; the short version is that the ladder used to multiply by thirty-three
+million where Powah's multiplies by two thousand, and now multiplies by eighteen
+thousand.
+
+⚠ Nothing reaches the ceiling an int imposes any more, which is what the ladder being
+this steep used to cost: a battery that held the same at two rungs running, and a cable
+with one tick of slack where the design says two.
 
 **A rung says how it is built.** The first six are the rung below inside a frame of
 their own metal. The last two are eight of the rung below squeezed around one thing in

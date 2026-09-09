@@ -21,13 +21,13 @@ import net.minecraft.util.StringRepresentable;
  */
 public enum Tier implements StringRepresentable {
     COPPER(0xE07C57, false, 1),
-    IRON(0xD5DBE0, false, 8),
-    GOLD(0xF0C246, false, 8),
-    DIAMOND(0x5BE0D6, false, 16),
+    IRON(0xD5DBE0, false, 2),
+    GOLD(0xF0C246, false, 2),
+    DIAMOND(0x5BE0D6, false, 3),
     // ⚠ The ingot highlight rather than the block face. Netherite drawn true came out
     // at 0x5B4E52 against a 0x51565A window: a top tier that looked like a blank plate.
-    NETHERITE(0xB0A2A5, false, 16),
-    NETHER_STAR(0xF3EFD8, false, 32),
+    NETHERITE(0xB0A2A5, false, 4),
+    NETHER_STAR(0xF3EFD8, false, 6),
     COMPRESSED_NETHER_STAR(0xCBBCE8, true, 8),
     SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true, 8);
 
