@@ -329,9 +329,8 @@ public final class Skins {
      */
     public static List<String> names() {
         List<String> names = new ArrayList<>();
-        for (int frame = 0; frame < SOL_FRAMES; frame++) {
-            names.add(sol(frame));
-        }
+        names.add(SOL);
+        names.add(SOL_LIT);
         for (Generator.Made made : Generator.made()) {
             if (made.source().flat()) {
                 names.add(generatorTop(made, false));
@@ -472,11 +471,17 @@ public final class Skins {
     /** The edge and underside of a panel: metal, in the colour of its rung. */
     public static final String SOL = "sol";
 
-    /** Pictures of the sun's skin, one to a step of the boil. */
-    public static final int SOL_FRAMES = 16;
+    /**
+     * A single white pixel for the sphere to hang its vertex colours on.
+     *
+     * <p>The ball is not textured: {@code Sunspots} answers what colour a point of it
+     * is from where that point is, so there is nothing to wrap and nothing to stretch.
+     * {@link #SOL} is still drawn, for the block in a hand and in the list.
+     */
+    public static final String SOL_LIT = "sol_lit";
 
-    public static String sol(int frame) {
-        return SOL + "_" + frame;
+    public static int[][] litSkin() {
+        return new int[][] { { 0xFFFFFF, 0xFFFFFF }, { 0xFFFFFF, 0xFFFFFF } };
     }
 
     /** The size of the sun's own picture, which is wrapped round a sphere. */

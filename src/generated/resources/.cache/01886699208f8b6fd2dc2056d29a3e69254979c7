@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-09T15:14:07.5982025	Caldarium textures
+// 1.21.1	2026-09-09T16:02:21.7703777	Caldarium textures
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/compressed_nether_star_burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/compressed_nether_star_burner_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/compressed_nether_star_crucible.png
@@ -135,22 +135,8 @@ a6b38a7e6023aa4a1f2e288b0f8b6dac88393b8b assets/caldarium/textures/block/nether_
 42d02cd91a8faea281a087262320659db50572e3 assets/caldarium/textures/block/nether_star_solar_panel_top_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/nether_star_spoliarium.png
 941b4e8385c2a41b53f21d688ffeb9d401f2bf70 assets/caldarium/textures/block/nether_star_spoliarium_on.png
-993bda85b6dbd21befd35b6571b3e84fe28c1a84 assets/caldarium/textures/block/sol_0.png
-da4d013110f18be91ebcee29f157d7fe939108c3 assets/caldarium/textures/block/sol_1.png
-b76c7a2eecd33d1b8f863c5690a82d2478ecd59f assets/caldarium/textures/block/sol_10.png
-4576636daaa49378dff1e3c9ae931d13f1796be9 assets/caldarium/textures/block/sol_11.png
-b4c7e0b58fcbec7d05ec291af55bbcdbbb02f9b6 assets/caldarium/textures/block/sol_12.png
-b77e1450d0e9251a1ba0a45c5b459670b00111bb assets/caldarium/textures/block/sol_13.png
-a3cdf09a83b05066d475f22ef49e48232e3e04dc assets/caldarium/textures/block/sol_14.png
-b0e862c67f494122b52bcb24fe01ac33e669f642 assets/caldarium/textures/block/sol_15.png
-81dd425322e90c5087ac089267cbf12fc95fc154 assets/caldarium/textures/block/sol_2.png
-f017932e3658e22b8ccabdc8c9ad217757021c94 assets/caldarium/textures/block/sol_3.png
-d8a2f3fcdc240b86edfa7b6933f2d70132b71c4a assets/caldarium/textures/block/sol_4.png
-72aacbcfe2455c0c544166a634f3629ada26520c assets/caldarium/textures/block/sol_5.png
-c9a9fc20524d29494bb5a5a362a655ffd196af6b assets/caldarium/textures/block/sol_6.png
-5126b4bad56317ea362db229bd2e59396ee142d3 assets/caldarium/textures/block/sol_7.png
-941d73f0419d994aee5f540928dbbb2e7b5317d6 assets/caldarium/textures/block/sol_8.png
-f6d63f6db6ec4ab47438e840c7e3392f714c5c8f assets/caldarium/textures/block/sol_9.png
+993bda85b6dbd21befd35b6571b3e84fe28c1a84 assets/caldarium/textures/block/sol.png
+5bfb216162fb3c2b1ace79cb96dfef1190086aa8 assets/caldarium/textures/block/sol_lit.png
 59442a9cad43a1f1f9c6a63cf75ed061d57b0373 assets/caldarium/textures/block/super_compressed_nether_star_burner.png
 4273e4c123e0539be4cfae107d3515cb1de7bbe1 assets/caldarium/textures/block/super_compressed_nether_star_burner_on.png
 88b9bd77af416eeab8e7911eb27ba0e0ec7543cd assets/caldarium/textures/block/super_compressed_nether_star_crucible.png

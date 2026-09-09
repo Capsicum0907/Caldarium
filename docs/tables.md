@@ -151,12 +151,13 @@ vertex at full brightness so it lights rather than being lit. The block itself r
 nothing at all. It shrinks as its durability goes, so a sun near the end of it is
 visibly smaller as well as dimmer, and its size is a setting.
 
-Its skin is generated like everything else here: cells of molten stuff, hot in the
-middle of each and dark at the seams, sampled on a torus so there is no seam down the
-back of the ball. **Sixteen of them**, with the cells drifting between one and the
-next, so it boils. ⚠ They are sixteen files rather than one file with animation
-metadata beside it: that metadata is read when a texture is stitched into an atlas,
-and this one is bound on its own, so the renderer picks between them instead.
+**Its surface is not a picture.** A flat picture on a sphere pinches to a point at both
+poles and stretches its pattern along the lines of latitude - a mirror ball rather than
+a sun, and no amount of redrawing the picture fixes it, because the fault is in the
+wrapping. So nothing is wrapped: the surface is asked, at each vertex, how hot the
+point it sits at is, from three-dimensional noise sampled at that point. No seam, no
+pole, no grid, and the boil comes from moving through the noise rather than from a
+sheaf of frames.
 
 ⚠ **It takes a diamond pickaxe and nothing else will do.** Not slowly with a stone one
 - not at all. A sun anybody can get through given the patience is a sun anybody gets

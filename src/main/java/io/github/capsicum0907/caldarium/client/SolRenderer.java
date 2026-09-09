@@ -22,29 +22,20 @@ import org.joml.Vector3f;
 
 public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     /**
-     * One picture per step of the boil.
+     * A blank to hang the vertex colours on.
      *
-     * <p>⚠ Not one picture with an animation beside it. Animation metadata is read when
-     * a texture is stitched into an atlas, and this one is bound on its own, so the
-     * frames are separate files and the renderer picks between them.
+     * <p>The surface is not a picture: {@link Sunspots} answers what colour a point of
+     * it is from where that point is. One white pixel is all the render type needs.
      */
-    private static final ResourceLocation[] SKINS = skins();
-
-    /** Ticks a frame is held for. */
-    private static final int HOLD = 3;
-
-    private static ResourceLocation[] skins() {
-        ResourceLocation[] all = new ResourceLocation[Skins.SOL_FRAMES];
-        for (int frame = 0; frame < all.length; frame++) {
-            all[frame] = ResourceLocation.fromNamespaceAndPath(Caldarium.MODID,
-                    "textures/block/" + Skins.sol(frame) + ".png");
-        }
-        return all;
-    }
+    private static final ResourceLocation SKIN = ResourceLocation
+            .fromNamespaceAndPath(Caldarium.MODID, "textures/block/" + Skins.SOL_LIT + ".png");
 
     /** Bands around the sphere, and segments around each band. */
-    private static final int RINGS = 20;
-    private static final int SEGMENTS = 32;
+    private static final int RINGS = 32;
+    private static final int SEGMENTS = 64;
+
+    /** How fast the surface churns, in noise units a second. */
+    private static final float BOIL = 0.35F;
 
     /** Degrees a second. Slow enough to read as churning rather than spinning. */
     private static final float TURN = 6.0F;
@@ -69,9 +60,9 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     public void render(SolBlockEntity sol, float partial, PoseStack pose,
             MultiBufferSource buffers, int light, int overlay) {
         float radius = CaldariumConfig.solSize() * (SHRUNK + (1.0F - SHRUNK) * sol.share());
-        long time = sol.getLevel() == null ? 0L : sol.getLevel().getGameTime();
-        float spin = (time + partial) * TURN / 20.0F;
-        ResourceLocation skin = SKINS[(int) ((time / HOLD) % SKINS.length)];
+        float time = (sol.getLevel() == null ? 0L : sol.getLevel().getGameTime()) + partial;
+        float spin = time * TURN / 20.0F;
+        float boil = time * BOIL / 20.0F;
 
         pose.pushPose();
         pose.translate(0.5F, 0.5F, 0.5F);
@@ -79,8 +70,8 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
         pose.scale(radius, radius, radius);
 
-        VertexConsumer into = buffers.getBuffer(RenderType.entityTranslucentEmissive(skin));
-        ball(pose, into, overlay);
+        VertexConsumer into = buffers.getBuffer(RenderType.entityTranslucentEmissive(SKIN));
+        ball(pose, into, overlay, boil);
         pose.popPose();
     }
 
@@ -88,7 +79,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
      * A sphere of quads. Every vertex is drawn at full brightness, which is what makes
      * it a light rather than a lit thing: a sun that dimmed in shadow would be a ball.
      */
-    private static void ball(PoseStack pose, VertexConsumer into, int overlay) {
+    private static void ball(PoseStack pose, VertexConsumer into, int overlay, float boil) {
         Matrix4f matrix = pose.last().pose();
         for (int ring = 0; ring < RINGS; ring++) {
             float from = Mth.PI * ring / RINGS;
@@ -96,25 +87,41 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
             for (int segment = 0; segment < SEGMENTS; segment++) {
                 float left = Mth.TWO_PI * segment / SEGMENTS;
                 float right = Mth.TWO_PI * (segment + 1) / SEGMENTS;
-                corner(matrix, pose, into, overlay, from, left, ring, segment);
-                corner(matrix, pose, into, overlay, to, left, ring + 1, segment);
-                corner(matrix, pose, into, overlay, to, right, ring + 1, segment + 1);
-                corner(matrix, pose, into, overlay, from, right, ring, segment + 1);
+                corner(matrix, pose, into, overlay, from, left, boil);
+                corner(matrix, pose, into, overlay, to, left, boil);
+                corner(matrix, pose, into, overlay, to, right, boil);
+                corner(matrix, pose, into, overlay, from, right, boil);
             }
         }
     }
 
+    /** The seam colour, and the two it climbs through as a spot heats up. */
+    private static final int COOL = 0xC2400C;
+    private static final int WARM = 0xF9A11B;
+    private static final int HOT = 0xFFF6D8;
+
     private static void corner(Matrix4f matrix, PoseStack pose, VertexConsumer into,
-            int overlay, float down, float round, int ring, int segment) {
+            int overlay, float down, float round, float boil) {
         float x = Mth.sin(down) * Mth.cos(round);
         float y = Mth.cos(down);
         float z = Mth.sin(down) * Mth.sin(round);
+        float heat = Sunspots.heat(x, y, z, boil);
+        int colour = heat < 0.5F
+                ? blend(COOL, WARM, heat * 2.0F)
+                : blend(WARM, HOT, (heat - 0.5F) * 2.0F);
         Vector3f normal = new Vector3f(x, y, z);
         into.addVertex(matrix, x, y, z)
-                .setColor(1.0F, 1.0F, 1.0F, 1.0F)
-                .setUv((float) segment / SEGMENTS, (float) ring / RINGS)
+                .setColor(colour | 0xFF000000)
+                .setUv(0.5F, 0.5F)
                 .setOverlay(overlay)
                 .setLight(LightTexture.FULL_BRIGHT)
                 .setNormal(pose.last(), normal.x, normal.y, normal.z);
+    }
+
+    private static int blend(int from, int to, float at) {
+        int r = Math.round(Mth.lerp(at, (from >> 16) & 0xFF, (to >> 16) & 0xFF));
+        int g = Math.round(Mth.lerp(at, (from >> 8) & 0xFF, (to >> 8) & 0xFF));
+        int b = Math.round(Mth.lerp(at, from & 0xFF, to & 0xFF));
+        return (r << 16) | (g << 8) | b;
     }
 }

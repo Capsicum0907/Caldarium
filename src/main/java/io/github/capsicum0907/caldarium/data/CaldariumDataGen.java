@@ -113,10 +113,8 @@ public final class CaldariumDataGen {
         @Override
         public CompletableFuture<?> run(CachedOutput output) {
             List<CompletableFuture<?>> writing = new ArrayList<>();
-            for (int frame = 0; frame < Skins.SOL_FRAMES; frame++) {
-                draw(output, writing, Skins.solSkin((float) frame / Skins.SOL_FRAMES),
-                        Skins.sol(frame));
-            }
+            draw(output, writing, Skins.solSkin(0.0F), Skins.SOL);
+            draw(output, writing, Skins.litSkin(), Skins.SOL_LIT);
             for (Generator.Made made : Generator.made()) {
                 if (made.source().flat()) {
                     for (boolean lit : new boolean[] { false, true }) {
@@ -203,7 +201,7 @@ public final class CaldariumDataGen {
                 itemModels().withExistingParent(cold, modLoc("block/" + cold));
             }
             simpleBlockWithItem(CaldariumRegistry.SOL.get(),
-                    models().cubeAll(Skins.SOL, modLoc("block/" + Skins.sol(0))));
+                    models().cubeAll(Skins.SOL, modLoc("block/" + Skins.SOL)));
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     String name = Skins.kind(kind, tier);
