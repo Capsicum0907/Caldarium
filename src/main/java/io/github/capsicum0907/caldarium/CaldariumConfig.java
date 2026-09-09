@@ -97,6 +97,7 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue SOL_BURNS;
     public static ModConfigSpec.IntValue SOL_BURN_SECONDS;
     public static ModConfigSpec.DoubleValue SOL_BURN_DAMAGE;
+    public static ModConfigSpec.DoubleValue SOL_SIZE;
 
     private static final int MC_DAY = 24_000;
     private static final int SOL_DAYS = 30;
@@ -169,6 +170,7 @@ public final class CaldariumConfig {
         SOL_BURNS = builder.defineInRange("burnReach", 3, 0, 32);
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
+        SOL_SIZE = builder.defineInRange("size", 4.0, 0.5, 64.0);
         builder.pop();
 
         builder.push("life");
@@ -242,6 +244,10 @@ public final class CaldariumConfig {
 
     public static int solBurnSeconds() {
         return SOL_BURN_SECONDS.get();
+    }
+
+    public static float solSize() {
+        return SOL_SIZE.get().floatValue();
     }
 
     public static float solBurnDamage() {

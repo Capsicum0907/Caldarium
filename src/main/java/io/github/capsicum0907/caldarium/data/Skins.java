@@ -469,19 +469,62 @@ public final class Skins {
     /** The edge and underside of a panel: metal, in the colour of its rung. */
     public static final String SOL = "sol";
 
-    /** Bright in the middle and falling to the colour of a flame at the rim. */
+    /** The size of the sun's own picture, which is wrapped round a sphere. */
+    private static final int SOL_SIZE = 32;
+
+    /**
+     * Cells of molten stuff, hot in the middle of each and dark at the seams.
+     *
+     * <p>Wraps in both directions, because it goes round a ball: the noise is sampled
+     * on a torus rather than on a square, so there is no line down the back of it.
+     */
     public static int[][] solSkin() {
-        int[][] pixels = new int[SIZE][SIZE];
-        float half = (SIZE - 1) / 2.0F;
-        for (int y = 0; y < SIZE; y++) {
-            for (int x = 0; x < SIZE; x++) {
-                float dx = (x - half) / half;
-                float dy = (y - half) / half;
-                float out = Math.min(1.0F, (float) Math.sqrt(dx * dx + dy * dy));
-                pixels[y][x] = mix(0xFFF6D8, 0xE0561A, out * out);
+        int[][] pixels = new int[SOL_SIZE][SOL_SIZE];
+        for (int y = 0; y < SOL_SIZE; y++) {
+            for (int x = 0; x < SOL_SIZE; x++) {
+                float heat = cells(x, y, 4) * 0.6F + cells(x, y, 8) * 0.3F
+                        + cells(x, y, 16) * 0.1F;
+                heat = Math.clamp((heat - 0.25F) * 1.9F, 0.0F, 1.0F);
+                pixels[y][x] = heat < 0.5F
+                        ? mix(0xB0300A, 0xF07A16, heat * 2.0F)
+                        : mix(0xF07A16, 0xFFF3C4, (heat - 0.5F) * 2.0F);
             }
         }
         return pixels;
+    }
+
+    /** Distance to the nearest of a lattice of drifting points, wrapped both ways. */
+    private static float cells(int x, int y, int across) {
+        float step = (float) SOL_SIZE / across;
+        float best = Float.MAX_VALUE;
+        int cx = (int) (x / step);
+        int cy = (int) (y / step);
+        for (int dy = -1; dy <= 1; dy++) {
+            for (int dx = -1; dx <= 1; dx++) {
+                int gx = Math.floorMod(cx + dx, across);
+                int gy = Math.floorMod(cy + dy, across);
+                float px = (gx + jitter(gx, gy, 1)) * step;
+                float py = (gy + jitter(gx, gy, 2)) * step;
+                float ox = wrapped(x - px);
+                float oy = wrapped(y - py);
+                best = Math.min(best, ox * ox + oy * oy);
+            }
+        }
+        return Math.clamp((float) Math.sqrt(best) / step, 0.0F, 1.0F);
+    }
+
+    private static float wrapped(float d) {
+        float half = SOL_SIZE / 2.0F;
+        if (d > half) {
+            return d - SOL_SIZE;
+        }
+        return d < -half ? d + SOL_SIZE : d;
+    }
+
+    private static float jitter(int x, int y, int salt) {
+        int h = x * 374761393 + y * 668265263 + salt * 1274126177;
+        h = (h ^ (h >> 13)) * 1274126177;
+        return ((h ^ (h >> 16)) & 0xFFFF) / 65535.0F;
     }
 
     public static int[][] plainSkin(Tier tier) {

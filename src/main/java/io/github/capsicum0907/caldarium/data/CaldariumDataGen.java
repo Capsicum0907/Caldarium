@@ -18,6 +18,7 @@ import io.github.capsicum0907.caldarium.CarrierBlock;
 import io.github.capsicum0907.caldarium.Joint;
 import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.GeneratorBlock;
+import io.github.capsicum0907.caldarium.SolBlock;
 import io.github.capsicum0907.caldarium.Tier;
 
 import net.minecraft.Util;
@@ -440,6 +441,13 @@ public final class CaldariumDataGen {
             @Override
             protected void generate() {
                 for (Block block : ours()) {
+                    if (block instanceof SolBlock) {
+                        // A sun that could be picked up would be a sun with a pause
+                        // button, and its durability would only ever be spent by
+                        // somebody who forgot to take it back.
+                        add(block, noDrop());
+                        continue;
+                    }
                     dropSelf(block);
                 }
             }

@@ -20,6 +20,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `experience.ticksPerPoint` | How long one point of experience burns for. What that is worth depends on the tier, since the tier decides what is made per tick. |
 | `sol.durability` | Ticks an artificial sun lasts. The default is thirty in-game days, at 24,000 ticks to a day. |
 | `sol.weatherCost` | Ticks of durability spent per tick while rain or snow is falling on it. |
+| `sol.size` | How wide the drawn ball is, in blocks. It does not change what the sun does, only how big it looks. |
 | `sol.reach` | How far its light counts as daylight for a solar panel. ⚠ Provisional. |
 | `sol.burnReach` / `burnSeconds` / `burnDamage` | How close is too close, and what that costs. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |

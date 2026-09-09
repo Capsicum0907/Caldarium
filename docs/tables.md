@@ -144,4 +144,19 @@ its range for each quarter of its durability spent, so how far through it is can
 read off the room. And standing near it sets you alight - a sun that was only bright
 would not be a sun.
 
+**It is drawn as a ball, not as a block.** A block model cannot leave its own three
+cubes and is made of boxes besides, so the sphere is drawn by a block entity renderer
+instead - twenty rings of thirty-two segments, turning slowly on two axes, every
+vertex at full brightness so it lights rather than being lit. The block itself renders
+nothing at all. It shrinks as its durability goes, so a sun near the end of it is
+visibly smaller as well as dimmer, and its size is a setting.
+
+Its skin is generated like everything else here: cells of molten stuff, hot in the
+middle of each and dark at the seams, sampled on a torus so there is no seam down the
+back of the ball.
+
+⚠ **Breaking it destroys it.** A sun that could be picked up would be a sun with a
+pause button, and its durability would only ever be spent by somebody who forgot to
+take it back in.
+
 ⚠ Its reach is one block and that is a placeholder rather than a decision.

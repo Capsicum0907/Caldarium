@@ -41,9 +41,10 @@ public class SolBlock extends BaseEntityBlock {
         builder.add(SPENT);
     }
 
+    /** ⚠ The sphere is drawn by {@code SolRenderer}; a cube inside it would show. */
     @Override
     protected RenderShape getRenderShape(BlockState state) {
-        return RenderShape.MODEL;
+        return RenderShape.INVISIBLE;
     }
 
     @Override

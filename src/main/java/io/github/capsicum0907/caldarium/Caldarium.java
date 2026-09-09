@@ -70,6 +70,7 @@ public class Caldarium {
     public static class Client {
         public Client(IEventBus modEventBus, ModContainer modContainer) {
             modEventBus.addListener(CaldariumClient::registerScreens);
+            modEventBus.addListener(CaldariumClient::registerRenderers);
         }
     }
 

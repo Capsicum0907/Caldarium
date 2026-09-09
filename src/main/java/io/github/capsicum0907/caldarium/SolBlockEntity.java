@@ -76,6 +76,13 @@ public class SolBlockEntity extends BlockEntity {
         return left;
     }
 
+    /** What is left of it, as a part of one. Read by the renderer. */
+    public float share() {
+        int whole = Math.max(1, CaldariumConfig.solDurability());
+        return left < 0 ? 1.0F : Math.clamp(left / (float) whole, 0.0F, 1.0F);
+    }
+
+
     /** Whether an artificial sun stands close enough to that place to count as day. */
     public static boolean shining(ServerLevel level, BlockPos where) {
         int reach = CaldariumConfig.solReach();
