@@ -41,6 +41,24 @@ public class SolBlock extends BaseEntityBlock {
         builder.add(SPENT);
     }
 
+    /**
+     * ⚠ <b>The wrong tool does not make it slow, it makes it impossible.</b> No progress
+     * at all rather than a long wait: a sun you could get through with a stone pickaxe
+     * given the patience is a sun anybody gets through.
+     *
+     * <p>Creative is untouched, because breaking a block there never asks about
+     * progress in the first place.
+     */
+    @Override
+    protected float getDestroyProgress(BlockState state, net.minecraft.world.entity.player.Player player,
+            BlockGetter level, BlockPos pos) {
+        if (!(level instanceof net.minecraft.world.level.Level world)
+                || !player.hasCorrectToolForDrops(state, world, pos)) {
+            return 0.0F;
+        }
+        return super.getDestroyProgress(state, player, level, pos);
+    }
+
     /** ⚠ The sphere is drawn by {@code SolRenderer}; a cube inside it would show. */
     @Override
     protected RenderShape getRenderShape(BlockState state) {

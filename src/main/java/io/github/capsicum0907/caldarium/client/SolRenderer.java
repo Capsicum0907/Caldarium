@@ -21,8 +21,26 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
-    private static final ResourceLocation SKIN = ResourceLocation
-            .fromNamespaceAndPath(Caldarium.MODID, "textures/block/" + Skins.SOL + ".png");
+    /**
+     * One picture per step of the boil.
+     *
+     * <p>⚠ Not one picture with an animation beside it. Animation metadata is read when
+     * a texture is stitched into an atlas, and this one is bound on its own, so the
+     * frames are separate files and the renderer picks between them.
+     */
+    private static final ResourceLocation[] SKINS = skins();
+
+    /** Ticks a frame is held for. */
+    private static final int HOLD = 3;
+
+    private static ResourceLocation[] skins() {
+        ResourceLocation[] all = new ResourceLocation[Skins.SOL_FRAMES];
+        for (int frame = 0; frame < all.length; frame++) {
+            all[frame] = ResourceLocation.fromNamespaceAndPath(Caldarium.MODID,
+                    "textures/block/" + Skins.sol(frame) + ".png");
+        }
+        return all;
+    }
 
     /** Bands around the sphere, and segments around each band. */
     private static final int RINGS = 20;
@@ -51,8 +69,9 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     public void render(SolBlockEntity sol, float partial, PoseStack pose,
             MultiBufferSource buffers, int light, int overlay) {
         float radius = CaldariumConfig.solSize() * (SHRUNK + (1.0F - SHRUNK) * sol.share());
-        float spin = (sol.getLevel() == null ? 0 : sol.getLevel().getGameTime() + partial)
-                * TURN / 20.0F;
+        long time = sol.getLevel() == null ? 0L : sol.getLevel().getGameTime();
+        float spin = (time + partial) * TURN / 20.0F;
+        ResourceLocation skin = SKINS[(int) ((time / HOLD) % SKINS.length)];
 
         pose.pushPose();
         pose.translate(0.5F, 0.5F, 0.5F);
@@ -60,7 +79,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
         pose.scale(radius, radius, radius);
 
-        VertexConsumer into = buffers.getBuffer(RenderType.entityTranslucentEmissive(SKIN));
+        VertexConsumer into = buffers.getBuffer(RenderType.entityTranslucentEmissive(skin));
         ball(pose, into, overlay);
         pose.popPose();
     }

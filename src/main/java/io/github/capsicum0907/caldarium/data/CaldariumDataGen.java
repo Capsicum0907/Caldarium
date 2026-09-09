@@ -113,7 +113,10 @@ public final class CaldariumDataGen {
         @Override
         public CompletableFuture<?> run(CachedOutput output) {
             List<CompletableFuture<?>> writing = new ArrayList<>();
-            draw(output, writing, Skins.solSkin(), Skins.SOL);
+            for (int frame = 0; frame < Skins.SOL_FRAMES; frame++) {
+                draw(output, writing, Skins.solSkin((float) frame / Skins.SOL_FRAMES),
+                        Skins.sol(frame));
+            }
             for (Generator.Made made : Generator.made()) {
                 if (made.source().flat()) {
                     for (boolean lit : new boolean[] { false, true }) {
@@ -200,7 +203,7 @@ public final class CaldariumDataGen {
                 itemModels().withExistingParent(cold, modLoc("block/" + cold));
             }
             simpleBlockWithItem(CaldariumRegistry.SOL.get(),
-                    models().cubeAll(Skins.SOL, modLoc("block/" + Skins.SOL)));
+                    models().cubeAll(Skins.SOL, modLoc("block/" + Skins.sol(0))));
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     String name = Skins.kind(kind, tier);
@@ -496,6 +499,7 @@ public final class CaldariumDataGen {
 
         @Override
         protected void addTags(HolderLookup.Provider registries) {
+            tag(BlockTags.NEEDS_DIAMOND_TOOL).add(CaldariumRegistry.SOL.get());
             var pickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
             for (Block block : ours()) {
                 pickaxe.add(block);

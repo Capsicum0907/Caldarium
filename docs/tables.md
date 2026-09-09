@@ -153,7 +153,14 @@ visibly smaller as well as dimmer, and its size is a setting.
 
 Its skin is generated like everything else here: cells of molten stuff, hot in the
 middle of each and dark at the seams, sampled on a torus so there is no seam down the
-back of the ball.
+back of the ball. **Sixteen of them**, with the cells drifting between one and the
+next, so it boils. ⚠ They are sixteen files rather than one file with animation
+metadata beside it: that metadata is read when a texture is stitched into an atlas,
+and this one is bound on its own, so the renderer picks between them instead.
+
+⚠ **It takes a diamond pickaxe and nothing else will do.** Not slowly with a stone one
+- not at all. A sun anybody can get through given the patience is a sun anybody gets
+through. It is as hard as obsidian to the tool that does work.
 
 ⚠ **Breaking it destroys it.** A sun that could be picked up would be a sun with a
 pause button, and its durability would only ever be spent by somebody who forgot to

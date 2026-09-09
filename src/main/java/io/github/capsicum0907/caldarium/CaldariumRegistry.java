@@ -95,7 +95,11 @@ public final class CaldariumRegistry {
     }
 
     public static final DeferredBlock<SolBlock> SOL = BLOCKS.registerBlock("sol",
-            SolBlock::new, metal().lightLevel(SolBlock::light).hasPostProcess((a, b, c) -> true));
+            SolBlock::new, metal()
+                    .strength(50.0F, 1200.0F)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(SolBlock::light)
+                    .hasPostProcess((a, b, c) -> true));
 
     public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerSimpleBlockItem(SOL);
 

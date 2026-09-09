@@ -9,6 +9,7 @@ import io.github.capsicum0907.caldarium.Source;
 import io.github.capsicum0907.caldarium.Tier;
 
 import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
 
 /**
  * Every texture the mod has, as a formula. No PNG is kept in the repository.
@@ -328,7 +329,9 @@ public final class Skins {
      */
     public static List<String> names() {
         List<String> names = new ArrayList<>();
-        names.add(SOL);
+        for (int frame = 0; frame < SOL_FRAMES; frame++) {
+            names.add(sol(frame));
+        }
         for (Generator.Made made : Generator.made()) {
             if (made.source().flat()) {
                 names.add(generatorTop(made, false));
@@ -469,6 +472,13 @@ public final class Skins {
     /** The edge and underside of a panel: metal, in the colour of its rung. */
     public static final String SOL = "sol";
 
+    /** Pictures of the sun's skin, one to a step of the boil. */
+    public static final int SOL_FRAMES = 16;
+
+    public static String sol(int frame) {
+        return SOL + "_" + frame;
+    }
+
     /** The size of the sun's own picture, which is wrapped round a sphere. */
     private static final int SOL_SIZE = 32;
 
@@ -478,23 +488,26 @@ public final class Skins {
      * <p>Wraps in both directions, because it goes round a ball: the noise is sampled
      * on a torus rather than on a square, so there is no line down the back of it.
      */
-    public static int[][] solSkin() {
+    public static int[][] solSkin(float phase) {
         int[][] pixels = new int[SOL_SIZE][SOL_SIZE];
         for (int y = 0; y < SOL_SIZE; y++) {
             for (int x = 0; x < SOL_SIZE; x++) {
-                float heat = cells(x, y, 4) * 0.6F + cells(x, y, 8) * 0.3F
-                        + cells(x, y, 16) * 0.1F;
-                heat = Math.clamp((heat - 0.25F) * 1.9F, 0.0F, 1.0F);
+                float heat = cells(x, y, 4, phase) * 0.6F + cells(x, y, 8, phase * 1.6F) * 0.3F
+                        + cells(x, y, 16, phase * 2.4F) * 0.1F;
+                // ⚠ cells() is the distance to a cell's middle, so the middle comes
+                // back as nought. A sun is brightest in the middle of each blob and
+                // dark where they meet, which is this the other way up.
+                heat = Math.clamp(1.0F - (heat - 0.15F) * 1.5F, 0.0F, 1.0F);
                 pixels[y][x] = heat < 0.5F
-                        ? mix(0xB0300A, 0xF07A16, heat * 2.0F)
-                        : mix(0xF07A16, 0xFFF3C4, (heat - 0.5F) * 2.0F);
+                        ? mix(0xC2400C, 0xF9A11B, heat * 2.0F)
+                        : mix(0xF9A11B, 0xFFF6D8, (heat - 0.5F) * 2.0F);
             }
         }
         return pixels;
     }
 
     /** Distance to the nearest of a lattice of drifting points, wrapped both ways. */
-    private static float cells(int x, int y, int across) {
+    private static float cells(int x, int y, int across, float phase) {
         float step = (float) SOL_SIZE / across;
         float best = Float.MAX_VALUE;
         int cx = (int) (x / step);
@@ -503,8 +516,11 @@ public final class Skins {
             for (int dx = -1; dx <= 1; dx++) {
                 int gx = Math.floorMod(cx + dx, across);
                 int gy = Math.floorMod(cy + dy, across);
-                float px = (gx + jitter(gx, gy, 1)) * step;
-                float py = (gy + jitter(gx, gy, 2)) * step;
+                float drift = Mth.TWO_PI * phase;
+                float px = (gx + jitter(gx, gy, 1)
+                        + 0.30F * Mth.sin(drift + jitter(gx, gy, 3) * Mth.TWO_PI)) * step;
+                float py = (gy + jitter(gx, gy, 2)
+                        + 0.30F * Mth.cos(drift + jitter(gx, gy, 4) * Mth.TWO_PI)) * step;
                 float ox = wrapped(x - px);
                 float oy = wrapped(y - py);
                 best = Math.min(best, ox * ox + oy * oy);
