@@ -156,7 +156,13 @@ Named for the place the Romans fenced off after lightning struck it. A vanilla
 lightning rod goes on top and this stands under it; the rod does the attracting, which
 it is already good at within a hundred and twenty-eight blocks of a strike.
 
-**It has no rungs and it holds a billion.** What it takes in has to last until the next
+**It has no rungs, and a row with no rungs is not given one.** Its numbers are its own,
+untouched by the ladder: a billion held, and a quarter of a million a tick out, which
+empties a strike in ten seconds and a full one in two hundred. ⚠ It used to be read as
+standing on the iron rung - a leftover from when the burner had no ladder either - and
+was quietly getting twice the capacity it asked for and a hundredth of the transfer.
+
+**It holds a billion.** What it takes in has to last until the next
 storm and it arrives all at once, so the buffer is the machine.
 
 **A storm is worth five hundred times what a trident is.** ⚠ What separates them is one

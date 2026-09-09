@@ -61,7 +61,6 @@ public final class CaldariumConfig {
     }
 
     /** A generator holds little: it is a source, not a store. */
-    private static final int GENERATOR_TRANSFER = FIRST_TRANSFER;
 
     /** Ten buckets, which is what a tank the size of the block ought to feel like. */
     private static final int TANK = 10_000;
@@ -141,7 +140,7 @@ public final class CaldariumConfig {
                     builder.defineInRange("capacity",
                             atRung(made.generator().capacity(), made.tier()),
                                     1, Integer.MAX_VALUE),
-                    builder.defineInRange("transferRate", atRung(GENERATOR_TRANSFER, made.tier()),
+                    builder.defineInRange("transferRate", atRung(made.generator().transfer(), made.tier()),
                                     1, Integer.MAX_VALUE),
                     builder.defineInRange("generates",
                             atRung(made.generator().makes(), made.tier()),
@@ -219,9 +218,14 @@ public final class CaldariumConfig {
      * whatever the numbers are. Meeting it is not an error — it is the largest
      * battery that can honestly report itself.
      */
-    /** Untiered machines stand on the iron rung; the numbers above are written for it. */
+    /**
+     * ⚠ A row with no rungs is not put on one. It used to be read as standing on iron,
+     * which was written when the burner had no ladder and kept its numbers where they
+     * were; every generator climbs now, so the only row left without rungs was the one
+     * that genuinely has none, and it was quietly getting twice what it asked for.
+     */
     private static int atRung(int first, Tier tier) {
-        return stepped(first, tier == null ? Tier.IRON : tier);
+        return tier == null ? first : stepped(first, tier);
     }
 
     private static int stepped(int first, Tier tier) {
