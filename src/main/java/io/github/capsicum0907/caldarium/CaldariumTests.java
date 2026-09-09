@@ -31,6 +31,45 @@ public final class CaldariumTests {
         return (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
     }
 
+    private static GeneratorBlockEntity bidental(GameTestHelper helper) {
+        helper.setBlock(WHERE, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BIDENTAL, null)).get());
+        return (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
+    }
+
+    /**
+     * A storm is worth a great deal and a trident is worth very little.
+     *
+     * <p>⚠ What separates them is one field on the bolt, set in exactly one place in the
+     * game: the enchantment that calls lightning down. Weather sets none. So this checks
+     * the thing that is actually being relied on rather than the outcome of a storm.
+     */
+    @GameTest(template = TestStructures.FLOOR)
+    public static void aStormIsWorthMoreThanATrident(GameTestHelper helper) {
+        GeneratorBlockEntity struck = bidental(helper);
+        int natural = struck.strike(false);
+        int summoned = struck.strike(true);
+
+        check(natural > 0, "a storm should be worth something: " + natural);
+        check(summoned > 0, "and so should a trident: " + summoned);
+        check(natural > summoned,
+                "but a storm should be worth more: " + natural + " against " + summoned);
+        helper.succeed();
+    }
+
+    /**
+     * ⚠ Nothing else here takes a strike, however close it lands.
+     */
+    @GameTest(template = TestStructures.FLOOR)
+    public static void onlyTheBidentalTakesAStrike(GameTestHelper helper) {
+        helper.setBlock(WHERE, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
+
+        check(burner.strike(false) == 0, "a burner should take nothing from lightning");
+        helper.succeed();
+    }
+
     /**
      * What steps on it dies, and what it was holding is what is paid.
      */

@@ -61,7 +61,6 @@ public final class CaldariumConfig {
     }
 
     /** A generator holds little: it is a source, not a store. */
-    private static final int GENERATOR_CAPACITY = 5_000;
     private static final int GENERATOR_TRANSFER = FIRST_TRANSFER;
 
     /** Ten buckets, which is what a tank the size of the block ought to feel like. */
@@ -98,6 +97,9 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue SOL_BURN_SECONDS;
     public static ModConfigSpec.DoubleValue SOL_BURN_DAMAGE;
     public static ModConfigSpec.DoubleValue SOL_SIZE;
+    public static ModConfigSpec.IntValue STORM_NATURAL;
+    public static ModConfigSpec.IntValue STORM_SUMMONED;
+    public static ModConfigSpec.IntValue STORM_REACH;
 
     private static final int MC_DAY = 24_000;
     private static final int SOL_DAYS = 30;
@@ -136,7 +138,8 @@ public final class CaldariumConfig {
         for (Generator.Made made : Generator.made()) {
             builder.push(made.id());
             GENERATORS.put(made, new Rates(
-                    builder.defineInRange("capacity", atRung(GENERATOR_CAPACITY, made.tier()),
+                    builder.defineInRange("capacity",
+                            atRung(made.generator().capacity(), made.tier()),
                                     1, Integer.MAX_VALUE),
                     builder.defineInRange("transferRate", atRung(GENERATOR_TRANSFER, made.tier()),
                                     1, Integer.MAX_VALUE),
@@ -171,6 +174,12 @@ public final class CaldariumConfig {
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
         SOL_SIZE = builder.defineInRange("size", 4.0, 0.5, 64.0);
+        builder.pop();
+
+        builder.push("storm");
+        STORM_NATURAL = builder.defineInRange("natural", 50_000_000, 0, Integer.MAX_VALUE);
+        STORM_SUMMONED = builder.defineInRange("summoned", 100_000, 0, Integer.MAX_VALUE);
+        STORM_REACH = builder.defineInRange("reach", 3, 0, 16);
         builder.pop();
 
         builder.push("life");
@@ -224,6 +233,18 @@ public final class CaldariumConfig {
             }
         }
         return (int) value;
+    }
+
+    public static int stormNatural() {
+        return STORM_NATURAL.get();
+    }
+
+    public static int stormSummoned() {
+        return STORM_SUMMONED.get();
+    }
+
+    public static int stormReach() {
+        return STORM_REACH.get();
     }
 
     public static int solDurability() {

@@ -20,32 +20,42 @@ import com.mojang.serialization.Codec;
  * <p>Numbers are not here — see {@link CaldariumConfig}. A row says what a generator
  * <em>is</em>; how much it makes is a setting.
  */
-public record Generator(String id, Source source, Tier top, int makes, int every) {
+public record Generator(String id, Source source, Tier top, int makes, int every,
+        int capacity) {
 
     /** Whatever a furnace would burn, put in a slot by hand or by a hopper. */
     public static final Generator BURNER =
-            new Generator("burner", Source.ITEM, Tier.SUPER_COMPRESSED_NETHER_STAR, 167, 1);
+            new Generator("burner", Source.ITEM, Tier.SUPER_COMPRESSED_NETHER_STAR, 167, 1, 5_000);
     /** The same fuels, molten, kept in a tank a pipe or a bucket can fill. */
     public static final Generator CRUCIBLE =
-            new Generator("crucible", Source.FLUID, Tier.SUPER_COMPRESSED_NETHER_STAR, 167, 1);
+            new Generator("crucible", Source.FLUID, Tier.SUPER_COMPRESSED_NETHER_STAR, 167, 1, 5_000);
     /** Daylight. Nothing goes in, so the only way to get more is a better panel. */
-    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.SUPER_COMPRESSED_NETHER_STAR, 8, 1);
+    public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.SUPER_COMPRESSED_NETHER_STAR, 8, 1, 5_000);
     /** Hot on one face, cold on the one opposite. Placement is the whole of it. */
     public static final Generator HYPOCAUSTUM =
-            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
+            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000);
     /** What a player earned, poured in by hand. No better experience exists, so it tiers. */
     public static final Generator EXPERIENTIA =
-            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
+            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000);
     /** Where the dead were taken out of the arena. Stand on it and it takes yours. */
     /** Lamplight rather than daylight. Weakest of them, and the only one you can light. */
     public static final Generator LUCERNARIUM =
-            new Generator("lucernarium", Source.LAMP, Tier.SUPER_COMPRESSED_NETHER_STAR, 1, 8);
+            new Generator("lucernarium", Source.LAMP, Tier.SUPER_COMPRESSED_NETHER_STAR, 1, 8, 5_000);
+
+    /**
+     * A place struck by lightning, which the Romans fenced off and left alone.
+     *
+     * <p>No rungs: a strike is a strike. It holds a great deal because what it takes
+     * in has to last until the next storm, and it takes it in all at once.
+     */
+    public static final Generator BIDENTAL =
+            new Generator("bidental", Source.STORM, null, 1, 1, 1_000_000_000);
 
     public static final Generator SPOLIARIUM =
-            new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1);
+            new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000);
 
     private static final List<Generator> ALL =
-            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM, LUCERNARIUM);
+            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM, LUCERNARIUM, BIDENTAL);
 
     /**
      * One generator block: a row, and the rung it stands on if it stands on one.

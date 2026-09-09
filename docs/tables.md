@@ -127,6 +127,30 @@ better experience to feed it, so a better machine is the only way it gets better
 ⚠ Pouring is three buttons rather than a click on the block. A block that drank
 experience when you touched it would take it while you were building.
 
+## Bidental, which is paid in weather
+
+Named for the place the Romans fenced off after lightning struck it. A vanilla
+lightning rod goes on top and this stands under it; the rod does the attracting, which
+it is already good at within a hundred and twenty-eight blocks of a strike.
+
+**It has no rungs and it holds a billion.** What it takes in has to last until the next
+storm and it arrives all at once, so the buffer is the machine.
+
+**A storm is worth five hundred times what a trident is.** ⚠ What separates them is one
+field on the bolt. The game sets a cause in exactly one place - the enchantment that
+calls lightning down - so a cause present means somebody summoned it. ⚠⚠ **A cause
+absent means only that nobody said**: weather sets none, a command sets none, a trapped
+skeleton horse sets none, and another mod has no reason to set one either. This was
+asked about and answered: no cooldown guards the rest, because somebody who has gone as
+far as installing a mod that calls lightning down has earned what it gives them.
+
+⚠ It does not read `LightningRodBlock#onLightningStrike`, which is handed the block and
+the place but not the bolt, and so cannot say who called it.
+
+⚠ Its recipe is a first pass. What it must not become is the answer to "what do I power
+the early game with", since one strike is worth more than anything else here makes in a
+minute - so the way in has to sit well past the early game.
+
 ## Sol, which makes no energy at all
 
 Not a generator: it is a sun, and what a sun does is shine on the panels somebody else

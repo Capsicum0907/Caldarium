@@ -1,4 +1,5 @@
-// 1.21.1	2026-09-09T15:02:29.1281416	Loot Tables
+// 1.21.1	2026-09-09T19:23:35.712042	Loot Tables
+e8dc301e841585cdf670a9c7ca743951d808b9cf data/caldarium/loot_table/blocks/bidental.json
 d39e61f8fc3a8f022f2125b174c1e9ccbd05134c data/caldarium/loot_table/blocks/compressed_nether_star_burner.json
 24351decc0291880d89f74487378c7adc4c3e0ca data/caldarium/loot_table/blocks/compressed_nether_star_crucible.json
 6fc2d57ba66769d5d7da65c2f23fd53c36ff3699 data/caldarium/loot_table/blocks/compressed_nether_star_experientia.json

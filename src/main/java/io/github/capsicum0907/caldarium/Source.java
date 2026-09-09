@@ -22,7 +22,9 @@ public enum Source {
     /** The health of whatever stands on it, and only what actually left. */
     LIFE(false, false, true),
     /** Whatever light is falling on it, from lamps rather than from the sky. */
-    LAMP(false, true, false);
+    LAMP(false, true, false),
+    /** Lightning, which arrives all at once or not for an hour. */
+    STORM(false, false, false);
 
     private final boolean burns;
     private final boolean flat;

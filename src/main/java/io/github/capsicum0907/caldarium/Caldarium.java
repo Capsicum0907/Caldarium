@@ -12,7 +12,9 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 import org.slf4j.Logger;
@@ -37,6 +39,7 @@ public class Caldarium {
         CaldariumRegistry.TABS.register(modEventBus);
 
         modEventBus.addListener(Caldarium::registerCapabilities);
+        NeoForge.EVENT_BUS.addListener(Caldarium::lightning);
         modEventBus.addListener(Caldarium::addToCreativeTab);
 
         LOGGER.info("Caldarium {} loaded.", modContainer.getModInfo().getVersion());
@@ -51,6 +54,12 @@ public class Caldarium {
      * a routing decision, and this mod does not make those. The generator also offers
      * its fuel slot as an item handler, which is how a hopper feeds it.
      */
+    private static void lightning(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof net.minecraft.world.entity.LightningBolt bolt) {
+            Storm.struck(bolt);
+        }
+    }
+
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.store());

@@ -137,6 +137,20 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         return Math.round(had);
     }
 
+    /** What a strike is worth here. Whatever will not fit is lost, as it would be. */
+    public int strike(boolean summoned) {
+        if (row.source() != Source.STORM) {
+            return 0;
+        }
+        int worth = summoned ? CaldariumConfig.stormSummoned() : CaldariumConfig.stormNatural();
+        if (worth <= 0) {
+            return 0;
+        }
+        store.fill(worth);
+        setChanged();
+        return worth;
+    }
+
     @Override
     public boolean pours() {
         return row.source() == Source.EXPERIENCE;
@@ -180,6 +194,8 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             case ITEM, FLUID -> generator.burn();
             case EXPERIENCE, LIFE -> generator.burn();
             case SUN, HEAT, LAMP -> generator.soak(server, pos);
+            // Nothing between strikes. See Storm.
+            case STORM -> { }
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
 

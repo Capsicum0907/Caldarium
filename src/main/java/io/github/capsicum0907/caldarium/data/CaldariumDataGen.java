@@ -584,6 +584,18 @@ public final class CaldariumDataGen {
                             .define('R', Items.REDSTONE)
                             .define('C', own)
                             .unlockedBy("has_redstone", has(Items.REDSTONE));
+                    // ⚠ A first pass and known to be one. What this must not be is the
+                    // answer to "what do I power the early game with" - a strike is
+                    // worth more than anything else here makes in a minute, so the way
+                    // in has to sit well past the early game. A copper rod does not.
+                    case STORM -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("NLN")
+                            .pattern("LDL")
+                            .pattern("NLN")
+                            .define('N', Items.NETHERITE_INGOT)
+                            .define('L', Blocks.LIGHTNING_ROD)
+                            .define('D', Blocks.DIAMOND_BLOCK)
+                            .unlockedBy("has_lightning_rod", has(Blocks.LIGHTNING_ROD));
                     case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("IBI")
                             .pattern("BRB")
