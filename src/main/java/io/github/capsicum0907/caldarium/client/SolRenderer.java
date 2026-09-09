@@ -70,7 +70,12 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
         pose.scale(radius, radius, radius);
 
-        VertexConsumer into = buffers.getBuffer(RenderType.entityTranslucentEmissive(SKIN));
+        // ⚠ Solid rather than translucent emissive. That one draws with NO_CULL and a
+        // COLOR_WRITE mask - no back face culling and no depth written - so the far
+        // half of the ball comes through the near half and the pattern doubles. The
+        // light does not come from the render type anyway: it comes from handing every
+        // vertex FULL_BRIGHT, which this one takes just as happily.
+        VertexConsumer into = buffers.getBuffer(RenderType.entitySolid(SKIN));
         ball(pose, into, overlay, boil);
         pose.popPose();
     }
