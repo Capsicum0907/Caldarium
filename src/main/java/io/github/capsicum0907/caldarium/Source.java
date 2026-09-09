@@ -18,7 +18,9 @@ public enum Source {
     /** The difference between what is on one face and what is on the one opposite. */
     HEAT(false, false, false),
     /** What a player has earned, poured in by hand. Held and spent, but not alight. */
-    EXPERIENCE(false, false, true);
+    EXPERIENCE(false, false, true),
+    /** The health of whatever stands on it, and only what actually left. */
+    LIFE(false, false, true);
 
     private final boolean burns;
     private final boolean flat;

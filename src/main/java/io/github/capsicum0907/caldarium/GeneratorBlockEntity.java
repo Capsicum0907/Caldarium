@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -109,6 +110,29 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         return tank == null ? FluidStack.EMPTY : tank.getFluid();
     }
 
+    /**
+     * What standing on it costs. Nothing is paid unless it died: a thing that shrugs
+     * the blow off has lost no health, and a thing that cannot die never will.
+     */
+    public int reap(ServerLevel level, LivingEntity living) {
+        if (row.source() != Source.LIFE) {
+            return 0;
+        }
+        float had = living.getHealth();
+        if (had <= 0.0F || living.isDeadOrDying()) {
+            return 0;
+        }
+        living.hurt(level.damageSources().generic(), Float.MAX_VALUE);
+        if (!living.isDeadOrDying()) {
+            return 0;
+        }
+        long added = (long) (had * CaldariumConfig.ticksPerHealth());
+        burning = (int) Math.min(Integer.MAX_VALUE, burning + added);
+        burnLength = Math.max(burnLength, burning);
+        setChanged();
+        return Math.round(had);
+    }
+
     @Override
     public boolean pours() {
         return row.source() == Source.EXPERIENCE;
@@ -150,7 +174,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
-            case EXPERIENCE -> generator.burn();
+            case EXPERIENCE, LIFE -> generator.burn();
             case SUN, HEAT -> generator.soak(server, pos);
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
@@ -159,6 +183,11 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         if (wasWorking != working) {
             level.setBlock(pos, state.setValue(GeneratorBlock.LIT, working), Block.UPDATE_ALL);
         }
+    }
+
+    /** Ticks of fuel left. Read by the game tests, which share this package. */
+    int burning() {
+        return burning;
     }
 
     /** Whether it is doing its work, whatever that work is. */

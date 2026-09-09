@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/nether_star_spoliarium"
+    },
+    "lit=true": {
+      "model": "caldarium:block/nether_star_spoliarium_on"
+    }
+  }
+}

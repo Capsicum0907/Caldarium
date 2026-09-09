@@ -92,6 +92,7 @@ public final class CaldariumDataGen {
 
         generator.addProvider(event.includeServer(), new Loot(output, lookup));
         generator.addProvider(event.includeServer(), new Recipes(output, lookup));
+        generator.addProvider(event.includeServer(), new TestStructures(output));
         generator.addProvider(event.includeServer(),
                 new Tags(output, lookup, helper));
     }
@@ -552,6 +553,14 @@ public final class CaldariumDataGen {
                             .define('B', Blocks.BOOKSHELF)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_bookshelf", has(Blocks.BOOKSHELF));
+                    case LIFE -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("CCC")
+                            .pattern("CSC")
+                            .pattern("CRC")
+                            .define('C', own)
+                            .define('S', Blocks.SOUL_SAND)
+                            .define('R', Items.REDSTONE)
+                            .unlockedBy("has_soul_sand", has(Blocks.SOUL_SAND));
                     case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("IBI")
                             .pattern("BRB")

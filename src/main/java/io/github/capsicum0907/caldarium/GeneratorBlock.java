@@ -15,6 +15,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.fluids.FluidUtil;
@@ -83,6 +85,20 @@ public class GeneratorBlock extends BaseEntityBlock {
             return ItemInteractionResult.sidedSuccess(level.isClientSide());
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    public void stepOn(Level level, BlockPos pos, BlockState state,
+            net.minecraft.world.entity.Entity entity) {
+        if (row.source() != Source.LIFE || !(level instanceof ServerLevel server)) {
+            return;
+        }
+        if (!(entity instanceof LivingEntity living) || entity instanceof Player) {
+            return;
+        }
+        if (level.getBlockEntity(pos) instanceof GeneratorBlockEntity generator) {
+            generator.reap(server, living);
+        }
     }
 
     @Override

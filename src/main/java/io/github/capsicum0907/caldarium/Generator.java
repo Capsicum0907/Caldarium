@@ -35,9 +35,12 @@ public record Generator(String id, Source source, Tier top) {
     /** What a player earned, poured in by hand. No better experience exists, so it tiers. */
     public static final Generator EXPERIENTIA =
             new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR);
+    /** Where the dead were taken out of the arena. Stand on it and it takes yours. */
+    public static final Generator SPOLIARIUM =
+            new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR);
 
     private static final List<Generator> ALL =
-            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA);
+            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM);
 
     /**
      * One generator block: a row, and the rung it stands on if it stands on one.

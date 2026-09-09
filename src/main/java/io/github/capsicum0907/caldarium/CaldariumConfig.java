@@ -90,6 +90,10 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue TICKS_PER_POINT;
 
     private static final int PER_POINT = 20;
+
+    public static ModConfigSpec.IntValue TICKS_PER_HEALTH;
+
+    private static final int PER_HEALTH = 200;
     public static ModConfigSpec.ConfigValue<List<? extends String>> TEMPERATURES;
 
     private static final double SPAN = 11.0;
@@ -146,6 +150,10 @@ public final class CaldariumConfig {
         TICKS_PER_POINT = builder.defineInRange("ticksPerPoint", PER_POINT, 1, 20_000);
         builder.pop();
 
+        builder.push("life");
+        TICKS_PER_HEALTH = builder.defineInRange("ticksPerHealth", PER_HEALTH, 1, 200_000);
+        builder.pop();
+
         builder.push("heat");
         HEAT_SPAN = builder.defineInRange("span", SPAN, 0.01, 1000.0);
         TEMPERATURES = builder.defineList("temperatures", WARMTH,
@@ -193,6 +201,10 @@ public final class CaldariumConfig {
             }
         }
         return (int) value;
+    }
+
+    public static int ticksPerHealth() {
+        return TICKS_PER_HEALTH.get();
     }
 
     public static int ticksPerPoint() {

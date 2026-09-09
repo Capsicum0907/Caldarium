@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/gold_spoliarium"
+    },
+    "lit=true": {
+      "model": "caldarium:block/gold_spoliarium_on"
+    }
+  }
+}
