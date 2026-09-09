@@ -88,6 +88,16 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
+        if (row.source() != Source.BLOW || level.isClientSide()) {
+            return;
+        }
+        if (level.getBlockEntity(pos) instanceof GeneratorBlockEntity generator) {
+            generator.hit(player);
+        }
+    }
+
+    @Override
     public void stepOn(Level level, BlockPos pos, BlockState state,
             net.minecraft.world.entity.Entity entity) {
         if (row.source() != Source.LIFE || !(level instanceof ServerLevel server)) {

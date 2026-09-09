@@ -51,11 +51,21 @@ public record Generator(String id, Source source, Tier top, int makes, int every
     public static final Generator BIDENTAL =
             new Generator("bidental", Source.STORM, null, 1, 1, 1_000_000_000);
 
+    /**
+     * The post a Roman soldier trained against.
+     *
+     * <p>{@code makes} is what one point of a blow is worth on the first rung, so the
+     * ladder scales the hit rather than a rate: this one makes nothing on its own.
+     */
+    public static final Generator PALUS =
+            new Generator("palus", Source.BLOW, Tier.SUPER_COMPRESSED_NETHER_STAR,
+                    100, 1, 5_000);
+
     public static final Generator SPOLIARIUM =
             new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000);
 
     private static final List<Generator> ALL =
-            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM, LUCERNARIUM, BIDENTAL);
+            List.of(BURNER, CRUCIBLE, SOLAR, HYPOCAUSTUM, EXPERIENTIA, SPOLIARIUM, LUCERNARIUM, BIDENTAL, PALUS);
 
     /**
      * One generator block: a row, and the rung it stands on if it stands on one.

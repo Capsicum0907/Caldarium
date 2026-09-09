@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/iron_palus"
+    },
+    "lit=true": {
+      "model": "caldarium:block/iron_palus_on"
+    }
+  }
+}

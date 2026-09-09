@@ -127,6 +127,29 @@ better experience to feed it, so a better machine is the only way it gets better
 ⚠ Pouring is three buttons rather than a click on the block. A block that drank
 experience when you touched it would take it while you were building.
 
+## Palus, which is paid for being hit
+
+The post a Roman soldier trained against. Hit it and it is worth what the blow was
+worth, which is a measurement combat already makes and nothing outside combat ever
+uses.
+
+**It is a block, not an entity.** `BlockBehaviour#attack` fires on a left click, so
+there is no dummy standing there to be knocked over or killed, and the hard part of the
+idea - keeping the thing being hit alive - was never a part of it.
+
+**The blow is worked out the way the game works one out**: the attack damage the player
+has, scaled by how far the swing has come back, which is `0.2 + scale * scale * 0.8` in
+`Player#attack`. What one point of it is worth is the row's own number, so the ladder
+scales the hit. ⚠ **Enchantments are not in it.** The game asks `getEnchantedDamage`
+with the thing being hit, and nothing is being hit here, so this measures the arm and
+the weapon rather than the sharpness on it.
+
+⚠ **The swing is reset afterwards.** Hitting a block does not reset it the way hitting
+something alive does, so without that a held-down click lands at full strength every
+time and the cooldown is decoration. ⚠ A game test checks exactly that, and caught the
+first version of the test instead: a mock player starts with the timer at nought, which
+is a player who has just swung, so both blows came out weak and equal.
+
 ## Bidental, which is paid in weather
 
 Named for the place the Romans fenced off after lightning struck it. A vanilla

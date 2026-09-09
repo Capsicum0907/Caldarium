@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "M": {
+      "item": "minecraft:iron_ingot"
+    },
+    "P": {
+      "item": "caldarium:copper_palus"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MPM",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "caldarium:iron_palus"
+  }
+}

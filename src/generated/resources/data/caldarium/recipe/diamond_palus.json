@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "M": {
+      "item": "minecraft:diamond"
+    },
+    "P": {
+      "item": "caldarium:gold_palus"
+    }
+  },
+  "pattern": [
+    " M ",
+    "MPM",
+    " M "
+  ],
+  "result": {
+    "count": 1,
+    "id": "caldarium:diamond_palus"
+  }
+}

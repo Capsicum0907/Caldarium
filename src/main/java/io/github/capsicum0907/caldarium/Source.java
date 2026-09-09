@@ -24,7 +24,9 @@ public enum Source {
     /** Whatever light is falling on it, from lamps rather than from the sky. */
     LAMP(false, true, false),
     /** Lightning, which arrives all at once or not for an hour. */
-    STORM(false, false, false);
+    STORM(false, false, false),
+    /** Being hit. What is measured is the blow, and the blow is somebody's work. */
+    BLOW(false, false, false);
 
     private final boolean burns;
     private final boolean flat;

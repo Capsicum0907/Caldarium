@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "C": {
+      "item": "minecraft:copper_ingot"
+    },
+    "L": {
+      "item": "minecraft:oak_log"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "pattern": [
+    "CLC",
+    "CLC",
+    "CRC"
+  ],
+  "result": {
+    "count": 1,
+    "id": "caldarium:copper_palus"
+  }
+}

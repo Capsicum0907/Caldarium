@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/netherite_palus"
+    },
+    "lit=true": {
+      "model": "caldarium:block/netherite_palus_on"
+    }
+  }
+}

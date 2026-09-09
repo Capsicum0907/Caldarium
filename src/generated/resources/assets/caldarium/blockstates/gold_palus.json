@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/gold_palus"
+    },
+    "lit=true": {
+      "model": "caldarium:block/gold_palus_on"
+    }
+  }
+}

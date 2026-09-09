@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/nether_star_palus"
+    },
+    "lit=true": {
+      "model": "caldarium:block/nether_star_palus_on"
+    }
+  }
+}

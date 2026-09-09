@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "redstone",
+  "key": {
+    "M": {
+      "item": "minecraft:totem_of_undying"
+    },
+    "P": {
+      "item": "caldarium:compressed_nether_star_palus"
+    }
+  },
+  "pattern": [
+    "PPP",
+    "PMP",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "caldarium:super_compressed_nether_star_palus"
+  }
+}

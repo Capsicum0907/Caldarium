@@ -6,6 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -137,6 +138,37 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         return Math.round(had);
     }
 
+    /**
+     * What a blow was worth.
+     *
+     * <p>The blow is worked out the way the game works one out - the attack damage the
+     * player has, scaled by how far the swing has recovered, which is
+     * {@code 0.2 + scale * scale * 0.8} in {@code Player#attack}. ⚠ <b>Enchantments are
+     * not in it</b>: the game asks {@code getEnchantedDamage} with the thing being hit,
+     * and there is nothing being hit here. So this measures the arm and the weapon and
+     * not the sharpness on it.
+     *
+     * <p>⚠ The swing is reset afterwards, or the same click held down would land at
+     * full strength every time and the cooldown would be decoration.
+     */
+    public int hit(Player player) {
+        if (row.source() != Source.BLOW) {
+            return 0;
+        }
+        float damage = (float) player.getAttributeValue(Attributes.ATTACK_DAMAGE);
+        float scale = player.getAttackStrengthScale(0.5F);
+        player.resetAttackStrengthTicker();
+        float blow = damage * (0.2F + scale * scale * 0.8F);
+        if (blow <= 0.0F) {
+            return 0;
+        }
+        long worth = (long) (blow * rates.makes().get());
+        int given = (int) Math.min(Integer.MAX_VALUE, worth);
+        store.fill(given);
+        setChanged();
+        return given;
+    }
+
     /** What a strike is worth here. Whatever will not fit is lost, as it would be. */
     public int strike(boolean summoned) {
         if (row.source() != Source.STORM) {
@@ -195,7 +227,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             case EXPERIENCE, LIFE -> generator.burn();
             case SUN, HEAT, LAMP -> generator.soak(server, pos);
             // Nothing between strikes. See Storm.
-            case STORM -> { }
+            case STORM, BLOW -> { }
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
 

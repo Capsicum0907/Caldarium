@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "caldarium:block/super_compressed_nether_star_palus"
+    },
+    "lit=true": {
+      "model": "caldarium:block/super_compressed_nether_star_palus_on"
+    }
+  }
+}

@@ -8,6 +8,8 @@ import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.GameType;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -35,6 +37,53 @@ public final class CaldariumTests {
         helper.setBlock(WHERE, CaldariumRegistry.generators()
                 .get(new Generator.Made(Generator.BIDENTAL, null)).get());
         return (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
+    }
+
+    private static GeneratorBlockEntity palus(GameTestHelper helper) {
+        helper.setBlock(WHERE, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.PALUS, Tier.COPPER)).get());
+        return (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
+    }
+
+    /**
+     * ⚠ A swing that has not come back is worth less than one that has.
+     *
+     * <p>This is the part worth checking. Hitting a block does not reset the swing the
+     * way hitting something alive does, so without resetting it here the same click held
+     * down would land at full strength every time and the cooldown would be decoration.
+     */
+    @GameTest(template = TestStructures.FLOOR)
+    public static void aRushedBlowIsWorthLess(GameTestHelper helper) {
+        GeneratorBlockEntity post = palus(helper);
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+
+        // ⚠ A mock player starts with the swing timer at nought, which is a player who
+        // has just swung rather than one standing ready. Let it come back first, or both
+        // blows are the weak one and the check passes on nothing.
+        for (int tick = 0; tick < 20; tick++) {
+            player.tick();
+        }
+        int rested = post.hit(player);
+        int rushed = post.hit(player);
+
+        check(rested > 0, "a blow should be worth something: " + rested);
+        check(rushed > 0, "and so should the one after it: " + rushed);
+        check(rushed < rested,
+                "but a swing that has not come back should be worth less: "
+                        + rushed + " against " + rested);
+        helper.succeed();
+    }
+
+    /** ⚠ Nothing else here is paid for being hit. */
+    @GameTest(template = TestStructures.FLOOR)
+    public static void onlyThePalusTakesABlow(GameTestHelper helper) {
+        helper.setBlock(WHERE, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
+
+        check(burner.hit(helper.makeMockPlayer(GameType.SURVIVAL)) == 0,
+                "a burner should take nothing from being hit");
+        helper.succeed();
     }
 
     /**

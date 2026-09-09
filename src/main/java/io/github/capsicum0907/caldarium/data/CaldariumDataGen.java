@@ -596,6 +596,14 @@ public final class CaldariumDataGen {
                             .define('L', Blocks.LIGHTNING_ROD)
                             .define('D', Blocks.DIAMOND_BLOCK)
                             .unlockedBy("has_lightning_rod", has(Blocks.LIGHTNING_ROD));
+                    case BLOW -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
+                            .pattern("CLC")
+                            .pattern("CLC")
+                            .pattern("CRC")
+                            .define('C', own)
+                            .define('L', Blocks.OAK_LOG)
+                            .define('R', Items.REDSTONE)
+                            .unlockedBy("has_redstone", has(Items.REDSTONE));
                     case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("IBI")
                             .pattern("BRB")
