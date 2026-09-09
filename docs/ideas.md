@@ -22,14 +22,13 @@ heat side, and if it takes the heat side it should take it the way hypocaustum d
 
 ## A panel that runs on something other than daylight, and an artificial sun
 
-⚠ **This argues with why the panel has tiers.** The README says the sun gives the
-same everywhere, so a better panel is the only way that one gets better — which is
-the whole reason solar is the one generator row that is a ladder. An artificial sun
-is a better light source, so the panel stops being the only lever and the
-justification for the ladder goes with it.
+This used to be recorded as arguing with why the panel has tiers. It does not any
+more: every generator climbs the ladder now, and the sentence that made solar the
+exception was dropped on 2026-09-08. Nothing stands in the way of it.
 
-Not a reason to drop the idea. It is a reason to decide, at the time, whether solar
-keeps its tiers or the artificial sun is deliberately no brighter than the real one.
+What is left is a plain question of what the panel reads. Daylight is the one thing
+the game hands a block for free; an artificial sun is a block that had to be paid
+for, so the two are not one source wearing different hats.
 
 ## A relay: same frequency, any distance, any dimension
 
