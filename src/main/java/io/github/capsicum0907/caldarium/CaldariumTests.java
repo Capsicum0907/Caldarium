@@ -359,8 +359,21 @@ public final class CaldariumTests {
         player.getMainHandItem().use(helper.getLevel(), player, InteractionHand.MAIN_HAND);
         check(helper.getLevel().getBlockState(core).getBlock() instanceof SolBlock,
                 "a sun should be set down where it was held, at " + core);
-        double gap = player.getEyePosition().distanceTo(SolBlock.centre(core)) - SolBlock.radius(placed);
-        check(gap > 0.0, "and the one holding it should be outside its ball: " + gap);
+        double gap = SolItem.gap(player.getBoundingBox(), SolBlock.centre(core)) - SolBlock.radius(placed);
+        check(gap >= CaldariumConfig.solHold(), "and held clear of the body by at least the hold: " + gap);
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aSunHeldBelowStaysClearOfTheBody(GameTestHelper helper) {
+        Vec3 eye = Vec3.atCenterOf(helper.absolutePos(new BlockPos(SUN.getX(), TestStructures.HALL_SIZE - 2, SUN.getZ())));
+        Player player = standing(helper, eye, 0.0F);
+        player.setXRot(90.0F);
+        player.xRotO = 90.0F;
+        BlockState placed = CaldariumRegistry.SOL.get().defaultBlockState();
+        BlockPos core = SolItem.core(player, placed);
+        double gap = SolItem.gap(player.getBoundingBox(), SolBlock.centre(core)) - SolBlock.radius(placed);
+        check(gap >= CaldariumConfig.solHold(), "looking straight down, the feet should be clear too: " + gap);
         helper.succeed();
     }
 

@@ -249,8 +249,10 @@ it for placements that do not come from a right-click.
 **It is held by its near side.** A ball wider than a block, put in the cell beside a
 face like any other block, would swallow the player putting it there - a player's reach
 is shorter than the ball is wide. So a sun is not put against anything. It is placed
-the way it would be carried: its near surface `hold` blocks in front of the eyes, the
-rest of it further along the line of sight, whether or not a block is being looked at.
+the way it would be carried: out along the line of sight, as far as it takes to leave a
+gap of at least `hold` between the ball and the body - the body, not the eyes, or looking
+down puts the feet inside it - whether or not a block is being looked at. The gap allows
+for the ball snapping to a cell.
 A right-click on a block is passed over in favour of that, so where it goes does not
 depend on what happens to be under the crosshair.
 

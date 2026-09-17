@@ -176,7 +176,7 @@ public final class CaldariumConfig {
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
         SOL_BLAST_REACH = builder.defineInRange("blastReach", 8, 0, 64);
-        SOL_HOLD = builder.defineInRange("hold", 1.0, 0.0, 16.0);
+        SOL_HOLD = builder.defineInRange("hold", 2.0, 0.0, 16.0);
         SOL_BLAST_DAMAGE = builder.defineInRange("blastDamage", 1_000.0, 0.0, 1_000_000.0);
         SOL_SIZE = builder.defineInRange("size", 4.0, 0.5, 64.0);
         builder.pop();
