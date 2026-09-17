@@ -244,6 +244,14 @@ outline the slices would give. From inside - which only a player who is not stop
 it can reach - the ball is drawn wound the other way, so it still shows. A block cannot
 be placed with its centre inside a ball.
 
+⚠ **Projectiles and explosions still pass through.** They trace their own lines through
+`Level.clip`, which none of the three touches, so an arrow meets the ball only at the
+core's own cell.
+
+⚠ The block is registered with `dynamicShape()`. Its shape reads the config, and block
+states build their shape caches while the mod is being constructed, before any config
+is loaded; without it the mod fails to start.
+
 ⚠ A mixin reaches into the game's own code. If a later build of the game moves these
 methods, the mod fails to start rather than quietly losing its shape, because every
 injection is required.

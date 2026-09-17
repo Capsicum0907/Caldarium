@@ -48,8 +48,12 @@ public final class Suns {
     }
 
     public static List<VoxelShape> touching(Level level, AABB box) {
+        List<BlockPos> suns = in(level);
+        if (suns.isEmpty()) {
+            return List.of();
+        }
         List<VoxelShape> shapes = new ArrayList<>();
-        for (BlockPos pos : in(level)) {
+        for (BlockPos pos : suns) {
             BlockState state = level.getBlockState(pos);
             if (SolBlock.bounds(state, pos).intersects(box)) {
                 shapes.add(SolBlock.shape(state).move(pos.getX(), pos.getY(), pos.getZ()));

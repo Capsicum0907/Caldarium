@@ -100,6 +100,7 @@ public final class CaldariumRegistry {
                     .requiresCorrectToolForDrops()
                     .lightLevel(SolBlock::light)
                     .noOcclusion()
+                    // The shape reads the config, which is not loaded when states build their caches.
                     .dynamicShape()
                     .hasPostProcess((a, b, c) -> true));
 
