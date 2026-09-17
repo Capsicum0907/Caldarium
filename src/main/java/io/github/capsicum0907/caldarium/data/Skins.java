@@ -481,7 +481,7 @@ public final class Skins {
     public static final String SOL_LIT = "sol_lit";
 
     public static int[][] litSkin() {
-        return new int[][] { { 0xFFFFFF, 0xFFFFFF }, { 0xFFFFFF, 0xFFFFFF } };
+        return new int[][] { { 0xFFFFFFFF, 0xFFFFFFFF }, { 0xFFFFFFFF, 0xFFFFFFFF } };
     }
 
     /** The size of the sun's own picture, which is wrapped round a sphere. */
@@ -503,9 +503,9 @@ public final class Skins {
                 // back as nought. A sun is brightest in the middle of each blob and
                 // dark where they meet, which is this the other way up.
                 heat = Math.clamp(1.0F - (heat - 0.15F) * 1.5F, 0.0F, 1.0F);
-                pixels[y][x] = heat < 0.5F
+                pixels[y][x] = 0xFF000000 | (heat < 0.5F
                         ? mix(0xC2400C, 0xF9A11B, heat * 2.0F)
-                        : mix(0xF9A11B, 0xFFF6D8, (heat - 0.5F) * 2.0F);
+                        : mix(0xF9A11B, 0xFFF6D8, (heat - 0.5F) * 2.0F));
             }
         }
         return pixels;
