@@ -21,16 +21,30 @@ public final class Experience {
         return (int) (4.5 * level * level - 162.5 * level + 2220.0);
     }
 
-    public static int down(Player player, int levels) {
-        int floor = Math.max(0, player.experienceLevel - levels);
-        return Math.max(0, points(player) - total(floor));
+    public static int span(int level) {
+        if (level >= 30) {
+            return 112 + (level - 30) * 9;
+        }
+        if (level >= 15) {
+            return 37 + (level - 15) * 5;
+        }
+        return 7 + level * 2;
     }
 
     public static int take(Player player, int wanted) {
-        int taken = Math.min(wanted, points(player));
-        if (taken > 0) {
-            player.giveExperiencePoints(-taken);
+        int have = points(player);
+        int taken = Math.min(wanted, have);
+        if (taken <= 0) {
+            return 0;
         }
+        int left = have - taken;
+        int level = 0;
+        while (total(level + 1) <= left) {
+            level++;
+        }
+        player.experienceLevel = level;
+        player.experienceProgress = (left - total(level)) / (float) span(level);
+        player.totalExperience = Math.max(0, player.totalExperience - taken);
         return taken;
     }
 }

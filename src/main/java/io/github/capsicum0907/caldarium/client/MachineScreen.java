@@ -1,6 +1,7 @@
 package io.github.capsicum0907.caldarium.client;
 
 import io.github.capsicum0907.caldarium.Caldarium;
+import io.github.capsicum0907.caldarium.Experience;
 import io.github.capsicum0907.caldarium.MachineMenu;
 import io.github.capsicum0907.caldarium.data.Skins;
 
@@ -44,22 +45,25 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         if (!menu.pours()) {
             return;
         }
-        int step = Skins.POUR_W + Skins.POUR_GAP;
-        int left = leftPos + (imageWidth - (step * 3 - Skins.POUR_GAP)) / 2;
+        int count = MachineMenu.pourings();
+        int width = (Skins.POUR_SPAN - Skins.POUR_GAP * (count - 1)) / count;
         int y = topPos + Skins.POUR_Y;
-        pour(left, y, 0, "gui.caldarium.pour.one");
-        pour(left + step, y, 1, "gui.caldarium.pour.ten");
-        pour(left + step * 2, y, 2, "gui.caldarium.pour.all");
+        for (int id = 0; id < count; id++) {
+            int points = MachineMenu.pouring(id);
+            Component label = points < 0 ? Component.translatable("gui.caldarium.pour.all")
+                    : Component.translatable("gui.caldarium.pour.points", points);
+            pour(leftPos + Skins.POUR_X + id * (width + Skins.POUR_GAP), y, width, id, label);
+        }
     }
 
-    private void pour(int x, int y, int id, String key) {
+    private void pour(int x, int y, int width, int id, Component label) {
         addRenderableWidget(net.minecraft.client.gui.components.Button
-                .builder(Component.translatable(key), pressed -> {
+                .builder(label, pressed -> {
                     if (minecraft != null && minecraft.gameMode != null) {
                         minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id);
                     }
                 })
-                .bounds(x, y, Skins.POUR_W, Skins.POUR_H)
+                .bounds(x, y, width, Skins.POUR_H)
                 .build());
     }
 
@@ -127,6 +131,11 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         super.render(graphics, mouseX, mouseY, partialTick);
+        if (menu.pours() && minecraft != null && minecraft.player != null) {
+            Component held = Component.translatable("gui.caldarium.experience",
+                    count(Experience.points(minecraft.player)));
+            graphics.drawString(font, held, leftPos + Skins.POUR_X, topPos + Skins.EXPERIENCE_Y, 0x404040, false);
+        }
         if (menu.pours()) {
             Component left = Component.translatable("gui.caldarium.burning",
                     menu.burningTicks() / 20);

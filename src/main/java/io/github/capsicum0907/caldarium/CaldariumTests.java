@@ -503,4 +503,47 @@ public final class CaldariumTests {
             helper.succeed();
         });
     }
+
+    private static void holding(Player player, int points) {
+        int level = 0;
+        while (Experience.total(level + 1) <= points) {
+            level++;
+        }
+        player.experienceLevel = level;
+        player.experienceProgress = (points - Experience.total(level)) / (float) Experience.span(level);
+        player.totalExperience = points;
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
+    public static void experienceIsTakenToThePoint(GameTestHelper helper) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        int[] starts = { 0, 7, 16, 17, 100, 352, 353, 1395, 1396, 5000, 30970, 1_000_000 };
+        int[] amounts = { 1, 10, 100, 1000, 10_000 };
+        for (int start : starts) {
+            for (int amount : amounts) {
+                holding(player, start);
+                check(Experience.points(player) == start, "set up " + start + " but read " + Experience.points(player));
+                int taken = Experience.take(player, amount);
+                int expected = Math.max(0, start - amount);
+                check(taken == start - expected, "from " + start + ", taking " + amount + " took " + taken);
+                check(Experience.points(player) == expected,
+                        "from " + start + ", taking " + amount + " should leave " + expected + " but left "
+                                + Experience.points(player) + " at level " + player.experienceLevel);
+                check(player.experienceProgress >= 0.0F && player.experienceProgress < 1.0F,
+                        "progress out of range: " + player.experienceProgress);
+            }
+        }
+        for (int level = 1; level < 60; level++) {
+            for (int into = 0; into < Experience.span(level); into += 3) {
+                int start = Experience.total(level) + into;
+                int amount = start - Experience.total(level - 1);
+                holding(player, start);
+                Experience.take(player, amount);
+                check(player.experienceLevel == level - 1 && Experience.points(player) == Experience.total(level - 1),
+                        "landing on the start of level " + (level - 1) + " from " + start + " left level "
+                                + player.experienceLevel + " and " + Experience.points(player) + " points");
+            }
+        }
+        helper.succeed();
+    }
 }

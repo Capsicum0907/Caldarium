@@ -85,6 +85,7 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue SUN_THROUGH;
     public static ModConfigSpec.DoubleValue HEAT_SPAN;
     public static ModConfigSpec.IntValue TICKS_PER_POINT;
+    public static ModConfigSpec.ConfigValue<List<? extends Integer>> POUR_STEPS;
 
     private static final int PER_POINT = 20;
 
@@ -168,6 +169,8 @@ public final class CaldariumConfig {
 
         builder.push("experience");
         TICKS_PER_POINT = builder.defineInRange("ticksPerPoint", PER_POINT, 1, 20_000);
+        POUR_STEPS = builder.defineList("pourSteps", List.of(10, 100, 1_000), () -> 10,
+                step -> step instanceof Integer points && points > 0);
         builder.pop();
 
         builder.push("sol");
@@ -317,6 +320,11 @@ public final class CaldariumConfig {
 
     public static int ticksPerHealth() {
         return TICKS_PER_HEALTH.get();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static List<Integer> pourSteps() {
+        return (List<Integer>) POUR_STEPS.get();
     }
 
     public static int ticksPerPoint() {

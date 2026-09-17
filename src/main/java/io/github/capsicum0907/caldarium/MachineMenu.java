@@ -1,5 +1,7 @@
 package io.github.capsicum0907.caldarium;
 
+import java.util.List;
+
 import io.github.capsicum0907.caldarium.data.Skins;
 
 import net.minecraft.core.BlockPos;
@@ -79,21 +81,28 @@ public class MachineMenu extends AbstractContainerMenu {
 
     @Override
     public boolean clickMenuButton(Player player, int id) {
-        int levels = switch (id) {
-            case 0 -> 1;
-            case 1 -> 10;
-            case 2 -> -1;
-            default -> 0;
-        };
-        if (levels == 0) {
+        int points = pouring(id);
+        if (points == 0) {
             return false;
         }
         access.execute((level, pos) -> {
             if (level.getBlockEntity(pos) instanceof GeneratorBlockEntity generator) {
-                generator.pour(player, levels);
+                generator.pour(player, points);
             }
         });
         return true;
+    }
+
+    public static int pourings() {
+        return CaldariumConfig.pourSteps().size() + 1;
+    }
+
+    public static int pouring(int id) {
+        List<Integer> steps = CaldariumConfig.pourSteps();
+        if (id >= 0 && id < steps.size()) {
+            return steps.get(id);
+        }
+        return id == steps.size() ? -1 : 0;
     }
 
     public int machineSlots() {

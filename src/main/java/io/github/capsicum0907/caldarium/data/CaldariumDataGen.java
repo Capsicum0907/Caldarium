@@ -437,8 +437,8 @@ public final class CaldariumDataGen {
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");
             add("gui.caldarium.burning", "Burning: %s");
-            add("gui.caldarium.pour.one", "1 Level");
-            add("gui.caldarium.pour.ten", "10 Levels");
+            add("gui.caldarium.pour.points", "%s");
+            add("gui.caldarium.experience", "Your experience: %s");
             add("gui.caldarium.pour.all", "All");
         }
     }

@@ -188,12 +188,12 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         return row.source() == Source.EXPERIENCE;
     }
 
-    /** Levels off the player and into the fire. A negative count means all of it. */
-    public int pour(Player player, int levels) {
+    /** Experience points off the player and into the fire. A negative amount means all of it. */
+    public int pour(Player player, int points) {
         if (!pours()) {
             return 0;
         }
-        int wanted = levels < 0 ? Experience.points(player) : Experience.down(player, levels);
+        int wanted = points < 0 ? Experience.points(player) : points;
         int taken = Experience.take(player, wanted);
         if (taken <= 0) {
             return 0;
