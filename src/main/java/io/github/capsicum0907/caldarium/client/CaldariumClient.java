@@ -5,11 +5,16 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.capsicum0907.caldarium.CaldariumRegistry;
 import io.github.capsicum0907.caldarium.SolBlock;
+import io.github.capsicum0907.caldarium.SolItem;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -21,6 +26,10 @@ public final class CaldariumClient {
     private static final int OUTLINE_SEGMENTS = 64;
     private static final float OUTLINE_ALPHA = 0.4F;
     private static final float OUTLINE_LIFT = 0.002F;
+    private static final int OUTLINE = 0x000000;
+    private static final int FITS = 0xFFFFFF;
+    private static final int BLOCKED = 0xFF3030;
+    private static final float PREVIEW_ALPHA = 0.8F;
 
     private CaldariumClient() {
     }
@@ -40,32 +49,51 @@ public final class CaldariumClient {
         }
         BlockPos pos = event.getTarget().getBlockPos();
         BlockState state = minecraft.level.getBlockState(pos);
-        if (!(state.getBlock() instanceof SolBlock)) {
+        if (state.getBlock() instanceof SolBlock) {
+            event.setCanceled(true);
+            wire(event, pos, SolBlock.radius(state) + OUTLINE_LIFT, OUTLINE, OUTLINE_ALPHA);
             return;
         }
-        event.setCanceled(true);
+        LocalPlayer player = minecraft.player;
+        if (player == null) {
+            return;
+        }
+        for (InteractionHand hand : InteractionHand.values()) {
+            ItemStack held = player.getItemInHand(hand);
+            if (held.getItem() instanceof SolItem item) {
+                BlockPlaceContext context = new BlockPlaceContext(player, hand, held, event.getTarget());
+                BlockState placed = item.getBlock().defaultBlockState();
+                BlockPos core = SolItem.core(context, placed);
+                boolean fits = SolItem.fits(context, placed);
+                wire(event, core, SolBlock.radius(placed), fits ? FITS : BLOCKED, PREVIEW_ALPHA);
+                return;
+            }
+        }
+    }
 
+    private static void wire(RenderHighlightEvent.Block event, BlockPos pos, float radius, int colour,
+            float alpha) {
         Vec3 centre = SolBlock.centre(pos).subtract(event.getCamera().getPosition());
-        float radius = SolBlock.radius(state) + OUTLINE_LIFT;
         PoseStack pose = event.getPoseStack();
         VertexConsumer lines = event.getMultiBufferSource().getBuffer(RenderType.lines());
         for (int axis = 0; axis < 3; axis++) {
             for (int i = 0; i < OUTLINE_SEGMENTS; i++) {
                 float from = Mth.TWO_PI * i / OUTLINE_SEGMENTS;
                 float to = Mth.TWO_PI * (i + 1) / OUTLINE_SEGMENTS;
-                point(pose, lines, centre, radius, axis, from, to);
-                point(pose, lines, centre, radius, axis, to, from);
+                point(pose, lines, centre, radius, axis, from, to, colour, alpha);
+                point(pose, lines, centre, radius, axis, to, from, colour, alpha);
             }
         }
     }
 
     private static void point(PoseStack pose, VertexConsumer lines, Vec3 centre, float radius,
-            int axis, float at, float away) {
+            int axis, float at, float away, int colour, float alpha) {
         Vec3 here = circle(axis, at);
         Vec3 along = circle(axis, away).subtract(here).normalize();
         lines.addVertex(pose.last(), (float) (centre.x + here.x * radius),
                         (float) (centre.y + here.y * radius), (float) (centre.z + here.z * radius))
-                .setColor(0.0F, 0.0F, 0.0F, OUTLINE_ALPHA)
+                .setColor(((colour >> 16) & 0xFF) / 255.0F, ((colour >> 8) & 0xFF) / 255.0F,
+                        (colour & 0xFF) / 255.0F, alpha)
                 .setNormal(pose.last(), (float) along.x, (float) along.y, (float) along.z);
     }
 

@@ -246,6 +246,17 @@ be placed with its centre inside a ball: the right-click is refused before the i
 used, on both sides, so nothing appears and vanishes. A place event check stays behind
 it for placements that do not come from a right-click.
 
+**It is set down against what you click, and shown before it is.** A ball wider than a
+block, put in the cell beside the face like any other block, would swallow the player
+putting it there. So the core goes as many cells out from the face as it takes for the
+ball to rest against it - with a gap of under half a block, never sunk into it.
+
+While a sun is held, the ball it would make is drawn over what is looked at: white where
+it can go, red where it cannot. It cannot go where its core cell is taken, where the
+core would be inside another sun, or where anything alive is inside the ball - the last
+is vanilla's own check, which a sun's shape makes the size of the ball. Standing too
+close is therefore still refused; the red ball is what says so.
+
 ⚠ **Projectiles and explosions still pass through.** They trace their own lines through
 `Level.clip`, which none of the three touches, so an arrow meets the ball only at the
 core's own cell.

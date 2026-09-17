@@ -10,12 +10,14 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -218,6 +220,7 @@ public final class CaldariumTests {
     private static final BlockPos SUN = new BlockPos(TestStructures.HALL_SIZE / 2, TestStructures.HALL_SIZE / 2,
             TestStructures.HALL_SIZE / 2);
     private static final double TOLERANCE = 0.25;
+    private static final int HALL_FLOOR = 1;
 
     private static BlockPos sun(GameTestHelper helper) {
         helper.setBlock(SUN, CaldariumRegistry.SOL.get());
@@ -342,5 +345,37 @@ public final class CaldariumTests {
             check(event.getUseItem() == TriState.FALSE, "a block aimed into a sun should not be used at all");
             helper.succeed();
         });
+    }
+
+    private static InteractionResult placeOnFloor(GameTestHelper helper, BlockPos floor) {
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(CaldariumRegistry.SOL_ITEM.get()));
+        BlockPos at = helper.absolutePos(floor);
+        BlockHitResult aim = new BlockHitResult(Vec3.atCenterOf(at).add(0.0, 0.5, 0.0), Direction.UP, at, false);
+        return player.getMainHandItem().useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, aim));
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aSunIsSetDownResting(GameTestHelper helper) {
+        BlockPos floor = new BlockPos(SUN.getX(), HALL_FLOOR, SUN.getZ());
+        InteractionResult result = placeOnFloor(helper, floor);
+        check(result.consumesAction(), "a sun aimed at an open floor should be placed: " + result);
+        BlockState placed = CaldariumRegistry.SOL.get().defaultBlockState();
+        int apart = (int) Math.ceil(SolBlock.radius(placed) - 0.5F);
+        BlockPos core = helper.absolutePos(floor.above(1 + apart));
+        check(helper.getLevel().getBlockState(core).getBlock() instanceof SolBlock,
+                "it should stand with its ball resting on the floor, at " + core);
+        check(!(helper.getLevel().getBlockState(helper.absolutePos(floor.above())).getBlock() instanceof SolBlock),
+                "and not in the cell against the floor");
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aSunIsNotSetDownOnSomethingAlive(GameTestHelper helper) {
+        BlockPos floor = new BlockPos(SUN.getX(), HALL_FLOOR, SUN.getZ());
+        helper.spawn(EntityType.PIG, floor.above(2));
+        InteractionResult result = placeOnFloor(helper, floor);
+        check(!result.consumesAction(), "a sun whose ball would hold a pig should not be placed: " + result);
+        helper.succeed();
     }
 }

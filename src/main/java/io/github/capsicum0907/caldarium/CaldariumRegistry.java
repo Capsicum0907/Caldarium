@@ -104,7 +104,8 @@ public final class CaldariumRegistry {
                     .dynamicShape()
                     .hasPostProcess((a, b, c) -> true));
 
-    public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerSimpleBlockItem(SOL);
+    public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerItem("sol",
+            properties -> new SolItem(SOL.get(), properties));
 
     static {
         ITEM_ORDER.add(SOL_ITEM);
