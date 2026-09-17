@@ -95,6 +95,8 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue SOL_BURNS;
     public static ModConfigSpec.IntValue SOL_BURN_SECONDS;
     public static ModConfigSpec.DoubleValue SOL_BURN_DAMAGE;
+    public static ModConfigSpec.IntValue SOL_BLAST_REACH;
+    public static ModConfigSpec.DoubleValue SOL_BLAST_DAMAGE;
     public static ModConfigSpec.DoubleValue SOL_SIZE;
     public static ModConfigSpec.IntValue STORM_NATURAL;
     public static ModConfigSpec.IntValue STORM_SUMMONED;
@@ -172,6 +174,8 @@ public final class CaldariumConfig {
         SOL_BURNS = builder.defineInRange("burnReach", 1, 0, 32);
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
+        SOL_BLAST_REACH = builder.defineInRange("blastReach", 8, 0, 64);
+        SOL_BLAST_DAMAGE = builder.defineInRange("blastDamage", 1_000.0, 0.0, 1_000_000.0);
         SOL_SIZE = builder.defineInRange("size", 4.0, 0.5, 64.0);
         builder.pop();
 
@@ -273,6 +277,14 @@ public final class CaldariumConfig {
 
     public static float solSize() {
         return SOL_SIZE.get().floatValue();
+    }
+
+    public static int solBlastReach() {
+        return SOL_BLAST_REACH.get();
+    }
+
+    public static float solBlastDamage() {
+        return SOL_BLAST_DAMAGE.get().floatValue();
     }
 
     public static float solBurnDamage() {

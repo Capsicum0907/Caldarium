@@ -5,19 +5,27 @@ import java.util.List;
 import io.github.capsicum0907.caldarium.data.TestStructures;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -301,6 +309,37 @@ public final class CaldariumTests {
             check(Suns.inside(helper.getLevel(), core.above()), "the cell above the core is inside the ball");
             check(!Suns.inside(helper.getLevel(), core.above((int) Math.ceil(radius) + 1)),
                     "a cell past the surface is not");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void breakingASunKillsWhatIsNearButLeavesTheBlocks(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            float radius = radius(helper, core);
+            BlockPos beside = SUN.east((int) Math.ceil(radius) + 1);
+            helper.setBlock(beside, Blocks.STONE);
+            LivingEntity pig = helper.spawn(EntityType.PIG, beside.above());
+            BlockState state = helper.getLevel().getBlockState(core);
+            Player breaker = helper.makeMockPlayer(GameType.SURVIVAL);
+            state.getBlock().playerWillDestroy(helper.getLevel(), core, state, breaker);
+            check(!pig.isAlive(), "a pig beside a sun that is broken should die");
+            check(helper.getBlockState(beside).is(Blocks.STONE), "and the blocks around it should stay");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void placingIntoASunIsRefusedBeforeItHappens(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE));
+            BlockHitResult aim = new BlockHitResult(SolBlock.centre(core), Direction.UP, core, false);
+            PlayerInteractEvent.RightClickBlock event = NeoForge.EVENT_BUS.post(
+                    new PlayerInteractEvent.RightClickBlock(player, InteractionHand.MAIN_HAND, core, aim));
+            check(event.getUseItem() == TriState.FALSE, "a block aimed into a sun should not be used at all");
             helper.succeed();
         });
     }

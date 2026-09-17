@@ -242,7 +242,9 @@ most places. `Suns` keeps the loaded suns of each level - added by the block ent
 The outline is one wire sphere of three great circles, drawn in place of the stepped
 outline the slices would give. From inside - which only a player who is not stopped by
 it can reach - the ball is drawn wound the other way, so it still shows. A block cannot
-be placed with its centre inside a ball.
+be placed with its centre inside a ball: the right-click is refused before the item is
+used, on both sides, so nothing appears and vanishes. A place event check stays behind
+it for placements that do not come from a right-click.
 
 ⚠ **Projectiles and explosions still pass through.** They trace their own lines through
 `Level.clip`, which none of the three touches, so an arrow meets the ball only at the
@@ -267,6 +269,11 @@ sheaf of frames.
 ⚠ **It takes a diamond pickaxe and nothing else will do.** Not slowly with a stone one
 - not at all. A sun anybody can get through given the patience is a sun anybody gets
 through. It is as hard as obsidian to the tool that does work.
+
+⚠ **Breaking it is an explosion.** Everything alive within `blastReach` of the surface
+takes `blastDamage`, the one who broke it included, and no block is touched. The damage
+is dealt directly rather than through a vanilla explosion: at the moment of breaking,
+the ball is still there and would shield everything behind it from its own blast.
 
 ⚠ **Breaking it destroys it.** A sun that could be picked up would be a sun with a
 pause button, and its durability would only ever be spent by somebody who forgot to

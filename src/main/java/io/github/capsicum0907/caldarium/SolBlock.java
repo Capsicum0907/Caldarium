@@ -7,6 +7,11 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -34,6 +39,7 @@ public class SolBlock extends BaseEntityBlock {
     private static final int QUARTERS = 4;
     private static final float SHRUNK = 0.55F;
     private static final int SLICES = 16;
+    private static final float BLAST_VOLUME = 4.0F;
     private static final Map<Float, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 
     public SolBlock(Properties properties) {
@@ -121,6 +127,26 @@ public class SolBlock extends BaseEntityBlock {
             return 0.0F;
         }
         return otherwise;
+    }
+
+    public static void blast(ServerLevel level, BlockPos pos, BlockState state, Player breaker) {
+        double reach = radius(state) + CaldariumConfig.solBlastReach();
+        Vec3 centre = centre(pos);
+        AABB around = new AABB(pos).inflate(Math.ceil(reach));
+        for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, around,
+                living -> living.getBoundingBox().getCenter().distanceTo(centre) <= reach)) {
+            living.hurt(level.damageSources().explosion(breaker, breaker), CaldariumConfig.solBlastDamage());
+        }
+        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, centre.x, centre.y, centre.z, 1, 0.0, 0.0, 0.0, 0.0);
+        level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, BLAST_VOLUME, 1.0F);
+    }
+
+    @Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level instanceof ServerLevel server) {
+            blast(server, pos, state, player);
+        }
+        return super.playerWillDestroy(level, pos, state, player);
     }
 
     @Override

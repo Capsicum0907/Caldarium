@@ -4,7 +4,11 @@ import com.mojang.logging.LogUtils;
 
 import io.github.capsicum0907.caldarium.client.CaldariumClient;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.item.context.UseOnContext;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -13,8 +17,10 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 
@@ -42,6 +48,7 @@ public class Caldarium {
         modEventBus.addListener(Caldarium::registerCapabilities);
         NeoForge.EVENT_BUS.addListener(Caldarium::lightning);
         NeoForge.EVENT_BUS.addListener(Caldarium::placing);
+        NeoForge.EVENT_BUS.addListener(Caldarium::aiming);
         modEventBus.addListener(Caldarium::addToCreativeTab);
 
         LOGGER.info("Caldarium {} loaded.", modContainer.getModInfo().getVersion());
@@ -59,6 +66,17 @@ public class Caldarium {
     private static void lightning(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof net.minecraft.world.entity.LightningBolt bolt) {
             Storm.struck(bolt);
+        }
+    }
+
+    public static void aiming(PlayerInteractEvent.RightClickBlock event) {
+        if (!(event.getItemStack().getItem() instanceof BlockItem)) {
+            return;
+        }
+        BlockPos pos = new BlockPlaceContext(new UseOnContext(event.getEntity(), event.getHand(),
+                event.getHitVec())).getClickedPos();
+        if (Suns.inside(event.getLevel(), pos)) {
+            event.setUseItem(TriState.FALSE);
         }
     }
 
