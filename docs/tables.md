@@ -306,7 +306,14 @@ thin dark-red rim cuts it out of the background - thin on the screen, whatever t
 size: its width grows with the distance to the edge, not with the ball, the way an inked
 outline would - and past the rim an orange corona fades
 out; the corona is alpha-blended rather than added, so it stays orange against a blue sky
-instead of washing to white. Neither is drawn from inside the ball, nor on the icon.
+instead of washing to white.
+
+⚠ **The corona is drawn last, and writes no depth.** A render type left at its default
+writes depth, and the corona first used one that did: a sun behind another's corona
+failed the depth test and vanished. The corona now has its own render type with depth
+testing but no depth writing, and it is not drawn with the ball: each sun queues it, and
+all of them are drawn after the particles, farthest first, so a nearer corona lies over
+a farther sun rather than the other way round. Neither is drawn from inside the ball, nor on the icon.
 
 Every `pulseEvery` ticks it flares for `pulseLength`: the colours slide towards a yellow
 palette, and the corona widens, brightens and turns yellow, then all of it settles back.

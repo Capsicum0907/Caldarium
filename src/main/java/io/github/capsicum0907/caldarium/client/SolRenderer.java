@@ -36,14 +36,8 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     /** Degrees a second. Slow enough to read as churning rather than spinning. */
     private static final float TURN = 6.0F;
 
-    private static final int HALO_SEGMENTS = 96;
     // Straight up faces both world diffuse lights, so the shader's shading comes out at full.
     private static final Vector3f LIT = new Vector3f(0.0F, 1.0F, 0.0F);
-    private static final double RIM_ANGLE = 0.0025;
-    private static final float CORONA = 1.3F;
-    private static final float BLAZING_CORONA = 1.6F;
-    private static final float GLOW_ALPHA = 0.55F;
-    private static final float BLAZING_GLOW_ALPHA = 0.8F;
 
     private static final Map<SolBlockEntity, SolSurface> SURFACES = new WeakHashMap<>();
 
@@ -64,7 +58,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
 
     @Override
     public AABB getRenderBoundingBox(SolBlockEntity sol) {
-        double reach = SolBlock.radius(sol.getBlockState()) * BLAZING_CORONA;
+        double reach = SolBlock.radius(sol.getBlockState()) * SolCorona.reach();
         return AABB.ofSize(SolBlock.centre(sol.getBlockPos()), 0.0, 0.0, 0.0).inflate(reach);
     }
 
@@ -89,8 +83,12 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         float time = (sol.getLevel() == null ? 0L : sol.getLevel().getGameTime()) + partial;
         Vec3 eye = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         float blaze = SolPalette.blaze(time, sol.getBlockPos().asLong());
-        draw(pose, buffers, overlay, radius, time, blaze, eye.subtract(SolBlock.centre(sol.getBlockPos())),
-                surface);
+        Vec3 centre = SolBlock.centre(sol.getBlockPos());
+        Vec3 toCamera = eye.subtract(centre);
+        if (toCamera.length() >= radius) {
+            SolCorona.queue(centre, radius, blaze);
+        }
+        draw(pose, buffers, overlay, radius, time, blaze, toCamera, surface);
     }
 
     public static void draw(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, float time,
@@ -103,7 +101,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         pose.pushPose();
         pose.translate(0.5F, 0.5F, 0.5F);
         if (toCamera != null && !inside) {
-            halo(pose, buffers, overlay, radius, blaze, toCamera);
+            halo(pose, buffers, overlay, radius, toCamera);
         }
         pose.mulPose(Axis.YP.rotationDegrees(spin));
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
@@ -116,47 +114,19 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         pose.popPose();
     }
 
-    private static void halo(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, float blaze,
-            Vec3 toCamera) {
-        float corona = Mth.lerp(blaze, CORONA, BLAZING_CORONA);
-        float alpha = Mth.lerp(blaze, GLOW_ALPHA, BLAZING_GLOW_ALPHA);
-        int colour = SolPalette.glow(blaze);
-        double distance = toCamera.length();
-        Vec3 towards = toCamera.scale(1.0 / distance);
-        Vec3 facing = towards.reverse();
-        Vec3 up = Math.abs(towards.y) > 0.99 ? new Vec3(1.0, 0.0, 0.0) : new Vec3(0.0, 1.0, 0.0);
-        Vec3 across = facing.cross(up).normalize();
-        Vec3 upward = across.cross(facing);
-        Vec3 plane = towards.scale(radius * radius / distance);
-        double edge = radius * Math.sqrt(1.0 - (radius / distance) * (radius / distance));
-        double line = RIM_ANGLE * Math.sqrt(distance * distance - radius * radius);
-        double inner = edge - line;
-        double outer = edge + line;
-
+    private static void halo(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, Vec3 toCamera) {
+        SolCorona.Limb limb = SolCorona.Limb.of(toCamera, radius);
         PoseStack.Pose at = pose.last();
         VertexConsumer solid = buffers.getBuffer(RenderType.entitySolid(SKIN));
-        for (int i = 0; i < HALO_SEGMENTS; i++) {
-            Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
-            Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
-            rim(at, solid, overlay, plane.add(a.scale(inner)));
-            rim(at, solid, overlay, plane.add(a.scale(outer)));
-            rim(at, solid, overlay, plane.add(b.scale(outer)));
-            rim(at, solid, overlay, plane.add(b.scale(inner)));
+        int segments = SolCorona.segments();
+        for (int i = 0; i < segments; i++) {
+            float from = Mth.TWO_PI * i / segments;
+            float to = Mth.TWO_PI * (i + 1) / segments;
+            rim(at, solid, overlay, limb.at(from, limb.inner()));
+            rim(at, solid, overlay, limb.at(from, limb.outer()));
+            rim(at, solid, overlay, limb.at(to, limb.outer()));
+            rim(at, solid, overlay, limb.at(to, limb.inner()));
         }
-
-        VertexConsumer glow = buffers.getBuffer(RenderType.debugQuads());
-        for (int i = 0; i < HALO_SEGMENTS; i++) {
-            Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
-            Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
-            shine(at, glow, plane.add(a.scale(outer)), colour, alpha);
-            shine(at, glow, plane.add(a.scale(edge * corona)), colour, 0.0F);
-            shine(at, glow, plane.add(b.scale(edge * corona)), colour, 0.0F);
-            shine(at, glow, plane.add(b.scale(outer)), colour, alpha);
-        }
-    }
-
-    private static Vec3 direction(Vec3 across, Vec3 upward, float angle) {
-        return across.scale(Mth.cos(angle)).add(upward.scale(Mth.sin(angle)));
     }
 
     private static void rim(PoseStack.Pose at, VertexConsumer into, int overlay, Vec3 point) {
@@ -166,11 +136,5 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
                 .setOverlay(overlay)
                 .setLight(LightTexture.FULL_BRIGHT)
                 .setNormal(LIT.x, LIT.y, LIT.z);
-    }
-
-    private static void shine(PoseStack.Pose at, VertexConsumer into, Vec3 point, int colour, float alpha) {
-        into.addVertex(at, (float) point.x, (float) point.y, (float) point.z)
-                .setColor(SolPalette.channel(colour, 16), SolPalette.channel(colour, 8),
-                        SolPalette.channel(colour, 0), alpha);
     }
 }
