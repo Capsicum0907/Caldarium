@@ -284,6 +284,17 @@ thin dark-red rim cuts it out of the background, and past the rim an orange coro
 out; the corona is alpha-blended rather than added, so it stays orange against a blue sky
 instead of washing to white. Neither is drawn from inside the ball, nor on the icon.
 
+Every `pulseEvery` ticks it flares for `pulseLength`: the colours slide towards a yellow
+palette, and the corona widens, brightens and turns yellow, then all of it settles back.
+Each sun is offset by its position, so a row of them does not flare together.
+
+⚠ **The placed ball is not shaded.** The entity shader darkens a face by how far it is
+turned from two fixed lights, down to 0.4 of its colour, which made the far side of a
+light source look like the dark side of a planet. Every vertex of the placed ball is
+given an upward normal, which faces both lights, so it comes out at full colour; in the
+Nether one of the lights points down and it comes out at about 0.88. The icon keeps its
+real normals, because inventory lighting points elsewhere.
+
 **Its surface is not a picture.** A flat picture on a sphere pinches to a point at both
 poles and stretches its pattern along the lines of latitude - a mirror ball rather than
 a sun, and no amount of redrawing the picture fixes it, because the fault is in the

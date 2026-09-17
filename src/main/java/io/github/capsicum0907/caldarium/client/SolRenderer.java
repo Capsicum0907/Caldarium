@@ -45,10 +45,14 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     private static final float TURN = 6.0F;
 
     private static final int HALO_SEGMENTS = 96;
+    // Straight up faces both world diffuse lights, so the shader's shading comes out at full.
+    private static final Vector3f LIT = new Vector3f(0.0F, 1.0F, 0.0F);
     private static final float RIM_INSIDE = 0.98F;
     private static final float RIM_OUTSIDE = 1.025F;
     private static final float CORONA = 1.3F;
+    private static final float BLAZING_CORONA = 1.6F;
     private static final float GLOW_ALPHA = 0.55F;
+    private static final float BLAZING_GLOW_ALPHA = 0.8F;
 
     public SolRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -69,11 +73,12 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         float radius = SolBlock.radius(sol.getBlockState());
         float time = (sol.getLevel() == null ? 0L : sol.getLevel().getGameTime()) + partial;
         Vec3 eye = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        draw(pose, buffers, overlay, radius, time, eye.subtract(SolBlock.centre(sol.getBlockPos())));
+        float blaze = SolPalette.blaze(time, sol.getBlockPos().asLong());
+        draw(pose, buffers, overlay, radius, time, blaze, eye.subtract(SolBlock.centre(sol.getBlockPos())));
     }
 
     public static void draw(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, float time,
-            Vec3 toCamera) {
+            float blaze, Vec3 toCamera) {
         float spin = time * TURN / 20.0F;
         float boil = time * BOIL / 20.0F;
         boolean inside = toCamera != null && toCamera.length() < radius;
@@ -81,7 +86,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         pose.pushPose();
         pose.translate(0.5F, 0.5F, 0.5F);
         if (toCamera != null && !inside) {
-            halo(pose, buffers, overlay, radius, toCamera);
+            halo(pose, buffers, overlay, radius, blaze, toCamera);
         }
         pose.mulPose(Axis.YP.rotationDegrees(spin));
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
@@ -93,7 +98,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         // light does not come from the render type anyway: it comes from handing every
         // vertex FULL_BRIGHT, which this one takes just as happily.
         VertexConsumer into = buffers.getBuffer(RenderType.entitySolid(SKIN));
-        ball(pose, into, overlay, boil, inside);
+        ball(pose, into, overlay, boil, blaze, inside, toCamera != null);
         pose.popPose();
     }
 
@@ -101,7 +106,8 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
      * A sphere of quads. Every vertex is drawn at full brightness, which is what makes
      * it a light rather than a lit thing: a sun that dimmed in shadow would be a ball.
      */
-    private static void ball(PoseStack pose, VertexConsumer into, int overlay, float boil, boolean inside) {
+    private static void ball(PoseStack pose, VertexConsumer into, int overlay, float boil, float blaze,
+            boolean inside, boolean flat) {
         Matrix4f matrix = pose.last().pose();
         for (int ring = 0; ring < RINGS; ring++) {
             float from = Mth.PI * ring / RINGS;
@@ -111,15 +117,19 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
                 float right = Mth.TWO_PI * (segment + 1) / SEGMENTS;
                 float first = inside ? right : left;
                 float last = inside ? left : right;
-                corner(matrix, pose, into, overlay, from, first, boil);
-                corner(matrix, pose, into, overlay, from, last, boil);
-                corner(matrix, pose, into, overlay, to, last, boil);
-                corner(matrix, pose, into, overlay, to, first, boil);
+                corner(matrix, pose, into, overlay, from, first, boil, blaze, flat);
+                corner(matrix, pose, into, overlay, from, last, boil, blaze, flat);
+                corner(matrix, pose, into, overlay, to, last, boil, blaze, flat);
+                corner(matrix, pose, into, overlay, to, first, boil, blaze, flat);
             }
         }
     }
 
-    private static void halo(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, Vec3 toCamera) {
+    private static void halo(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, float blaze,
+            Vec3 toCamera) {
+        float corona = Mth.lerp(blaze, CORONA, BLAZING_CORONA);
+        float alpha = Mth.lerp(blaze, GLOW_ALPHA, BLAZING_GLOW_ALPHA);
+        int colour = SolPalette.glow(blaze);
         double distance = toCamera.length();
         Vec3 towards = toCamera.scale(1.0 / distance);
         Vec3 facing = towards.reverse();
@@ -144,10 +154,10 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         for (int i = 0; i < HALO_SEGMENTS; i++) {
             Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
             Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
-            shine(at, glow, plane.add(a.scale(edge * RIM_OUTSIDE)), GLOW_ALPHA);
-            shine(at, glow, plane.add(a.scale(edge * CORONA)), 0.0F);
-            shine(at, glow, plane.add(b.scale(edge * CORONA)), 0.0F);
-            shine(at, glow, plane.add(b.scale(edge * RIM_OUTSIDE)), GLOW_ALPHA);
+            shine(at, glow, plane.add(a.scale(edge * RIM_OUTSIDE)), colour, alpha);
+            shine(at, glow, plane.add(a.scale(edge * corona)), colour, 0.0F);
+            shine(at, glow, plane.add(b.scale(edge * corona)), colour, 0.0F);
+            shine(at, glow, plane.add(b.scale(edge * RIM_OUTSIDE)), colour, alpha);
         }
     }
 
@@ -161,29 +171,32 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
                 .setUv(0.5F, 0.5F)
                 .setOverlay(overlay)
                 .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(at, (float) normal.x, (float) normal.y, (float) normal.z);
+                .setNormal(LIT.x, LIT.y, LIT.z);
     }
 
-    private static void shine(PoseStack.Pose at, VertexConsumer into, Vec3 point, float alpha) {
+    private static void shine(PoseStack.Pose at, VertexConsumer into, Vec3 point, int colour, float alpha) {
         into.addVertex(at, (float) point.x, (float) point.y, (float) point.z)
-                .setColor(SolPalette.channel(SolPalette.GLOW, 16), SolPalette.channel(SolPalette.GLOW, 8),
-                        SolPalette.channel(SolPalette.GLOW, 0), alpha);
+                .setColor(SolPalette.channel(colour, 16), SolPalette.channel(colour, 8),
+                        SolPalette.channel(colour, 0), alpha);
     }
 
     private static void corner(Matrix4f matrix, PoseStack pose, VertexConsumer into,
-            int overlay, float down, float round, float boil) {
+            int overlay, float down, float round, float boil, float blaze, boolean flat) {
         float x = Mth.sin(down) * Mth.cos(round);
         float y = Mth.cos(down);
         float z = Mth.sin(down) * Mth.sin(round);
         float heat = Sunspots.heat(x, y, z, boil);
-        int colour = SolPalette.colour(heat);
-        Vector3f normal = new Vector3f(x, y, z);
-        into.addVertex(matrix, x, y, z)
+        int colour = SolPalette.colour(heat, blaze);
+        VertexConsumer vertex = into.addVertex(matrix, x, y, z)
                 .setColor(colour | 0xFF000000)
                 .setUv(0.5F, 0.5F)
                 .setOverlay(overlay)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(pose.last(), normal.x, normal.y, normal.z);
+                .setLight(LightTexture.FULL_BRIGHT);
+        if (flat) {
+            vertex.setNormal(LIT.x, LIT.y, LIT.z);
+        } else {
+            vertex.setNormal(pose.last(), x, y, z);
+        }
     }
 
 }

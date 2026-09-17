@@ -504,7 +504,7 @@ public final class Skins {
                 // back as nought. A sun is brightest in the middle of each blob and
                 // dark where they meet, which is this the other way up.
                 heat = Math.clamp(1.0F - (heat - 0.15F) * 1.5F, 0.0F, 1.0F);
-                pixels[y][x] = 0xFF000000 | SolPalette.colour(heat);
+                pixels[y][x] = 0xFF000000 | SolPalette.colour(heat, 0.0F);
             }
         }
         return pixels;

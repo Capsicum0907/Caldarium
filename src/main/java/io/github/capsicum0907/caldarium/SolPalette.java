@@ -1,23 +1,51 @@
 package io.github.capsicum0907.caldarium;
 
 public final class SolPalette {
-    private static final int[] STOPS = { 0x6E1606, 0xC0300A, 0xE8601A, 0xFA9A24, 0xFFE070 };
-    private static final double CONTRAST = 1.3;
+    private static final int[] STOPS = { 0x8A2008, 0xD0400E, 0xF07A1E, 0xFFB030, 0xFFE070 };
+    private static final double CONTRAST = 0.9;
+    private static final int[] BLAZING = { 0xD9420C, 0xF58A1C, 0xFFC23A, 0xFFE070, 0xFFF0A0 };
+    private static final double BLAZING_CONTRAST = 0.8;
 
     public static final int RIM = 0x4A0A03;
     public static final int GLOW = 0xFF6A10;
+    public static final int BLAZING_GLOW = 0xFFB030;
 
     private SolPalette() {
     }
 
-    public static int colour(float heat) {
-        float scaled = (float) Math.pow(Math.clamp(heat, 0.0F, 1.0F), CONTRAST) * (STOPS.length - 1);
-        int stop = Math.min((int) scaled, STOPS.length - 2);
-        return mix(STOPS[stop], STOPS[stop + 1], scaled - stop);
+    public static int colour(float heat, float blaze) {
+        return mix(along(STOPS, CONTRAST, heat), along(BLAZING, BLAZING_CONTRAST, heat), blaze);
+    }
+
+    public static int glow(float blaze) {
+        return mix(GLOW, BLAZING_GLOW, blaze);
+    }
+
+    public static float blaze(float time, long seed) {
+        if (!CaldariumConfig.SPEC.isLoaded()) {
+            return 0.0F;
+        }
+        int every = Math.max(1, CaldariumConfig.solPulseEvery());
+        int length = Math.min(CaldariumConfig.solPulseLength(), every);
+        if (length <= 0) {
+            return 0.0F;
+        }
+        float into = (float) ((time + Math.floorMod(seed, every)) % every);
+        if (into >= length) {
+            return 0.0F;
+        }
+        float wave = (float) Math.sin(Math.PI * into / length);
+        return wave * wave;
     }
 
     public static float channel(int colour, int shift) {
         return ((colour >> shift) & 0xFF) / 255.0F;
+    }
+
+    private static int along(int[] stops, double contrast, float heat) {
+        float scaled = (float) Math.pow(Math.clamp(heat, 0.0F, 1.0F), contrast) * (stops.length - 1);
+        int stop = Math.min((int) scaled, stops.length - 2);
+        return mix(stops[stop], stops[stop + 1], scaled - stop);
     }
 
     private static int mix(int from, int to, float at) {
