@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 
 public class SolBlockEntity extends BlockEntity {
     private int left = -1;
@@ -26,7 +27,7 @@ public class SolBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel server)) {
             return;
         }
-        sol.burnWhatIsNear(server, pos);
+        sol.burnWhatIsNear(server, pos, state);
         sol.spend(server, pos, state);
     }
 
@@ -34,17 +35,21 @@ public class SolBlockEntity extends BlockEntity {
      * Being near it is being near a fire. Nothing else here hurts anything, so the
      * damage is the ordinary one a fire does rather than a type of this mod's own.
      */
-    private void burnWhatIsNear(ServerLevel level, BlockPos pos) {
-        int reach = CaldariumConfig.solBurns();
-        if (reach <= 0) {
-            return;
-        }
-        AABB around = new AABB(pos).inflate(reach);
-        List<LivingEntity> caught = level.getEntitiesOfClass(LivingEntity.class, around);
+    private void burnWhatIsNear(ServerLevel level, BlockPos pos, BlockState state) {
+        double reach = SolBlock.radius(state) + CaldariumConfig.solBurns();
+        Vec3 centre = Vec3.atCenterOf(pos);
+        AABB around = new AABB(pos).inflate(Math.ceil(reach));
+        List<LivingEntity> caught = level.getEntitiesOfClass(LivingEntity.class, around,
+                living -> nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
         for (LivingEntity living : caught) {
             living.igniteForSeconds(CaldariumConfig.solBurnSeconds());
             living.hurt(level.damageSources().inFire(), CaldariumConfig.solBurnDamage());
         }
+    }
+
+    private static Vec3 nearest(AABB box, Vec3 to) {
+        return new Vec3(Math.clamp(to.x, box.minX, box.maxX), Math.clamp(to.y, box.minY, box.maxY),
+                Math.clamp(to.z, box.minZ, box.maxZ));
     }
 
     /** Weather spends it faster: a sun in the rain is a sun being put out. */
@@ -76,11 +81,6 @@ public class SolBlockEntity extends BlockEntity {
         return left;
     }
 
-    /** What is left of it, as a part of one. Read by the renderer. */
-    public float share() {
-        int whole = Math.max(1, CaldariumConfig.solDurability());
-        return left < 0 ? 1.0F : Math.clamp(left / (float) whole, 0.0F, 1.0F);
-    }
 
 
     /** Whether an artificial sun stands close enough to that place to count as day. */

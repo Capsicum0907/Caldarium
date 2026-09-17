@@ -19,6 +19,7 @@ import io.github.capsicum0907.caldarium.Joint;
 import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.GeneratorBlock;
 import io.github.capsicum0907.caldarium.SolBlock;
+import io.github.capsicum0907.caldarium.SolBodyBlock;
 import io.github.capsicum0907.caldarium.Tier;
 
 import net.minecraft.Util;
@@ -202,6 +203,8 @@ public final class CaldariumDataGen {
             }
             simpleBlockWithItem(CaldariumRegistry.SOL.get(),
                     models().cubeAll(Skins.SOL, modLoc("block/" + Skins.SOL)));
+            simpleBlock(CaldariumRegistry.SOL_BODY.get(), models().getBuilder("sol_body")
+                    .texture("particle", modLoc("block/" + Skins.SOL)));
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     String name = Skins.kind(kind, tier);
@@ -415,6 +418,7 @@ public final class CaldariumDataGen {
                 }
             }
             add(CaldariumRegistry.SOL.get(), "Sol");
+            add(CaldariumRegistry.SOL_BODY.get(), "Sol");
             add("itemGroup." + Caldarium.MODID, "Caldarium");
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");
@@ -442,7 +446,7 @@ public final class CaldariumDataGen {
             @Override
             protected void generate() {
                 for (Block block : ours()) {
-                    if (block instanceof SolBlock) {
+                    if (block instanceof SolBlock || block instanceof SolBodyBlock) {
                         // A sun that could be picked up would be a sun with a pause
                         // button, and its durability would only ever be spent by
                         // somebody who forgot to take it back.
@@ -463,6 +467,7 @@ public final class CaldariumDataGen {
     private static List<Block> ours() {
         List<Block> blocks = new ArrayList<>();
         blocks.add(CaldariumRegistry.SOL.get());
+        blocks.add(CaldariumRegistry.SOL_BODY.get());
         CaldariumRegistry.generators().values().forEach(block -> blocks.add(block.get()));
         for (Kind kind : Kind.values()) {
             for (Tier tier : Tier.upTo(kind.top())) {
@@ -497,7 +502,8 @@ public final class CaldariumDataGen {
 
         @Override
         protected void addTags(HolderLookup.Provider registries) {
-            tag(BlockTags.NEEDS_DIAMOND_TOOL).add(CaldariumRegistry.SOL.get());
+            tag(BlockTags.NEEDS_DIAMOND_TOOL).add(CaldariumRegistry.SOL.get(),
+                    CaldariumRegistry.SOL_BODY.get());
             var pickaxe = tag(BlockTags.MINEABLE_WITH_PICKAXE);
             for (Block block : ours()) {
                 pickaxe.add(block);

@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 
 import io.github.capsicum0907.caldarium.Caldarium;
-import io.github.capsicum0907.caldarium.CaldariumConfig;
+import io.github.capsicum0907.caldarium.SolBlock;
 import io.github.capsicum0907.caldarium.SolBlockEntity;
 import io.github.capsicum0907.caldarium.data.Skins;
 
@@ -40,9 +40,6 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     /** Degrees a second. Slow enough to read as churning rather than spinning. */
     private static final float TURN = 6.0F;
 
-    /** How much of its size a sun has left when it is nearly out. */
-    private static final float SHRUNK = 0.55F;
-
     public SolRenderer(BlockEntityRendererProvider.Context context) {
     }
 
@@ -59,7 +56,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     @Override
     public void render(SolBlockEntity sol, float partial, PoseStack pose,
             MultiBufferSource buffers, int light, int overlay) {
-        float radius = CaldariumConfig.solSize() * (SHRUNK + (1.0F - SHRUNK) * sol.share());
+        float radius = SolBlock.radius(sol.getBlockState());
         float time = (sol.getLevel() == null ? 0L : sol.getLevel().getGameTime()) + partial;
         float spin = time * TURN / 20.0F;
         float boil = time * BOIL / 20.0F;

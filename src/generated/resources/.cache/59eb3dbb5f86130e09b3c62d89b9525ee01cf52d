@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-09T19:38:33.9777435	Loot Tables
+// 1.21.1	2026-09-17T20:51:37.5527802	Loot Tables
 e8dc301e841585cdf670a9c7ca743951d808b9cf data/caldarium/loot_table/blocks/bidental.json
 d39e61f8fc3a8f022f2125b174c1e9ccbd05134c data/caldarium/loot_table/blocks/compressed_nether_star_burner.json
 24351decc0291880d89f74487378c7adc4c3e0ca data/caldarium/loot_table/blocks/compressed_nether_star_crucible.json
@@ -87,6 +87,7 @@ deea350408a36fda16bb823753ca751dda647753 data/caldarium/loot_table/blocks/nether
 c9664b3353b8aa530015b18e991581e69d751d1f data/caldarium/loot_table/blocks/nether_star_solar_panel.json
 6bedaa068a91041c6d84792de9ede21b54abf0fa data/caldarium/loot_table/blocks/nether_star_spoliarium.json
 ae158c32eaceb6176450b019dca8ad5916bb5793 data/caldarium/loot_table/blocks/sol.json
+d72242620db5c0869d26d66735fc43a322394373 data/caldarium/loot_table/blocks/sol_body.json
 aba9ef068a0d73960bb7a6a108c1cb1121677ebb data/caldarium/loot_table/blocks/super_compressed_nether_star_burner.json
 31bb7c9bab84f4aca8951f026cf7a0b651c00c73 data/caldarium/loot_table/blocks/super_compressed_nether_star_crucible.json
 ab3708cd0904eacd414471775c4e97689ecb1141 data/caldarium/loot_table/blocks/super_compressed_nether_star_experientia.json

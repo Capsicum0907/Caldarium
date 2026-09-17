@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -102,6 +103,18 @@ public final class CaldariumRegistry {
                     .hasPostProcess((a, b, c) -> true));
 
     public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerSimpleBlockItem(SOL);
+
+    public static final DeferredBlock<SolBodyBlock> SOL_BODY = BLOCKS.registerBlock("sol_body",
+            SolBodyBlock::new, metal()
+                    .strength(50.0F, 1200.0F)
+                    .requiresCorrectToolForDrops()
+                    .lightLevel(SolBlock::light)
+                    .noOcclusion()
+                    .isViewBlocking((state, level, pos) -> false)
+                    .isSuffocating((state, level, pos) -> false)
+                    .isRedstoneConductor((state, level, pos) -> false)
+                    .pushReaction(PushReaction.BLOCK)
+                    .randomTicks());
 
     static {
         ITEM_ORDER.add(SOL_ITEM);

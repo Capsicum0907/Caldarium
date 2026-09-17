@@ -2,6 +2,8 @@ package io.github.capsicum0907.caldarium;
 
 import io.github.capsicum0907.caldarium.data.TestStructures;
 
+import java.util.List;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
@@ -10,6 +12,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -196,6 +200,89 @@ public final class CaldariumTests {
         check(forWounded < forWhole,
                 "a wounded one should be worth less than a whole one: "
                         + forWounded + " against " + forWhole);
+        helper.succeed();
+    }
+
+    private static final BlockPos SUN = new BlockPos(2, 2, 2);
+
+    private static BlockPos sun(GameTestHelper helper) {
+        helper.setBlock(SUN, CaldariumRegistry.SOL.get());
+        return helper.absolutePos(SUN);
+    }
+
+    private static int bodies(GameTestHelper helper, BlockPos core) {
+        int span = SolBlock.span() + 1;
+        int found = 0;
+        for (BlockPos at : BlockPos.betweenClosed(core.offset(-span, -span, -span),
+                core.offset(span, span, span))) {
+            if (helper.getLevel().getBlockState(at).getBlock() instanceof SolBodyBlock) {
+                found++;
+            }
+        }
+        return found;
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
+    public static void aSunFillsItsBall(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockState state = helper.getLevel().getBlockState(core);
+        List<BlockPos> cells = SolBlock.body(core, SolBlock.radius(state));
+        int filled = 0;
+        for (BlockPos cell : cells) {
+            BlockState there = helper.getLevel().getBlockState(cell);
+            if (there.getBlock() instanceof SolBodyBlock) {
+                filled++;
+            } else {
+                check(!there.canBeReplaced(), "an empty cell inside the ball was left open: " + cell);
+            }
+        }
+        check(filled > 0, "a sun should fill its ball");
+        check(bodies(helper, core) == filled, "nothing outside the ball should be filled");
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
+    public static void nothingIsLeftWhenTheSunGoes(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.setBlock(SUN, Blocks.AIR);
+        check(bodies(helper, core) == 0, "a sun that is gone should leave no body behind: "
+                + bodies(helper, core));
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
+    public static void breakingItsBodyBreaksTheSun(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockPos cell = core.above();
+        BlockState state = helper.getLevel().getBlockState(cell);
+        check(state.getBlock() instanceof SolBodyBlock, "the cell above a sun should be its body");
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        state.getBlock().playerWillDestroy(helper.getLevel(), cell, state, player);
+        check(!(helper.getLevel().getBlockState(core).getBlock() instanceof SolBlock),
+                "breaking the body should break the sun");
+        check(bodies(helper, core) == 0, "and take the rest of the body with it: "
+                + bodies(helper, core));
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
+    public static void aSpentSunGivesUpItsOuterCells(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        int whole = bodies(helper, core);
+        BlockState spent = helper.getLevel().getBlockState(core).setValue(SolBlock.SPENT, 3);
+        helper.getLevel().setBlockAndUpdate(core, spent);
+        float radius = SolBlock.radius(spent);
+        int span = SolBlock.span() + 1;
+        for (BlockPos at : BlockPos.betweenClosed(core.offset(-span, -span, -span),
+                core.offset(span, span, span))) {
+            BlockState there = helper.getLevel().getBlockState(at);
+            if (there.getBlock() instanceof SolBodyBlock) {
+                check(at.distSqr(core) <= radius * radius, "a cell outside the smaller ball remained: " + at);
+                check(there.getValue(SolBlock.SPENT) == 3, "a remaining cell should dim with the sun");
+            }
+        }
+        check(bodies(helper, core) < whole, "a spent sun should be smaller: "
+                + bodies(helper, core) + " against " + whole);
         helper.succeed();
     }
 }
