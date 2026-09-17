@@ -79,7 +79,7 @@ public final class CaldariumClient {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES
-                || player == null || minecraft.level == null) {
+                || player == null || minecraft.level == null || minecraft.options.hideGui) {
             return;
         }
         for (InteractionHand hand : InteractionHand.values()) {

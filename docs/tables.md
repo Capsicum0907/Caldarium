@@ -257,7 +257,8 @@ A right-click on a block is passed over in favour of that, so where it goes does
 depend on what happens to be under the crosshair.
 
 While a sun is held, the ball it would make is drawn where it would go: white where it
-can, red where it cannot. It cannot go where its core cell is taken, outside the world,
+can, red where it cannot. It is part of the interface, so it is hidden with the rest of
+it by F1. It cannot go where its core cell is taken, outside the world,
 where the core would be inside another sun, or where anything alive is inside the ball -
 the last is vanilla's own check, which a sun's shape makes the size of the ball.
 
