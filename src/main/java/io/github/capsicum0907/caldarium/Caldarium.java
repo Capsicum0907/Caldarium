@@ -15,6 +15,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
 
 import org.slf4j.Logger;
@@ -40,6 +41,7 @@ public class Caldarium {
 
         modEventBus.addListener(Caldarium::registerCapabilities);
         NeoForge.EVENT_BUS.addListener(Caldarium::lightning);
+        NeoForge.EVENT_BUS.addListener(Caldarium::placing);
         modEventBus.addListener(Caldarium::addToCreativeTab);
 
         LOGGER.info("Caldarium {} loaded.", modContainer.getModInfo().getVersion());
@@ -57,6 +59,13 @@ public class Caldarium {
     private static void lightning(EntityJoinLevelEvent event) {
         if (event.getEntity() instanceof net.minecraft.world.entity.LightningBolt bolt) {
             Storm.struck(bolt);
+        }
+    }
+
+    private static void placing(BlockEvent.EntityPlaceEvent event) {
+        if (event.getLevel() instanceof net.minecraft.world.level.Level level
+                && Suns.inside(level, event.getPos())) {
+            event.setCanceled(true);
         }
     }
 
@@ -80,6 +89,7 @@ public class Caldarium {
         public Client(IEventBus modEventBus, ModContainer modContainer) {
             modEventBus.addListener(CaldariumClient::registerScreens);
             modEventBus.addListener(CaldariumClient::registerRenderers);
+            NeoForge.EVENT_BUS.addListener(CaldariumClient::outline);
         }
     }
 

@@ -22,6 +22,30 @@ public class SolBlockEntity extends BlockEntity {
         super(CaldariumRegistry.SOL_ENTITY.get(), pos, state);
     }
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level != null) {
+            Suns.add(level, worldPosition);
+        }
+    }
+
+    @Override
+    public void setRemoved() {
+        super.setRemoved();
+        if (level != null) {
+            Suns.remove(level, worldPosition);
+        }
+    }
+
+    @Override
+    public void onChunkUnloaded() {
+        super.onChunkUnloaded();
+        if (level != null) {
+            Suns.remove(level, worldPosition);
+        }
+    }
+
     public static void serverTick(Level level, BlockPos pos, BlockState state,
             SolBlockEntity sol) {
         if (!(level instanceof ServerLevel server)) {

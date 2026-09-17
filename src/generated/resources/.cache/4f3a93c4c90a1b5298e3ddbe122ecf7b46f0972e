@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-17T20:51:37.558466	Block States: caldarium
+// 1.21.1	2026-09-17T21:22:40.6734195	Block States: caldarium
 6f505fdafbbb72f38e9882c318e1545704013d19 assets/caldarium/blockstates/bidental.json
 1e4a7c2572d5bc44933568c4f8e752d4ca131c8e assets/caldarium/blockstates/compressed_nether_star_burner.json
 e62dc434de298581851c82c87b89c371d9e11fda assets/caldarium/blockstates/compressed_nether_star_crucible.json
@@ -87,7 +87,6 @@ c704177bd4f8a077f2b785a81318b726ecf64fcd assets/caldarium/blockstates/nether_sta
 7822ab27e22fa00493a0b00308b0310e1b4a66fe assets/caldarium/blockstates/nether_star_solar_panel.json
 5f1e3e8b44f293682a17fddaff3957400e363b8e assets/caldarium/blockstates/nether_star_spoliarium.json
 83c0fc93fe1c72ae3ec4678ad1fbdce58aa7c93b assets/caldarium/blockstates/sol.json
-919f6b8cc5982dd25a386ca9400e55b9aa28b471 assets/caldarium/blockstates/sol_body.json
 71f6ef88726b807e2cd1a708941f20729a2e656f assets/caldarium/blockstates/super_compressed_nether_star_burner.json
 7abd7267a43b3aac391400b1331dcc75e20ae6db assets/caldarium/blockstates/super_compressed_nether_star_crucible.json
 e557ebcc88d0a0f47a95058fa0474d05ffea29d8 assets/caldarium/blockstates/super_compressed_nether_star_experientia.json
@@ -349,7 +348,6 @@ f7ab9bf619d7ae4318c223e522523f12d86b33e5 assets/caldarium/models/block/nether_st
 4163f3debe4b923abfc83c0d0ac4757b21ab0325 assets/caldarium/models/block/nether_star_spoliarium.json
 e0d2d0fc67e0bd8a213846d4cf09eced838e0734 assets/caldarium/models/block/nether_star_spoliarium_on.json
 a1c6f23530fdec2dd35c2b15344c4d166207be18 assets/caldarium/models/block/sol.json
-6e53f49d545abb6b20bdc53a1d396d4d230e7697 assets/caldarium/models/block/sol_body.json
 20f41430df74f0f24ebf9a4bafc997c5a9e31f19 assets/caldarium/models/block/super_compressed_nether_star_burner.json
 f8eb7075a5e4422bf10e13c5001f4e695af2fa93 assets/caldarium/models/block/super_compressed_nether_star_burner_on.json
 25c42e951f064cd03543cadd4643c793236a753b assets/caldarium/models/block/super_compressed_nether_star_crucible.json

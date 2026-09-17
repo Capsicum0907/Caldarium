@@ -24,6 +24,8 @@ import net.minecraft.resources.ResourceLocation;
 /** A flat floor for the game tests to stand on. */
 public class TestStructures implements DataProvider {
     public static final String FLOOR = "floor";
+    public static final String HALL = "hall";
+    public static final int HALL_SIZE = 19;
 
     private static final int SIZE = 5;
     private static final String FLOOR_BLOCK = "minecraft:polished_andesite";
@@ -42,14 +44,17 @@ public class TestStructures implements DataProvider {
 
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        Path target = path.file(ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, FLOOR), "nbt");
-        return CompletableFuture.runAsync(() -> write(output, floor(), target), Util.backgroundExecutor());
+        Path floor = path.file(ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, FLOOR), "nbt");
+        Path hall = path.file(ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, HALL), "nbt");
+        return CompletableFuture.allOf(
+                CompletableFuture.runAsync(() -> write(output, floor(SIZE), floor), Util.backgroundExecutor()),
+                CompletableFuture.runAsync(() -> write(output, floor(HALL_SIZE), hall), Util.backgroundExecutor()));
     }
 
-    private static CompoundTag floor() {
+    private static CompoundTag floor(int size) {
         CompoundTag tag = new CompoundTag();
         NbtUtils.addCurrentDataVersion(tag);
-        tag.put("size", vector(SIZE, SIZE, SIZE));
+        tag.put("size", vector(size, size, size));
 
         ListTag palette = new ListTag();
         palette.add(named(AIR));
@@ -57,9 +62,9 @@ public class TestStructures implements DataProvider {
         tag.put("palette", palette);
 
         ListTag blocks = new ListTag();
-        for (int x = 0; x < SIZE; x++) {
-            for (int y = 0; y < SIZE; y++) {
-                for (int z = 0; z < SIZE; z++) {
+        for (int x = 0; x < size; x++) {
+            for (int y = 0; y < size; y++) {
+                for (int z = 0; z < size; z++) {
                     CompoundTag block = new CompoundTag();
                     block.put("pos", vector(x, y, z));
                     block.putInt("state", y == 0 ? 1 : 0);

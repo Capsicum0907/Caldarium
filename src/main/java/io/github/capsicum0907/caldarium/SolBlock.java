@@ -1,24 +1,28 @@
 package io.github.capsicum0907.caldarium;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class SolBlock extends BaseEntityBlock {
     /** How far through its durability it is, in quarters. Only the light reads it. */
@@ -29,6 +33,8 @@ public class SolBlock extends BaseEntityBlock {
     private static final int BRIGHTEST = 15;
     private static final int QUARTERS = 4;
     private static final float SHRUNK = 0.55F;
+    private static final int SLICES = 16;
+    private static final Map<Float, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 
     public SolBlock(Properties properties) {
         super(properties);
@@ -40,48 +46,73 @@ public class SolBlock extends BaseEntityBlock {
         return Math.max(1, BRIGHTEST - state.getValue(SPENT) * 3);
     }
 
-    public static float fullRadius() {
-        return CaldariumConfig.solSize() / 2.0F;
-    }
-
     public static float radius(BlockState state) {
         float left = 1.0F - state.getValue(SPENT) / (float) QUARTERS;
-        return fullRadius() * (SHRUNK + (1.0F - SHRUNK) * left);
+        return CaldariumConfig.solSize() / 2.0F * (SHRUNK + (1.0F - SHRUNK) * left);
     }
 
-    public static int span() {
-        return (int) Math.ceil(fullRadius());
+    public static Vec3 centre(BlockPos pos) {
+        return Vec3.atCenterOf(pos);
     }
 
-    public static List<BlockPos> body(BlockPos core, float radius) {
-        List<BlockPos> cells = new ArrayList<>();
-        int span = (int) Math.ceil(radius);
-        float limit = radius * radius;
-        for (int dx = -span; dx <= span; dx++) {
-            for (int dy = -span; dy <= span; dy++) {
-                for (int dz = -span; dz <= span; dz++) {
-                    if ((dx != 0 || dy != 0 || dz != 0) && dx * dx + dy * dy + dz * dz <= limit) {
-                        cells.add(core.offset(dx, dy, dz));
-                    }
+    public static double gap(BlockState state, BlockPos pos, Vec3 point) {
+        return Math.max(0.0, point.distanceTo(centre(pos)) - radius(state));
+    }
+
+    public static AABB bounds(BlockState state, BlockPos pos) {
+        return AABB.ofSize(centre(pos), 0.0, 0.0, 0.0).inflate(radius(state));
+    }
+
+    public static BlockHitResult hit(BlockState state, BlockPos pos, Vec3 from, Vec3 to) {
+        Vec3 along = to.subtract(from);
+        Vec3 offset = from.subtract(centre(pos));
+        double radius = radius(state);
+        double a = along.lengthSqr();
+        double b = 2.0 * offset.dot(along);
+        double c = offset.lengthSqr() - radius * radius;
+        if (a == 0.0) {
+            return null;
+        }
+        if (c <= 0.0) {
+            return new BlockHitResult(from, Direction.getNearest(-along.x, -along.y, -along.z), pos, true);
+        }
+        double disc = b * b - 4.0 * a * c;
+        if (disc < 0.0) {
+            return null;
+        }
+        double t = (-b - Math.sqrt(disc)) / (2.0 * a);
+        if (t < 0.0 || t > 1.0) {
+            return null;
+        }
+        Vec3 point = from.add(along.scale(t));
+        Vec3 normal = point.subtract(centre(pos));
+        return new BlockHitResult(point, Direction.getNearest(normal.x, normal.y, normal.z), pos, false);
+    }
+
+    public static VoxelShape shape(BlockState state) {
+        return SHAPES.computeIfAbsent(radius(state), SolBlock::ball);
+    }
+
+    private static VoxelShape ball(float radius) {
+        double step = radius * 2.0 / SLICES;
+        VoxelShape ball = Shapes.empty();
+        for (int i = 0; i < SLICES; i++) {
+            double y = -radius + (i + 0.5) * step;
+            for (int j = 0; j < SLICES; j++) {
+                double x = -radius + (j + 0.5) * step;
+                double left = radius * radius - x * x - y * y;
+                if (left <= 0.0) {
+                    continue;
                 }
+                double half = Math.sqrt(left);
+                double x0 = -radius + j * step;
+                double y0 = -radius + i * step;
+                ball = Shapes.joinUnoptimized(ball, Shapes.create(
+                        0.5 + x0, 0.5 + y0, 0.5 - half, 0.5 + x0 + step, 0.5 + y0 + step, 0.5 + half),
+                        net.minecraft.world.phys.shapes.BooleanOp.OR);
             }
         }
-        return cells;
-    }
-
-    public static BlockPos coreOf(BlockGetter level, BlockPos cell) {
-        int span = span();
-        for (BlockPos at : BlockPos.betweenClosed(cell.offset(-span, -span, -span),
-                cell.offset(span, span, span))) {
-            BlockState state = level.getBlockState(at);
-            if (state.getBlock() instanceof SolBlock) {
-                float radius = radius(state);
-                if (at.distSqr(cell) <= radius * radius) {
-                    return at.immutable();
-                }
-            }
-        }
-        return null;
+        return ball.optimize();
     }
 
     public static float progress(BlockState state, Player player, BlockGetter level, BlockPos pos,
@@ -103,51 +134,13 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     @Override
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
-        BlockPos pos = context.getClickedPos();
-        int apart = span() * 2 + 1;
-        for (BlockPos at : BlockPos.betweenClosed(pos.offset(-apart, -apart, -apart),
-                pos.offset(apart, apart, apart))) {
-            if (context.getLevel().getBlockState(at).getBlock() instanceof SolBlock) {
-                return null;
-            }
-        }
-        return defaultBlockState();
+    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return shape(state);
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moved) {
-        super.onPlace(state, level, pos, old, moved);
-        if (level.isClientSide() || old.is(this)) {
-            return;
-        }
-        BlockState filler = CaldariumRegistry.SOL_BODY.get().defaultBlockState()
-                .setValue(SPENT, state.getValue(SPENT));
-        for (BlockPos cell : body(pos, radius(state))) {
-            if (level.getBlockState(cell).canBeReplaced()) {
-                level.setBlock(cell, filler, Block.UPDATE_ALL);
-            }
-        }
-    }
-
-    @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
-        if (!level.isClientSide()) {
-            float keep = now.is(this) ? radius(now) : -1.0F;
-            float limit = keep * keep;
-            for (BlockPos cell : body(pos, Math.max(fullRadius(), radius(state)))) {
-                BlockState there = level.getBlockState(cell);
-                if (!(there.getBlock() instanceof SolBodyBlock)) {
-                    continue;
-                }
-                if (keep >= 0.0F && cell.distSqr(pos) <= limit) {
-                    level.setBlock(cell, there.setValue(SPENT, now.getValue(SPENT)), Block.UPDATE_ALL);
-                } else {
-                    level.setBlock(cell, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
-                }
-            }
-        }
-        super.onRemove(state, level, pos, now, moved);
+    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return shape(state);
     }
 
     /**

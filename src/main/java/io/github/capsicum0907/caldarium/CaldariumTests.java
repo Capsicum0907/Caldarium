@@ -1,19 +1,23 @@
 package io.github.capsicum0907.caldarium;
 
-import io.github.capsicum0907.caldarium.data.TestStructures;
-
 import java.util.List;
+
+import io.github.capsicum0907.caldarium.data.TestStructures;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
@@ -203,86 +207,101 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    private static final BlockPos SUN = new BlockPos(2, 2, 2);
+    private static final BlockPos SUN = new BlockPos(TestStructures.HALL_SIZE / 2, TestStructures.HALL_SIZE / 2,
+            TestStructures.HALL_SIZE / 2);
+    private static final double TOLERANCE = 0.25;
 
     private static BlockPos sun(GameTestHelper helper) {
         helper.setBlock(SUN, CaldariumRegistry.SOL.get());
         return helper.absolutePos(SUN);
     }
 
-    private static int bodies(GameTestHelper helper, BlockPos core) {
-        int span = SolBlock.span() + 1;
-        int found = 0;
-        for (BlockPos at : BlockPos.betweenClosed(core.offset(-span, -span, -span),
-                core.offset(span, span, span))) {
-            if (helper.getLevel().getBlockState(at).getBlock() instanceof SolBodyBlock) {
-                found++;
-            }
-        }
-        return found;
+    private static float radius(GameTestHelper helper, BlockPos core) {
+        return SolBlock.radius(helper.getLevel().getBlockState(core));
     }
 
-    @GameTest(template = TestStructures.FLOOR)
-    public static void aSunFillsItsBall(GameTestHelper helper) {
-        BlockPos core = sun(helper);
-        BlockState state = helper.getLevel().getBlockState(core);
-        List<BlockPos> cells = SolBlock.body(core, SolBlock.radius(state));
-        int filled = 0;
-        for (BlockPos cell : cells) {
-            BlockState there = helper.getLevel().getBlockState(cell);
-            if (there.getBlock() instanceof SolBodyBlock) {
-                filled++;
-            } else {
-                check(!there.canBeReplaced(), "an empty cell inside the ball was left open: " + cell);
-            }
-        }
-        check(filled > 0, "a sun should fill its ball");
-        check(bodies(helper, core) == filled, "nothing outside the ball should be filled");
-        helper.succeed();
-    }
-
-    @GameTest(template = TestStructures.FLOOR)
-    public static void nothingIsLeftWhenTheSunGoes(GameTestHelper helper) {
-        BlockPos core = sun(helper);
-        helper.setBlock(SUN, Blocks.AIR);
-        check(bodies(helper, core) == 0, "a sun that is gone should leave no body behind: "
-                + bodies(helper, core));
-        helper.succeed();
-    }
-
-    @GameTest(template = TestStructures.FLOOR)
-    public static void breakingItsBodyBreaksTheSun(GameTestHelper helper) {
-        BlockPos core = sun(helper);
-        BlockPos cell = core.above();
-        BlockState state = helper.getLevel().getBlockState(cell);
-        check(state.getBlock() instanceof SolBodyBlock, "the cell above a sun should be its body");
+    private static Player standing(GameTestHelper helper, Vec3 eye, float yaw) {
         Player player = helper.makeMockPlayer(GameType.SURVIVAL);
-        state.getBlock().playerWillDestroy(helper.getLevel(), cell, state, player);
-        check(!(helper.getLevel().getBlockState(core).getBlock() instanceof SolBlock),
-                "breaking the body should break the sun");
-        check(bodies(helper, core) == 0, "and take the rest of the body with it: "
-                + bodies(helper, core));
-        helper.succeed();
+        player.setPos(eye.x, eye.y - player.getEyeHeight(), eye.z);
+        player.xo = player.getX();
+        player.yo = player.getY();
+        player.zo = player.getZ();
+        player.setYRot(yaw);
+        player.setXRot(0.0F);
+        player.yRotO = yaw;
+        player.xRotO = 0.0F;
+        player.setYHeadRot(yaw);
+        player.yHeadRotO = yaw;
+        return player;
     }
 
-    @GameTest(template = TestStructures.FLOOR)
-    public static void aSpentSunGivesUpItsOuterCells(GameTestHelper helper) {
+    private static Vec3 pushed(GameTestHelper helper, Vec3 start, double by) {
+        AABB box = AABB.ofSize(start, 0.5, 0.5, 0.5);
+        return Entity.collideBoundingBox(null, new Vec3(-by, 0.0, 0.0), box, helper.getLevel(), List.of());
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aSunStopsWhatMovesIntoIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
-        int whole = bodies(helper, core);
-        BlockState spent = helper.getLevel().getBlockState(core).setValue(SolBlock.SPENT, 3);
-        helper.getLevel().setBlockAndUpdate(core, spent);
-        float radius = SolBlock.radius(spent);
-        int span = SolBlock.span() + 1;
-        for (BlockPos at : BlockPos.betweenClosed(core.offset(-span, -span, -span),
-                core.offset(span, span, span))) {
-            BlockState there = helper.getLevel().getBlockState(at);
-            if (there.getBlock() instanceof SolBodyBlock) {
-                check(at.distSqr(core) <= radius * radius, "a cell outside the smaller ball remained: " + at);
-                check(there.getValue(SolBlock.SPENT) == 3, "a remaining cell should dim with the sun");
-            }
-        }
-        check(bodies(helper, core) < whole, "a spent sun should be smaller: "
-                + bodies(helper, core) + " against " + whole);
-        helper.succeed();
+        helper.runAfterDelay(1, () -> {
+            float radius = radius(helper, core);
+            Vec3 start = SolBlock.centre(core).add(radius + 1.0, 0.0, 0.0);
+            Vec3 moved = pushed(helper, start, 1.0);
+            check(Math.abs(moved.x + 0.75) < TOLERANCE,
+                    "a box moving into the sun should stop at its surface: " + moved.x);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aSunThatIsGoneStopsNothing(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            float radius = radius(helper, core);
+            helper.setBlock(SUN, Blocks.AIR);
+            Vec3 moved = pushed(helper, SolBlock.centre(core).add(radius + 1.0, 0.0, 0.0), 2.0);
+            check(moved.x == -2.0, "nothing should be left in the way: " + moved.x);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aSunIsReachedAtItsSurface(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            float radius = radius(helper, core);
+            Player near = standing(helper, SolBlock.centre(core).add(radius + 4.0, 0.0, 0.0), 90.0F);
+            check(near.canInteractWithBlock(core, 1.0), "four blocks from its surface should be in reach");
+            Player far = standing(helper, SolBlock.centre(core).add(radius + 6.0, 0.0, 0.0), 90.0F);
+            check(!far.canInteractWithBlock(core, 1.0), "six blocks from its surface should not");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void lookingAtASunLandsOnIt(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            float radius = radius(helper, core);
+            Player player = standing(helper, SolBlock.centre(core).add(radius + 3.0, 0.0, 0.0), 90.0F);
+            HitResult hit = player.pick(3.5, 1.0F, false);
+            check(hit instanceof BlockHitResult block && block.getBlockPos().equals(core),
+                    "looking at the sun should land on it: " + hit.getType());
+            double distance = hit.getLocation().distanceTo(player.getEyePosition());
+            check(Math.abs(distance - 3.0) < TOLERANCE, "and on its surface: " + distance);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void nothingIsPlacedInsideASun(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            float radius = radius(helper, core);
+            check(Suns.inside(helper.getLevel(), core.above()), "the cell above the core is inside the ball");
+            check(!Suns.inside(helper.getLevel(), core.above((int) Math.ceil(radius) + 1)),
+                    "a cell past the surface is not");
+            helper.succeed();
+        });
     }
 }

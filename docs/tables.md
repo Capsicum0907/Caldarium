@@ -218,21 +218,35 @@ The size comes from the quarters in the block state, not from the durability cou
 The state reaches the client on its own; the count never did, so a size read from it
 never shrank.
 
-**It is as solid as it looks.** A block's shape cannot reach far outside its own cell,
-so the ball is filled with `sol_body`: an invisible block in every cell whose centre is
-inside the ball, a staircase sphere rather than a smooth one. Each one stops a player,
-takes a click and gives off the same light as the core, and none of them blocks light.
+**It is as solid as it looks, and it is one thing.** The core's shape is the whole ball,
+built from sixteen slices across. That shape alone is not enough, because the game only
+looks at a block's shape from nearby:
 
-- They are placed when the sun is, only into cells that could be replaced - a sun put
-  down beside a wall has a dent in it rather than a hole in the wall.
-- The core takes them away in `onRemove`, which every way of removing a block passes
-  through, and trims the outer ones as it shrinks.
-- Breaking any of them breaks the core. They follow the same diamond rule and drop
-  nothing.
-- A body with no core near it removes itself on a random tick. That is for a sun whose
-  size was changed in the config while it stood, or one removed by something that
-  skips block updates.
-- A sun cannot be placed where its ball could meet another's.
+| What | Where the game looks | Source |
+|---|---|---|
+| Collision | cells the moving box overlaps, plus one around it | `BlockCollisions.computeNext` |
+| Clicking | only the cells the line of sight passes through | `BlockGetter.clip`, `traverseBlocks` |
+| Reach on the server | the distance to the clicked block's own cell | `Player.canInteractWithBlock` |
+
+So a ball wider than its cell would be walked into, looked through and refused from
+most places. `Suns` keeps the loaded suns of each level - added by the block entity's
+`onLoad`, dropped by `setRemoved` and `onChunkUnloaded` - and three mixins ask it:
+
+- `Entity.collectColliders` adds the shape of any sun near the moving box.
+- `Entity.pick` takes the sun if the line of sight meets it nearer than what vanilla
+  found. The meeting point is worked out against a true sphere, not the slices: a line
+  running exactly along the seam between two slices meets neither.
+- `Player.canInteractWithBlock` measures to the surface rather than to the core's cell,
+  so a sun can be broken from outside its heat.
+
+The outline is one wire sphere of three great circles, drawn in place of the stepped
+outline the slices would give. From inside - which only a player who is not stopped by
+it can reach - the ball is drawn wound the other way, so it still shows. A block cannot
+be placed with its centre inside a ball.
+
+⚠ A mixin reaches into the game's own code. If a later build of the game moves these
+methods, the mod fails to start rather than quietly losing its shape, because every
+injection is required.
 
 **Its surface is not a picture.** A flat picture on a sphere pinches to a point at both
 poles and stretches its pattern along the lines of latitude - a mirror ball rather than

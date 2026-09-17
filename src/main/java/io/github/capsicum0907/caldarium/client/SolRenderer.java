@@ -9,6 +9,7 @@ import io.github.capsicum0907.caldarium.SolBlock;
 import io.github.capsicum0907.caldarium.SolBlockEntity;
 import io.github.capsicum0907.caldarium.data.Skins;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +17,8 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+
+import net.minecraft.world.phys.Vec3;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -73,7 +76,9 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         // light does not come from the render type anyway: it comes from handing every
         // vertex FULL_BRIGHT, which this one takes just as happily.
         VertexConsumer into = buffers.getBuffer(RenderType.entitySolid(SKIN));
-        ball(pose, into, overlay, boil);
+        Vec3 eye = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        boolean inside = eye.distanceTo(SolBlock.centre(sol.getBlockPos())) < radius;
+        ball(pose, into, overlay, boil, inside);
         pose.popPose();
     }
 
@@ -81,7 +86,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
      * A sphere of quads. Every vertex is drawn at full brightness, which is what makes
      * it a light rather than a lit thing: a sun that dimmed in shadow would be a ball.
      */
-    private static void ball(PoseStack pose, VertexConsumer into, int overlay, float boil) {
+    private static void ball(PoseStack pose, VertexConsumer into, int overlay, float boil, boolean inside) {
         Matrix4f matrix = pose.last().pose();
         for (int ring = 0; ring < RINGS; ring++) {
             float from = Mth.PI * ring / RINGS;
@@ -89,10 +94,12 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
             for (int segment = 0; segment < SEGMENTS; segment++) {
                 float left = Mth.TWO_PI * segment / SEGMENTS;
                 float right = Mth.TWO_PI * (segment + 1) / SEGMENTS;
-                corner(matrix, pose, into, overlay, from, left, boil);
-                corner(matrix, pose, into, overlay, from, right, boil);
-                corner(matrix, pose, into, overlay, to, right, boil);
-                corner(matrix, pose, into, overlay, to, left, boil);
+                float first = inside ? right : left;
+                float last = inside ? left : right;
+                corner(matrix, pose, into, overlay, from, first, boil);
+                corner(matrix, pose, into, overlay, from, last, boil);
+                corner(matrix, pose, into, overlay, to, last, boil);
+                corner(matrix, pose, into, overlay, to, first, boil);
             }
         }
     }
