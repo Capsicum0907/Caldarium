@@ -7,6 +7,7 @@ import com.mojang.math.Axis;
 import io.github.capsicum0907.caldarium.Caldarium;
 import io.github.capsicum0907.caldarium.SolBlock;
 import io.github.capsicum0907.caldarium.SolBlockEntity;
+import io.github.capsicum0907.caldarium.SolPalette;
 import io.github.capsicum0907.caldarium.data.Skins;
 
 import net.minecraft.client.Minecraft;
@@ -43,6 +44,12 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     /** Degrees a second. Slow enough to read as churning rather than spinning. */
     private static final float TURN = 6.0F;
 
+    private static final int HALO_SEGMENTS = 96;
+    private static final float RIM_INSIDE = 0.98F;
+    private static final float RIM_OUTSIDE = 1.025F;
+    private static final float CORONA = 1.3F;
+    private static final float GLOW_ALPHA = 0.55F;
+
     public SolRenderer(BlockEntityRendererProvider.Context context) {
     }
 
@@ -62,17 +69,20 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         float radius = SolBlock.radius(sol.getBlockState());
         float time = (sol.getLevel() == null ? 0L : sol.getLevel().getGameTime()) + partial;
         Vec3 eye = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        boolean inside = eye.distanceTo(SolBlock.centre(sol.getBlockPos())) < radius;
-        draw(pose, buffers, overlay, radius, time, inside);
+        draw(pose, buffers, overlay, radius, time, eye.subtract(SolBlock.centre(sol.getBlockPos())));
     }
 
     public static void draw(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, float time,
-            boolean inside) {
+            Vec3 toCamera) {
         float spin = time * TURN / 20.0F;
         float boil = time * BOIL / 20.0F;
+        boolean inside = toCamera != null && toCamera.length() < radius;
 
         pose.pushPose();
         pose.translate(0.5F, 0.5F, 0.5F);
+        if (toCamera != null && !inside) {
+            halo(pose, buffers, overlay, radius, toCamera);
+        }
         pose.mulPose(Axis.YP.rotationDegrees(spin));
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
         pose.scale(radius, radius, radius);
@@ -109,10 +119,56 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         }
     }
 
-    /** The seam colour, and the two it climbs through as a spot heats up. */
-    private static final int COOL = 0xC2400C;
-    private static final int WARM = 0xF9A11B;
-    private static final int HOT = 0xFFF6D8;
+    private static void halo(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, Vec3 toCamera) {
+        double distance = toCamera.length();
+        Vec3 towards = toCamera.scale(1.0 / distance);
+        Vec3 facing = towards.reverse();
+        Vec3 up = Math.abs(towards.y) > 0.99 ? new Vec3(1.0, 0.0, 0.0) : new Vec3(0.0, 1.0, 0.0);
+        Vec3 across = facing.cross(up).normalize();
+        Vec3 upward = across.cross(facing);
+        Vec3 plane = towards.scale(radius * radius / distance);
+        double edge = radius * Math.sqrt(1.0 - (radius / distance) * (radius / distance));
+
+        PoseStack.Pose at = pose.last();
+        VertexConsumer solid = buffers.getBuffer(RenderType.entitySolid(SKIN));
+        for (int i = 0; i < HALO_SEGMENTS; i++) {
+            Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
+            Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
+            rim(at, solid, overlay, plane.add(a.scale(edge * RIM_INSIDE)), towards);
+            rim(at, solid, overlay, plane.add(a.scale(edge * RIM_OUTSIDE)), towards);
+            rim(at, solid, overlay, plane.add(b.scale(edge * RIM_OUTSIDE)), towards);
+            rim(at, solid, overlay, plane.add(b.scale(edge * RIM_INSIDE)), towards);
+        }
+
+        VertexConsumer glow = buffers.getBuffer(RenderType.debugQuads());
+        for (int i = 0; i < HALO_SEGMENTS; i++) {
+            Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
+            Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
+            shine(at, glow, plane.add(a.scale(edge * RIM_OUTSIDE)), GLOW_ALPHA);
+            shine(at, glow, plane.add(a.scale(edge * CORONA)), 0.0F);
+            shine(at, glow, plane.add(b.scale(edge * CORONA)), 0.0F);
+            shine(at, glow, plane.add(b.scale(edge * RIM_OUTSIDE)), GLOW_ALPHA);
+        }
+    }
+
+    private static Vec3 direction(Vec3 across, Vec3 upward, float angle) {
+        return across.scale(Mth.cos(angle)).add(upward.scale(Mth.sin(angle)));
+    }
+
+    private static void rim(PoseStack.Pose at, VertexConsumer into, int overlay, Vec3 point, Vec3 normal) {
+        into.addVertex(at, (float) point.x, (float) point.y, (float) point.z)
+                .setColor(SolPalette.RIM | 0xFF000000)
+                .setUv(0.5F, 0.5F)
+                .setOverlay(overlay)
+                .setLight(LightTexture.FULL_BRIGHT)
+                .setNormal(at, (float) normal.x, (float) normal.y, (float) normal.z);
+    }
+
+    private static void shine(PoseStack.Pose at, VertexConsumer into, Vec3 point, float alpha) {
+        into.addVertex(at, (float) point.x, (float) point.y, (float) point.z)
+                .setColor(SolPalette.channel(SolPalette.GLOW, 16), SolPalette.channel(SolPalette.GLOW, 8),
+                        SolPalette.channel(SolPalette.GLOW, 0), alpha);
+    }
 
     private static void corner(Matrix4f matrix, PoseStack pose, VertexConsumer into,
             int overlay, float down, float round, float boil) {
@@ -120,9 +176,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         float y = Mth.cos(down);
         float z = Mth.sin(down) * Mth.sin(round);
         float heat = Sunspots.heat(x, y, z, boil);
-        int colour = heat < 0.5F
-                ? blend(COOL, WARM, heat * 2.0F)
-                : blend(WARM, HOT, (heat - 0.5F) * 2.0F);
+        int colour = SolPalette.colour(heat);
         Vector3f normal = new Vector3f(x, y, z);
         into.addVertex(matrix, x, y, z)
                 .setColor(colour | 0xFF000000)
@@ -132,10 +186,4 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
                 .setNormal(pose.last(), normal.x, normal.y, normal.z);
     }
 
-    private static int blend(int from, int to, float at) {
-        int r = Math.round(Mth.lerp(at, (from >> 16) & 0xFF, (to >> 16) & 0xFF));
-        int g = Math.round(Mth.lerp(at, (from >> 8) & 0xFF, (to >> 8) & 0xFF));
-        int b = Math.round(Mth.lerp(at, from & 0xFF, to & 0xFF));
-        return (r << 16) | (g << 8) | b;
-    }
 }

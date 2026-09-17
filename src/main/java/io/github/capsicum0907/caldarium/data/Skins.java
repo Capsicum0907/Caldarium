@@ -3,6 +3,7 @@ package io.github.capsicum0907.caldarium.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import io.github.capsicum0907.caldarium.SolPalette;
 import io.github.capsicum0907.caldarium.Generator;
 import io.github.capsicum0907.caldarium.Kind;
 import io.github.capsicum0907.caldarium.Source;
@@ -503,9 +504,7 @@ public final class Skins {
                 // back as nought. A sun is brightest in the middle of each blob and
                 // dark where they meet, which is this the other way up.
                 heat = Math.clamp(1.0F - (heat - 0.15F) * 1.5F, 0.0F, 1.0F);
-                pixels[y][x] = 0xFF000000 | (heat < 0.5F
-                        ? mix(0xC2400C, 0xF9A11B, heat * 2.0F)
-                        : mix(0xF9A11B, 0xFFF6D8, (heat - 0.5F) * 2.0F));
+                pixels[y][x] = 0xFF000000 | SolPalette.colour(heat);
             }
         }
         return pixels;

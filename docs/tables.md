@@ -276,6 +276,14 @@ is loaded; without it the mod fails to start.
 methods, the mod fails to start rather than quietly losing its shape, because every
 injection is required.
 
+**It is drawn to look dangerous rather than pretty.** The colours run from dark red
+through red and orange to yellow and stop there - no white - and the heat is weighted
+towards the dark end, so the hot cells are islands. `SolPalette` holds the colours for
+both the drawn ball and the particle picture. Outside the ball, facing the camera, a
+thin dark-red rim cuts it out of the background, and past the rim an orange corona fades
+out; the corona is alpha-blended rather than added, so it stays orange against a blue sky
+instead of washing to white. Neither is drawn from inside the ball, nor on the icon.
+
 **Its surface is not a picture.** A flat picture on a sphere pinches to a point at both
 poles and stretches its pattern along the lines of latitude - a mirror ball rather than
 a sun, and no amount of redrawing the picture fixes it, because the fault is in the

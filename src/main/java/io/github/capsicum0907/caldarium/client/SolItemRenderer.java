@@ -21,6 +21,6 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
         Minecraft minecraft = Minecraft.getInstance();
         float time = (minecraft.level == null ? 0L : minecraft.level.getGameTime())
                 + minecraft.getTimer().getGameTimeDeltaPartialTick(false);
-        SolRenderer.draw(pose, buffers, overlay, ICON_RADIUS, time, false);
+        SolRenderer.draw(pose, buffers, overlay, ICON_RADIUS, time, null);
     }
 }
