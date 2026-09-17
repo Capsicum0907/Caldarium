@@ -93,9 +93,9 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
                 float left = Mth.TWO_PI * segment / SEGMENTS;
                 float right = Mth.TWO_PI * (segment + 1) / SEGMENTS;
                 corner(matrix, pose, into, overlay, from, left, boil);
-                corner(matrix, pose, into, overlay, to, left, boil);
-                corner(matrix, pose, into, overlay, to, right, boil);
                 corner(matrix, pose, into, overlay, from, right, boil);
+                corner(matrix, pose, into, overlay, to, right, boil);
+                corner(matrix, pose, into, overlay, to, left, boil);
             }
         }
     }
