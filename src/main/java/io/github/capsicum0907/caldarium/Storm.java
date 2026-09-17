@@ -1,5 +1,9 @@
 package io.github.capsicum0907.caldarium;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.level.Level;
@@ -22,9 +26,11 @@ public final class Storm {
     private Storm() {
     }
 
+    private static final Set<LightningBolt> COUNTED = Collections.newSetFromMap(new WeakHashMap<>());
+
     public static void struck(LightningBolt bolt) {
         Level level = bolt.level();
-        if (level.isClientSide()) {
+        if (level.isClientSide() || !COUNTED.add(bolt)) {
             return;
         }
         boolean summoned = bolt.getCause() != null;

@@ -15,6 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Arrow;
@@ -28,6 +29,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
@@ -484,5 +486,21 @@ public final class CaldariumTests {
                     "a glow was left behind at " + cell);
         }
         helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
+    public static void aBoltCalledDownIsCountedAsCalled(GameTestHelper helper) {
+        GeneratorBlockEntity struck = bidental(helper);
+        LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(helper.getLevel());
+        bolt.moveTo(Vec3.atBottomCenterOf(helper.absolutePos(WHERE.above())));
+        helper.getLevel().addFreshEntity(bolt);
+        bolt.setCause(FakePlayerFactory.getMinecraft(helper.getLevel()));
+        helper.runAfterDelay(1, () -> {
+            int stored = struck.store().getEnergyStored();
+            check(stored == CaldariumConfig.stormSummoned(),
+                    "a bolt whose cause is set after it is spawned, as a trident does, should count as summoned: "
+                            + stored);
+            helper.succeed();
+        });
     }
 }

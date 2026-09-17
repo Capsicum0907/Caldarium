@@ -175,6 +175,11 @@ skeleton horse sets none, and another mod has no reason to set one either. This 
 asked about and answered: no cooldown guards the rest, because somebody who has gone as
 far as installing a mod that calls lightning down has earned what it gives them.
 
+⚠⚠ **The bolt is judged on its first tick, not when it joins the level.** The enchantment
+spawns the bolt first and sets its cause after (`SummonEntityEffect.apply`), so a bolt
+read the moment it joined never had a cause, and every trident paid as much as a storm.
+Each bolt is counted once.
+
 ⚠ It does not read `LightningRodBlock#onLightningStrike`, which is handed the block and
 the place but not the bolt, and so cannot say who called it.
 
