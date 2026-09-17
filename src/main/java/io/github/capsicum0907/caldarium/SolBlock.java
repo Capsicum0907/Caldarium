@@ -1,7 +1,9 @@
 package io.github.capsicum0907.caldarium;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +20,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -43,6 +47,9 @@ public class SolBlock extends BaseEntityBlock {
     private static final int SLICES = 16;
     private static final double STEP = 0.25;
     private static final float BLAST_VOLUME = 4.0F;
+    private static final double GLOW_OUTSIDE = 1.0;
+    private static final int MIN_GLOWS = 6;
+    private static final double GOLDEN_ANGLE = Math.PI * (3.0 - Math.sqrt(5.0));
     private static final Map<Float, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 
     public SolBlock(Properties properties) {
@@ -150,6 +157,66 @@ public class SolBlock extends BaseEntityBlock {
             }
         }
         return ball.optimize();
+    }
+
+    public static double shell(float radius) {
+        return radius + GLOW_OUTSIDE;
+    }
+
+    public static List<BlockPos> glowCells(BlockPos core, float radius) {
+        double shell = shell(radius);
+        int spacing = Math.max(1, CaldariumConfig.solGlowSpacing());
+        int count = Math.max(MIN_GLOWS, (int) Math.ceil(4.0 * Math.PI * shell * shell / (spacing * spacing)));
+        Vec3 centre = centre(core);
+        Set<BlockPos> cells = new LinkedHashSet<>();
+        for (int i = 0; i < count; i++) {
+            double y = 1.0 - 2.0 * (i + 0.5) / count;
+            double across = Math.sqrt(1.0 - y * y);
+            double turn = i * GOLDEN_ANGLE;
+            Vec3 at = centre.add(Math.cos(turn) * across * shell, y * shell, Math.sin(turn) * across * shell);
+            cells.add(BlockPos.containing(at));
+        }
+        return new ArrayList<>(cells);
+    }
+
+    public static void glow(Level level, BlockPos core, BlockState state) {
+        BlockState glow = CaldariumRegistry.SOL_GLOW.get().defaultBlockState().setValue(SPENT, state.getValue(SPENT));
+        for (BlockPos cell : glowCells(core, radius(state))) {
+            if (!level.isLoaded(cell)) {
+                continue;
+            }
+            BlockState there = level.getBlockState(cell);
+            if (there.isAir() || (there.getBlock() instanceof SolGlowBlock && !there.equals(glow))) {
+                level.setBlock(cell, glow, Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    public static void unglow(Level level, BlockPos core, BlockState state) {
+        for (BlockPos cell : glowCells(core, radius(state))) {
+            if (level.isLoaded(cell) && level.getBlockState(cell).getBlock() instanceof SolGlowBlock) {
+                level.setBlock(cell, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
+    }
+
+    @Override
+    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moved) {
+        super.onPlace(state, level, pos, old, moved);
+        if (!level.isClientSide() && !old.is(this)) {
+            glow(level, pos, state);
+        }
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
+        if (!level.isClientSide()) {
+            unglow(level, pos, state);
+            if (now.is(this)) {
+                glow(level, pos, now);
+            }
+        }
+        super.onRemove(state, level, pos, now, moved);
     }
 
     public static float progress(BlockState state, Player player, BlockGetter level, BlockPos pos,

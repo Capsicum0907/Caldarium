@@ -19,6 +19,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 public final class Suns {
     private static final Map<Level, Set<BlockPos>> PLACED = Collections.synchronizedMap(new WeakHashMap<>());
 
+    private static final double SHELL_TOLERANCE = 1.0;
+
     private Suns() {
     }
 
@@ -78,6 +80,17 @@ public final class Suns {
             }
         }
         return nearest;
+    }
+
+    public static boolean lights(Level level, BlockPos cell) {
+        Vec3 point = Vec3.atCenterOf(cell);
+        for (BlockPos pos : in(level)) {
+            double shell = SolBlock.shell(SolBlock.radius(level.getBlockState(pos)));
+            if (Math.abs(point.distanceTo(SolBlock.centre(pos)) - shell) <= SHELL_TOLERANCE) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean inside(Level level, BlockPos cell) {

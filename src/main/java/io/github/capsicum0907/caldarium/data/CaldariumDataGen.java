@@ -203,6 +203,8 @@ public final class CaldariumDataGen {
             }
             simpleBlock(CaldariumRegistry.SOL.get(),
                     models().cubeAll(Skins.SOL, modLoc("block/" + Skins.SOL)));
+            simpleBlock(CaldariumRegistry.SOL_GLOW.get(), models().getBuilder("sol_glow")
+                    .texture("particle", modLoc("block/" + Skins.SOL)));
             itemModels().getBuilder(Skins.SOL)
                     .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
                     .guiLight(BlockModel.GuiLight.FRONT)
@@ -430,6 +432,7 @@ public final class CaldariumDataGen {
                 }
             }
             add(CaldariumRegistry.SOL.get(), "Sol");
+            add(CaldariumRegistry.SOL_GLOW.get(), "Sol Glow");
             add("itemGroup." + Caldarium.MODID, "Caldarium");
             add("gui.caldarium.stored", "%s / %s FE");
             add("gui.caldarium.held", "%s / %s mB");

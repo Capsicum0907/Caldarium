@@ -23,6 +23,7 @@ import net.minecraft.world.phys.Vec3;
 public class SolBlockEntity extends BlockEntity {
     private static final double FLIGHT_MARGIN = 4.0;
     private static final int SMOKE = 8;
+    private static final int GLOW_REFRESH = 100;
 
     private static Consumer<SolBlockEntity> leftClient = sol -> {
     };
@@ -74,6 +75,9 @@ public class SolBlockEntity extends BlockEntity {
         }
         sol.burnWhatIsNear(server, pos, state);
         burnWhatFlies(server, pos, state);
+        if (Math.floorMod(server.getGameTime() + pos.asLong(), GLOW_REFRESH) == 0) {
+            SolBlock.glow(server, pos, state);
+        }
         sol.spend(server, pos, state);
     }
 

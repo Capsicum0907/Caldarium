@@ -454,4 +454,35 @@ public final class CaldariumTests {
         check(!clear.isRemoved(), "an arrow that stayed clear of it should not");
         helper.succeed();
     }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void aSunLightsWhatIsAroundIt(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockState state = helper.getLevel().getBlockState(core);
+        List<BlockPos> cells = SolBlock.glowCells(core, SolBlock.radius(state));
+        int lit = 0;
+        for (BlockPos cell : cells) {
+            BlockState there = helper.getLevel().getBlockState(cell);
+            if (there.getBlock() instanceof SolGlowBlock) {
+                lit++;
+                check(there.getLightEmission() == SolBlock.light(state), "a glow should shine as the sun does");
+                check(there.canBeReplaced(), "a glow should give way to anything built there");
+                check(there.getCollisionShape(helper.getLevel(), cell).isEmpty(), "a glow should not be in the way");
+            }
+        }
+        check(lit > 0, "a sun should light its surroundings");
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void nothingGlowsWhenTheSunGoes(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        List<BlockPos> cells = SolBlock.glowCells(core, SolBlock.radius(helper.getLevel().getBlockState(core)));
+        helper.setBlock(SUN, Blocks.AIR);
+        for (BlockPos cell : cells) {
+            check(!(helper.getLevel().getBlockState(cell).getBlock() instanceof SolGlowBlock),
+                    "a glow was left behind at " + cell);
+        }
+        helper.succeed();
+    }
 }

@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -103,6 +104,17 @@ public final class CaldariumRegistry {
                     // The shape reads the config, which is not loaded when states build their caches.
                     .dynamicShape()
                     .hasPostProcess((a, b, c) -> true));
+
+    public static final DeferredBlock<SolGlowBlock> SOL_GLOW = BLOCKS.registerBlock("sol_glow",
+            SolGlowBlock::new, BlockBehaviour.Properties.of()
+                    .noCollission()
+                    .replaceable()
+                    .instabreak()
+                    .noLootTable()
+                    .noOcclusion()
+                    .lightLevel(SolBlock::light)
+                    .randomTicks()
+                    .pushReaction(PushReaction.DESTROY));
 
     public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerItem("sol",
             properties -> new SolItem(SOL.get(), properties));

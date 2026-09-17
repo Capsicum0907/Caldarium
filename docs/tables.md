@@ -282,6 +282,22 @@ is loaded; without it the mod fails to start.
 methods, the mod fails to start rather than quietly losing its shape, because every
 injection is required.
 
+**It lights what is around it through a shell of glows.** A block's light reaches fifteen
+blocks from its own cell, so the core alone lights nothing outside a ball wider than
+about twenty-eight. Around the ball, one block out from its surface, `sol_glow` blocks are
+spread evenly - a golden-angle spiral, as many as the shell's area over `glowSpacing`
+squared, and never fewer than six - each shining as brightly as the core. They are
+invisible, have no shape to walk into or click, give way to anything built there, drop
+nothing, and are only ever put into air.
+
+- The core lays them when it is placed, takes them away in `onRemove`, and lays them
+  again at the new size when it shrinks.
+- Every hundred ticks it lays any that are missing, which covers cells whose chunk was
+  not loaded when it tried.
+- A glow checks on a random tick that some loaded sun's shell passes through it and
+  removes itself if not. A glow in a loaded chunk next to a sun in an unloaded one goes
+  too, and comes back when that sun next lays its shell.
+
 **It is drawn to look dangerous rather than pretty.** The colours run from dark red
 through red and orange to yellow and stop there - no white - and the heat is weighted
 towards the dark end, so the hot cells are islands. `SolPalette` holds the colours for
