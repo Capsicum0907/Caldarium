@@ -264,9 +264,15 @@ the last is vanilla's own check, which a sun's shape makes the size of the ball.
 **Its icon is the ball.** The item is drawn by the same code as the placed sun, turning
 and boiling, through a custom item renderer on a `builtin/entity` model.
 
-⚠ **Projectiles and explosions still pass through.** They trace their own lines through
-`Level.clip`, which none of the three touches, so an arrow meets the ball only at the
-core's own cell.
+**Projectiles burn up in it.** They trace their own lines through `Level.clip`, which none
+of the mixins touches, so rather than being stopped they are caught: every tick the sun
+looks for projectiles near it whose last move - from where they were to where they are -
+crossed the ball, or that are inside it, and removes them with smoke and a hiss. Checking
+the move rather than the position is what catches an arrow fast enough to cross the ball
+between two ticks.
+
+⚠ **Explosions still pass through.** Their rays go through `Level.clip` as well, and only
+the core's own cell is in their way.
 
 ⚠ The block is registered with `dynamicShape()`. Its shape reads the config, and block
 states build their shape caches while the mod is being constructed, before any config

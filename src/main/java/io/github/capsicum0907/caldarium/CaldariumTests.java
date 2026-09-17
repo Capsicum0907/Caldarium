@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -426,6 +427,31 @@ public final class CaldariumTests {
             check(touched == (off < 0.0), "a point " + off + " from the surface of a wide sun should "
                     + (off < 0.0 ? "" : "not ") + "be inside it");
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void anArrowBurnsUpPassingThroughASun(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockState state = helper.getLevel().getBlockState(core);
+        float radius = SolBlock.radius(state);
+        Vec3 centre = SolBlock.centre(core);
+        Arrow through = new Arrow(EntityType.ARROW, helper.getLevel());
+        through.setPos(centre.add(-radius - 1.0, 0.0, 0.0));
+        through.xo = through.getX();
+        through.yo = through.getY();
+        through.zo = through.getZ();
+        through.setPos(centre.add(radius + 1.0, 0.0, 0.0));
+        helper.getLevel().addFreshEntity(through);
+        Arrow clear = new Arrow(EntityType.ARROW, helper.getLevel());
+        clear.setPos(centre.add(radius + 2.0, 0.0, 0.0));
+        clear.xo = clear.getX();
+        clear.yo = clear.getY();
+        clear.zo = clear.getZ();
+        helper.getLevel().addFreshEntity(clear);
+        SolBlockEntity.burnWhatFlies(helper.getLevel(), core, state);
+        check(through.isRemoved(), "an arrow whose last move crossed the sun should burn up");
+        check(!clear.isRemoved(), "an arrow that stayed clear of it should not");
         helper.succeed();
     }
 }

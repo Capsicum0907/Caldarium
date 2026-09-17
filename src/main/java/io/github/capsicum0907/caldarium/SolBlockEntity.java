@@ -6,8 +6,12 @@ import java.util.function.Consumer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -17,6 +21,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class SolBlockEntity extends BlockEntity {
+    private static final double FLIGHT_MARGIN = 4.0;
+    private static final int SMOKE = 8;
+
     private static Consumer<SolBlockEntity> leftClient = sol -> {
     };
 
@@ -66,7 +73,24 @@ public class SolBlockEntity extends BlockEntity {
             return;
         }
         sol.burnWhatIsNear(server, pos, state);
+        burnWhatFlies(server, pos, state);
         sol.spend(server, pos, state);
+    }
+
+    public static void burnWhatFlies(ServerLevel level, BlockPos pos, BlockState state) {
+        double radius = SolBlock.radius(state);
+        AABB around = new AABB(pos).inflate(Math.ceil(radius) + FLIGHT_MARGIN);
+        for (Projectile flying : level.getEntitiesOfClass(Projectile.class, around, Projectile::isAlive)) {
+            Vec3 was = new Vec3(flying.xo, flying.yo, flying.zo);
+            Vec3 now = flying.position();
+            boolean inside = SolBlock.gap(state, pos, now) <= 0.0;
+            if (inside || (!was.equals(now) && SolBlock.hit(state, pos, was, now) != null)) {
+                level.sendParticles(ParticleTypes.LARGE_SMOKE, now.x, now.y, now.z, SMOKE, 0.1, 0.1, 0.1, 0.02);
+                level.playSound(null, flying.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
+                        1.0F, 1.0F);
+                flying.discard();
+            }
+        }
     }
 
     /**
