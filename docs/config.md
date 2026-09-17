@@ -1,5 +1,7 @@
 # Config
 
+English | [日本語](config.ja.md)
+
 Back to the [README](../README.md).
 
 Capacity, transfer rates and generation rate are settings. There is no defensible
@@ -22,9 +24,9 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `sol.weatherCost` | Ticks of durability spent per tick while rain or snow is falling on it. |
 | `storm.natural` / `storm.summoned` | What a strike is worth, when nobody called it down and when somebody did. |
 | `storm.reach` | How far from where the bolt lands a bidental will still take it. |
-| `sol.size` | How wide the drawn ball is, in blocks. It does not change what the sun does, only how big it looks. |
+| `sol.size` | How wide the ball is, in blocks. It sets the solid body and the heat as well as the drawing, so a large one fills a large number of cells when it is placed. |
 | `sol.reach` | How far its light counts as daylight for a solar panel. ⚠ Provisional. |
-| `sol.burnReach` / `burnSeconds` / `burnDamage` | How close is too close, and what that costs. |
+| `sol.burnReach` / `burnSeconds` / `burnDamage` | How far past the surface the heat reaches, in blocks, and what it costs. At 0 only touching burns. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |
 | `heat.span` | The difference across one axis that counts as a full one. Three axes add up, so a hypocaustum built out on all three makes three times what one pair makes. |
 | `sun.through` | What percentage of the sun is left after one block that light passes through. Anything solid overhead stops it entirely, whatever this is set to. |

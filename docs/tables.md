@@ -1,5 +1,7 @@
 # Types, tiers and the ladder
 
+English | [日本語](tables.ja.md)
+
 How a block gets to exist: what the tables hold, and what a row decides for itself.
 Back to the [README](../README.md).
 
@@ -195,14 +197,42 @@ times as fast**, which takes those thirty days down to six.
 **It is a light and it is hot.** Brightest light the game has, dimming by a third of
 its range for each quarter of its durability spent, so how far through it is can be
 read off the room. And standing near it sets you alight - a sun that was only bright
-would not be a sun.
+would not be a sun. The heat reaches `burnReach` blocks past the surface, measured as a
+ball rather than a box, so a sun can be touched from outside the heat as long as the
+player's reach is longer than that.
 
 **It is drawn as a ball, not as a block.** A block model cannot leave its own three
 cubes and is made of boxes besides, so the sphere is drawn by a block entity renderer
-instead - twenty rings of thirty-two segments, turning slowly on two axes, every
+instead - thirty-two rings of sixty-four segments, turning slowly on two axes, every
 vertex at full brightness so it lights rather than being lit. The block itself renders
-nothing at all. It shrinks as its durability goes, so a sun near the end of it is
-visibly smaller as well as dimmer, and its size is a setting.
+nothing at all. `size` is its width. It shrinks a step for each quarter of its
+durability spent, down to a little over half, so a sun near the end of it is visibly
+smaller as well as dimmer.
+
+⚠ **The faces are wound outward.** The render type culls back faces, and the ball was
+first wound the other way: the near half was culled and the inside of the far half was
+drawn instead. Lit evenly all over, that reads as a ball from a distance and as a bowl
+up close.
+
+The size comes from the quarters in the block state, not from the durability count.
+The state reaches the client on its own; the count never did, so a size read from it
+never shrank.
+
+**It is as solid as it looks.** A block's shape cannot reach far outside its own cell,
+so the ball is filled with `sol_body`: an invisible block in every cell whose centre is
+inside the ball, a staircase sphere rather than a smooth one. Each one stops a player,
+takes a click and gives off the same light as the core, and none of them blocks light.
+
+- They are placed when the sun is, only into cells that could be replaced - a sun put
+  down beside a wall has a dent in it rather than a hole in the wall.
+- The core takes them away in `onRemove`, which every way of removing a block passes
+  through, and trims the outer ones as it shrinks.
+- Breaking any of them breaks the core. They follow the same diamond rule and drop
+  nothing.
+- A body with no core near it removes itself on a random tick. That is for a sun whose
+  size was changed in the config while it stood, or one removed by something that
+  skips block updates.
+- A sun cannot be placed where its ball could meet another's.
 
 **Its surface is not a picture.** A flat picture on a sphere pinches to a point at both
 poles and stretches its pattern along the lines of latitude - a mirror ball rather than
