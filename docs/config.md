@@ -27,6 +27,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `sol.size` | How wide the ball is, in blocks. The drawing, the solid shape, the outline and the heat all follow it. |
 | `sol.reach` | How far its light counts as daylight for a solar panel. ⚠ Provisional. |
 | `sol.burnReach` / `burnSeconds` / `burnDamage` | How far past the surface the heat reaches, in blocks, and what it costs. At 0 only touching burns. |
+| `sol.hold` | How far in front of the eyes the near side of a held sun is, in blocks. |
 | `sol.blastReach` / `blastDamage` | How far past the surface breaking a sun reaches, in blocks, and the damage it does to everything alive there. Blocks are never harmed. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |
 | `heat.span` | The difference across one axis that counts as a full one. Three axes add up, so a hypocaustum built out on all three makes three times what one pair makes. |

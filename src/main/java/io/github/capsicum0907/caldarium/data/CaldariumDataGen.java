@@ -38,6 +38,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
@@ -200,8 +201,22 @@ public final class CaldariumDataGen {
                 // The item is the cold one: a generator in a hand is not burning.
                 itemModels().withExistingParent(cold, modLoc("block/" + cold));
             }
-            simpleBlockWithItem(CaldariumRegistry.SOL.get(),
+            simpleBlock(CaldariumRegistry.SOL.get(),
                     models().cubeAll(Skins.SOL, modLoc("block/" + Skins.SOL)));
+            itemModels().getBuilder(Skins.SOL)
+                    .parent(new ModelFile.UncheckedModelFile("builtin/entity"))
+                    .guiLight(BlockModel.GuiLight.FRONT)
+                    .transforms()
+                    .transform(ItemDisplayContext.GUI).rotation(30, 225, 0).scale(0.625F).end()
+                    .transform(ItemDisplayContext.GROUND).translation(0, 3, 0).scale(0.25F).end()
+                    .transform(ItemDisplayContext.FIXED).scale(0.5F).end()
+                    .transform(ItemDisplayContext.THIRD_PERSON_RIGHT_HAND).rotation(75, 45, 0)
+                            .translation(0, 2.5F, 0).scale(0.375F).end()
+                    .transform(ItemDisplayContext.THIRD_PERSON_LEFT_HAND).rotation(75, 45, 0)
+                            .translation(0, 2.5F, 0).scale(0.375F).end()
+                    .transform(ItemDisplayContext.FIRST_PERSON_RIGHT_HAND).rotation(0, 45, 0).scale(0.4F).end()
+                    .transform(ItemDisplayContext.FIRST_PERSON_LEFT_HAND).rotation(0, 225, 0).scale(0.4F).end()
+                    .end();
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     String name = Skins.kind(kind, tier);

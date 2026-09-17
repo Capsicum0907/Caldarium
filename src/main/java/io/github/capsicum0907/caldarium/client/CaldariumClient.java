@@ -9,17 +9,20 @@ import io.github.capsicum0907.caldarium.SolItem;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 /** Drawing is a client concern, and this is the only place that knows it exists. */
 public final class CaldariumClient {
@@ -42,6 +45,20 @@ public final class CaldariumClient {
         event.registerBlockEntityRenderer(CaldariumRegistry.SOL_ENTITY.get(), SolRenderer::new);
     }
 
+    public static void registerExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new IClientItemExtensions() {
+            private SolItemRenderer renderer;
+
+            @Override
+            public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                if (renderer == null) {
+                    renderer = new SolItemRenderer();
+                }
+                return renderer;
+            }
+        }, CaldariumRegistry.SOL_ITEM.get());
+    }
+
     public static void outline(RenderHighlightEvent.Block event) {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.level == null) {
@@ -54,18 +71,24 @@ public final class CaldariumClient {
             wire(event, pos, SolBlock.radius(state) + OUTLINE_LIFT, OUTLINE, OUTLINE_ALPHA);
             return;
         }
+    }
+
+    public static void preview(RenderLevelStageEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        if (player == null) {
+        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES
+                || player == null || minecraft.level == null) {
             return;
         }
         for (InteractionHand hand : InteractionHand.values()) {
-            ItemStack held = player.getItemInHand(hand);
-            if (held.getItem() instanceof SolItem item) {
-                BlockPlaceContext context = new BlockPlaceContext(player, hand, held, event.getTarget());
+            if (player.getItemInHand(hand).getItem() instanceof SolItem item) {
                 BlockState placed = item.getBlock().defaultBlockState();
-                BlockPos core = SolItem.core(context, placed);
-                boolean fits = SolItem.fits(context, placed);
-                wire(event, core, SolBlock.radius(placed), fits ? FITS : BLOCKED, PREVIEW_ALPHA);
+                BlockPos core = SolItem.core(player, placed);
+                boolean fits = SolItem.fits(minecraft.level, player, core, placed);
+                MultiBufferSource.BufferSource buffers = minecraft.renderBuffers().bufferSource();
+                wire(event.getPoseStack(), buffers, event.getCamera().getPosition(), core,
+                        SolBlock.radius(placed), fits ? FITS : BLOCKED, PREVIEW_ALPHA);
+                buffers.endBatch(RenderType.lines());
                 return;
             }
         }
@@ -73,9 +96,14 @@ public final class CaldariumClient {
 
     private static void wire(RenderHighlightEvent.Block event, BlockPos pos, float radius, int colour,
             float alpha) {
-        Vec3 centre = SolBlock.centre(pos).subtract(event.getCamera().getPosition());
-        PoseStack pose = event.getPoseStack();
-        VertexConsumer lines = event.getMultiBufferSource().getBuffer(RenderType.lines());
+        wire(event.getPoseStack(), event.getMultiBufferSource(), event.getCamera().getPosition(), pos,
+                radius, colour, alpha);
+    }
+
+    private static void wire(PoseStack pose, MultiBufferSource buffers, Vec3 camera, BlockPos pos,
+            float radius, int colour, float alpha) {
+        Vec3 centre = SolBlock.centre(pos).subtract(camera);
+        VertexConsumer lines = buffers.getBuffer(RenderType.lines());
         for (int axis = 0; axis < 3; axis++) {
             for (int i = 0; i < OUTLINE_SEGMENTS; i++) {
                 float from = Mth.TWO_PI * i / OUTLINE_SEGMENTS;

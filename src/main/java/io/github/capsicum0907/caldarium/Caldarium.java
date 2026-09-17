@@ -107,7 +107,9 @@ public class Caldarium {
         public Client(IEventBus modEventBus, ModContainer modContainer) {
             modEventBus.addListener(CaldariumClient::registerScreens);
             modEventBus.addListener(CaldariumClient::registerRenderers);
+            modEventBus.addListener(CaldariumClient::registerExtensions);
             NeoForge.EVENT_BUS.addListener(CaldariumClient::outline);
+            NeoForge.EVENT_BUS.addListener(CaldariumClient::preview);
         }
     }
 

@@ -61,6 +61,13 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
             MultiBufferSource buffers, int light, int overlay) {
         float radius = SolBlock.radius(sol.getBlockState());
         float time = (sol.getLevel() == null ? 0L : sol.getLevel().getGameTime()) + partial;
+        Vec3 eye = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        boolean inside = eye.distanceTo(SolBlock.centre(sol.getBlockPos())) < radius;
+        draw(pose, buffers, overlay, radius, time, inside);
+    }
+
+    public static void draw(PoseStack pose, MultiBufferSource buffers, int overlay, float radius, float time,
+            boolean inside) {
         float spin = time * TURN / 20.0F;
         float boil = time * BOIL / 20.0F;
 
@@ -76,8 +83,6 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         // light does not come from the render type anyway: it comes from handing every
         // vertex FULL_BRIGHT, which this one takes just as happily.
         VertexConsumer into = buffers.getBuffer(RenderType.entitySolid(SKIN));
-        Vec3 eye = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
-        boolean inside = eye.distanceTo(SolBlock.centre(sol.getBlockPos())) < radius;
         ball(pose, into, overlay, boil, inside);
         pose.popPose();
     }

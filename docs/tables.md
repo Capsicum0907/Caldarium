@@ -246,16 +246,21 @@ be placed with its centre inside a ball: the right-click is refused before the i
 used, on both sides, so nothing appears and vanishes. A place event check stays behind
 it for placements that do not come from a right-click.
 
-**It is set down against what you click, and shown before it is.** A ball wider than a
-block, put in the cell beside the face like any other block, would swallow the player
-putting it there. So the core goes as many cells out from the face as it takes for the
-ball to rest against it - with a gap of under half a block, never sunk into it.
+**It is held by its near side.** A ball wider than a block, put in the cell beside a
+face like any other block, would swallow the player putting it there - a player's reach
+is shorter than the ball is wide. So a sun is not put against anything. It is placed
+the way it would be carried: its near surface `hold` blocks in front of the eyes, the
+rest of it further along the line of sight, whether or not a block is being looked at.
+A right-click on a block is passed over in favour of that, so where it goes does not
+depend on what happens to be under the crosshair.
 
-While a sun is held, the ball it would make is drawn over what is looked at: white where
-it can go, red where it cannot. It cannot go where its core cell is taken, where the
-core would be inside another sun, or where anything alive is inside the ball - the last
-is vanilla's own check, which a sun's shape makes the size of the ball. Standing too
-close is therefore still refused; the red ball is what says so.
+While a sun is held, the ball it would make is drawn where it would go: white where it
+can, red where it cannot. It cannot go where its core cell is taken, outside the world,
+where the core would be inside another sun, or where anything alive is inside the ball -
+the last is vanilla's own check, which a sun's shape makes the size of the ball.
+
+**Its icon is the ball.** The item is drawn by the same code as the placed sun, turning
+and boiling, through a custom item renderer on a `builtin/entity` model.
 
 ⚠ **Projectiles and explosions still pass through.** They trace their own lines through
 `Level.clip`, which none of the three touches, so an arrow meets the ball only at the
