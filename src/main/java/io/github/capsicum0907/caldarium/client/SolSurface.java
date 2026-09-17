@@ -57,7 +57,6 @@ public final class SolSurface {
         this.heat = new float[FACES][cell * cell];
         this.image = new NativeImage(NativeImage.Format.RGBA, cell * COLUMNS, cell * (FACES / COLUMNS), false);
         this.texture = new DynamicTexture(image);
-        this.texture.setFilter(true, false);
         this.location = ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "dynamic/sol_" + made++);
         Minecraft.getInstance().getTextureManager().register(location, texture);
     }
@@ -113,7 +112,9 @@ public final class SolSurface {
                 }
             }
         }
-        texture.upload();
+        texture.bind();
+        // DynamicTexture.upload() passes blur=false, which resets the filter to nearest on every upload.
+        image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), true, false, false, false);
     }
 
     private void sample(int face, int fromRow, int toRow, float boil) {

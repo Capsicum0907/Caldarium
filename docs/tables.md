@@ -320,6 +320,10 @@ are laid over the stored heat every frame through a 256-entry table, so a flare 
 every face at once. The picture belongs to its block entity and is released when the
 block entity leaves the client.
 
+⚠ The picture is uploaded with its own call rather than `DynamicTexture.upload()`, which
+passes no blur and so resets the filter to nearest on every upload: set once, linear
+filtering was undone at the first frame and every texel showed as a square.
+
 ⚠ **It takes a diamond pickaxe and nothing else will do.** Not slowly with a stone one
 - not at all. A sun anybody can get through given the patience is a sun anybody gets
 through. It is as hard as obsidian to the tool that does work.
