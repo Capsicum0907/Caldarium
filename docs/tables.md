@@ -232,7 +232,7 @@ So a ball wider than its cell would be walked into, looked through and refused f
 most places. `Suns` keeps the loaded suns of each level - added by the block entity's
 `onLoad`, dropped by `setRemoved` and `onChunkUnloaded` - and three mixins ask it:
 
-- `Entity.collectColliders` adds the shape of any sun near the moving box.
+- `Entity.collectColliders` adds the part of any sun near the moving box, cut there and then as quarter-block slabs. The core's own sixteen-slice shape would be four blocks to a step at the largest size; slabs cut to the box stay a quarter block whatever the size, and only as many as the box needs are made.
 - `Entity.pick` takes the sun if the line of sight meets it nearer than what vanilla
   found. The meeting point is worked out against a true sphere, not the slices: a line
   running exactly along the seam between two slices meets neither.

@@ -389,4 +389,20 @@ public final class CaldariumTests {
                 "a sun whose ball would hold a pig should not be set down");
         helper.succeed();
     }
+
+    @GameTest(template = TestStructures.HALL)
+    public static void aLargeSunIsSmoothToTheTouch(GameTestHelper helper) {
+        double radius = 32.0;
+        Vec3 centre = Vec3.ZERO;
+        Vec3 slant = new Vec3(1.0, 1.0, 1.0).normalize();
+        for (double off : new double[] { -0.3, 0.3 }) {
+            Vec3 point = slant.scale(radius + off);
+            AABB probe = AABB.ofSize(point, 0.05, 0.05, 0.05);
+            boolean touched = SolBlock.slabs(radius, centre, probe).stream()
+                    .anyMatch(slab -> slab.bounds().intersects(probe));
+            check(touched == (off < 0.0), "a point " + off + " from the surface of a wide sun should "
+                    + (off < 0.0 ? "" : "not ") + "be inside it");
+        }
+        helper.succeed();
+    }
 }

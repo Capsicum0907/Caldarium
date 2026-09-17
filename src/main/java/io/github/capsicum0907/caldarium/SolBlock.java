@@ -1,5 +1,7 @@
 package io.github.capsicum0907.caldarium;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -39,6 +41,7 @@ public class SolBlock extends BaseEntityBlock {
     private static final int QUARTERS = 4;
     private static final float SHRUNK = 0.55F;
     private static final int SLICES = 16;
+    private static final double STEP = 0.25;
     private static final float BLAST_VOLUME = 4.0F;
     private static final Map<Float, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 
@@ -93,6 +96,34 @@ public class SolBlock extends BaseEntityBlock {
         Vec3 point = from.add(along.scale(t));
         Vec3 normal = point.subtract(centre(pos));
         return new BlockHitResult(point, Direction.getNearest(normal.x, normal.y, normal.z), pos, false);
+    }
+
+    public static List<VoxelShape> slabs(double radius, Vec3 centre, AABB region) {
+        List<VoxelShape> slabs = new ArrayList<>();
+        double lowX = Math.max(region.minX, centre.x - radius);
+        double highX = Math.min(region.maxX, centre.x + radius);
+        double lowY = Math.max(region.minY, centre.y - radius);
+        double highY = Math.min(region.maxY, centre.y + radius);
+        if (lowX >= highX || lowY >= highY) {
+            return slabs;
+        }
+        for (double y = Math.floor(lowY / STEP) * STEP; y < highY; y += STEP) {
+            double dy = y + STEP / 2.0 - centre.y;
+            for (double x = Math.floor(lowX / STEP) * STEP; x < highX; x += STEP) {
+                double dx = x + STEP / 2.0 - centre.x;
+                double left = radius * radius - dx * dx - dy * dy;
+                if (left <= 0.0) {
+                    continue;
+                }
+                double half = Math.sqrt(left);
+                double near = Math.max(centre.z - half, region.minZ - STEP);
+                double far = Math.min(centre.z + half, region.maxZ + STEP);
+                if (near < far) {
+                    slabs.add(Shapes.create(x, y, near, x + STEP, y + STEP, far));
+                }
+            }
+        }
+        return slabs;
     }
 
     public static VoxelShape shape(BlockState state) {

@@ -56,7 +56,7 @@ public final class Suns {
         for (BlockPos pos : suns) {
             BlockState state = level.getBlockState(pos);
             if (SolBlock.bounds(state, pos).intersects(box)) {
-                shapes.add(SolBlock.shape(state).move(pos.getX(), pos.getY(), pos.getZ()));
+                shapes.addAll(SolBlock.slabs(SolBlock.radius(state), SolBlock.centre(pos), box));
             }
         }
         return shapes;
