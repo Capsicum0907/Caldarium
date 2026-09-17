@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import org.joml.Vector3f;
@@ -59,6 +60,12 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     @Override
     public boolean shouldRenderOffScreen(SolBlockEntity sol) {
         return true;
+    }
+
+    @Override
+    public AABB getRenderBoundingBox(SolBlockEntity sol) {
+        double reach = SolBlock.radius(sol.getBlockState()) * BLAZING_CORONA;
+        return AABB.ofSize(SolBlock.centre(sol.getBlockPos()), 0.0, 0.0, 0.0).inflate(reach);
     }
 
     @Override

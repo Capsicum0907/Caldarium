@@ -51,12 +51,21 @@ public final class SolSurface {
     private boolean filled;
 
     public SolSurface(float radius, float scale) {
-        this.texels = Mth.clamp(Mth.ceil(radius * QUARTER * 2.0F / TEXEL), MIN_TEXELS, MAX_TEXELS);
+        this(texelsFor(radius), scale);
+    }
+
+    public SolSurface(int texels, float scale) {
+        this.texels = texels;
         this.cell = texels + 2;
         this.scale = scale;
         this.heat = new float[FACES][cell * cell];
         this.image = new NativeImage(NativeImage.Format.RGBA, cell * COLUMNS, cell * (FACES / COLUMNS), false);
-        this.texture = new DynamicTexture(image);
+        this.texture = new DynamicTexture(image) {
+            @Override
+            public void setFilter(boolean blur, boolean mipmap) {
+                super.setFilter(true, false);
+            }
+        };
         this.location = ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "dynamic/sol_" + made++);
         Minecraft.getInstance().getTextureManager().register(location, texture);
     }
@@ -65,9 +74,12 @@ public final class SolSurface {
         return radius / REFERENCE_RADIUS;
     }
 
+    private static int texelsFor(float radius) {
+        return Mth.clamp(Mth.ceil(radius * QUARTER * 2.0F / TEXEL), MIN_TEXELS, MAX_TEXELS);
+    }
+
     public boolean fits(float radius, float scale) {
-        return this.scale == scale
-                && texels == Mth.clamp(Mth.ceil(radius * QUARTER * 2.0F / TEXEL), MIN_TEXELS, MAX_TEXELS);
+        return this.scale == scale && texels == texelsFor(radius);
     }
 
     public ResourceLocation location() {
@@ -113,7 +125,6 @@ public final class SolSurface {
             }
         }
         texture.bind();
-        // DynamicTexture.upload() passes blur=false, which resets the filter to nearest on every upload.
         image.upload(0, 0, 0, 0, 0, image.getWidth(), image.getHeight(), true, false, false, false);
     }
 

@@ -12,7 +12,8 @@ import net.minecraft.world.item.ItemStack;
 
 public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final float ICON_RADIUS = 0.5F;
-    private static final float ICON_SCALE = 1.0F;
+    private static final int ICON_TEXELS = 64;
+    private static final float ICON_SCALE = 4.0F;
 
     private SolSurface surface;
 
@@ -24,7 +25,7 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buffers,
             int light, int overlay) {
         if (surface == null) {
-            surface = new SolSurface(ICON_RADIUS, ICON_SCALE);
+            surface = new SolSurface(ICON_TEXELS, ICON_SCALE);
         }
         Minecraft minecraft = Minecraft.getInstance();
         float time = (minecraft.level == null ? 0L : minecraft.level.getGameTime())
