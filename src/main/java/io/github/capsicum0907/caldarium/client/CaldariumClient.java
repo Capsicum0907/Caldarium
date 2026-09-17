@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 
 import io.github.capsicum0907.caldarium.CaldariumRegistry;
 import io.github.capsicum0907.caldarium.SolBlock;
+import io.github.capsicum0907.caldarium.SolBlockEntity;
 import io.github.capsicum0907.caldarium.SolItem;
 
 import net.minecraft.client.Minecraft;
@@ -43,6 +44,7 @@ public final class CaldariumClient {
 
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(CaldariumRegistry.SOL_ENTITY.get(), SolRenderer::new);
+        SolBlockEntity.onLeavingClient(SolRenderer::forget);
     }
 
     public static void registerExtensions(RegisterClientExtensionsEvent event) {

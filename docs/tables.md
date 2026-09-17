@@ -203,8 +203,8 @@ player's reach is longer than that.
 
 **It is drawn as a ball, not as a block.** A block model cannot leave its own three
 cubes and is made of boxes besides, so the sphere is drawn by a block entity renderer
-instead - thirty-two rings of sixty-four segments, turning slowly on two axes, every
-vertex at full brightness so it lights rather than being lit. The block itself renders
+instead - a cube with its six faces blown out into a ball, sixteen by sixteen quads to a
+face, turning slowly on two axes, every vertex at full brightness so it lights rather than being lit. The block itself renders
 nothing at all. `size` is its width. It shrinks a step for each quarter of its
 durability spent, down to a little over half, so a sun near the end of it is visibly
 smaller as well as dimmer.
@@ -297,13 +297,28 @@ given an upward normal, which faces both lights, so it comes out at full colour;
 Nether one of the lights points down and it comes out at about 0.88. The icon keeps its
 real normals, because inventory lighting points elsewhere.
 
-**Its surface is not a picture.** A flat picture on a sphere pinches to a point at both
-poles and stretches its pattern along the lines of latitude - a mirror ball rather than
-a sun, and no amount of redrawing the picture fixes it, because the fault is in the
-wrapping. So nothing is wrapped: the surface is asked, at each vertex, how hot the
-point it sits at is, from three-dimensional noise sampled at that point. No seam, no
-pole, no grid, and the boil comes from moving through the noise rather than from a
-sheaf of frames.
+**Its surface is a picture painted from the ball, not wrapped round it.** A flat picture
+on a sphere pinches to a point at both poles and stretches along the lines of latitude -
+a mirror ball rather than a sun - so the picture is not made flat and then wrapped. Each
+of the six faces has its own square of texels, and each texel is coloured by asking the
+three-dimensional noise how hot the point of the ball under it is. No pole, and no seam:
+every face carries a border of one texel painted the same way, so filtering across an
+edge blends into what is really there.
+
+It used to be coloured per vertex instead, and that set the finest grain the ball could
+show at the spacing of its vertices - smeared into triangles in between.
+
+**The grain is a size in blocks, not a share of the ball.** The noise is sampled at the
+ball's point multiplied by its radius over four, so a sun of width eight looks as it
+always did and a wider one has more cells rather than bigger ones. The picture is sized
+to match - a texel is about 0.3 blocks, from sixteen to a hundred and sixty to a face.
+
+**It is repainted a little at a time.** Sampling a whole face at the largest size
+measured 2.4 ms, so each frame samples half of one face, and the whole ball turns over in
+twelve frames; the boil is slow enough that the faces never visibly disagree. The colours
+are laid over the stored heat every frame through a 256-entry table, so a flare changes
+every face at once. The picture belongs to its block entity and is released when the
+block entity leaves the client.
 
 ⚠ **It takes a diamond pickaxe and nothing else will do.** Not slowly with a stone one
 - not at all. A sun anybody can get through given the patience is a sun anybody gets

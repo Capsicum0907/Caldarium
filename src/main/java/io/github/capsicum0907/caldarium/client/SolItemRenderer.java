@@ -12,6 +12,9 @@ import net.minecraft.world.item.ItemStack;
 
 public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     private static final float ICON_RADIUS = 0.5F;
+    private static final float ICON_SCALE = 1.0F;
+
+    private SolSurface surface;
 
     public SolItemRenderer() {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
@@ -20,9 +23,12 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buffers,
             int light, int overlay) {
+        if (surface == null) {
+            surface = new SolSurface(ICON_RADIUS, ICON_SCALE);
+        }
         Minecraft minecraft = Minecraft.getInstance();
         float time = (minecraft.level == null ? 0L : minecraft.level.getGameTime())
                 + minecraft.getTimer().getGameTimeDeltaPartialTick(false);
-        SolRenderer.draw(pose, buffers, overlay, ICON_RADIUS, time, SolPalette.blaze(time, 0L), null);
+        SolRenderer.draw(pose, buffers, overlay, ICON_RADIUS, time, SolPalette.blaze(time, 0L), null, surface);
     }
 }

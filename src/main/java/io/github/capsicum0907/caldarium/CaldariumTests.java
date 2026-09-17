@@ -6,9 +6,12 @@ import io.github.capsicum0907.caldarium.data.TestStructures;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.gametest.framework.AfterBatch;
+import net.minecraft.gametest.framework.BeforeBatch;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -215,6 +218,26 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
+    private static final String SOL_BATCH = "sol";
+    private static final double SOL_SIZE = 8.0;
+    private static final double SOL_HOLD = 2.0;
+    private static double sizeWas;
+    private static double holdWas;
+
+    @BeforeBatch(batch = SOL_BATCH)
+    public static void fixTheSun(ServerLevel level) {
+        sizeWas = CaldariumConfig.SOL_SIZE.get();
+        holdWas = CaldariumConfig.SOL_HOLD.get();
+        CaldariumConfig.SOL_SIZE.set(SOL_SIZE);
+        CaldariumConfig.SOL_HOLD.set(SOL_HOLD);
+    }
+
+    @AfterBatch(batch = SOL_BATCH)
+    public static void restoreTheSun(ServerLevel level) {
+        CaldariumConfig.SOL_SIZE.set(sizeWas);
+        CaldariumConfig.SOL_HOLD.set(holdWas);
+    }
+
     private static final BlockPos SUN = new BlockPos(TestStructures.HALL_SIZE / 2, TestStructures.HALL_SIZE / 2,
             TestStructures.HALL_SIZE / 2);
     private static final double TOLERANCE = 0.25;
@@ -248,7 +271,7 @@ public final class CaldariumTests {
         return Entity.collideBoundingBox(null, new Vec3(-by, 0.0, 0.0), box, helper.getLevel(), List.of());
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunStopsWhatMovesIntoIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -261,7 +284,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunThatIsGoneStopsNothing(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -273,7 +296,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunIsReachedAtItsSurface(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -286,7 +309,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void lookingAtASunLandsOnIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -301,7 +324,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void nothingIsPlacedInsideASun(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -313,7 +336,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void breakingASunKillsWhatIsNearButLeavesTheBlocks(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -330,7 +353,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void placingIntoASunIsRefusedBeforeItHappens(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -351,7 +374,7 @@ public final class CaldariumTests {
         return player;
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunIsHeldByItsNearSide(GameTestHelper helper) {
         Player player = holdingASun(helper);
         BlockState placed = CaldariumRegistry.SOL.get().defaultBlockState();
@@ -364,7 +387,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunHeldBelowStaysClearOfTheBody(GameTestHelper helper) {
         Vec3 eye = Vec3.atCenterOf(helper.absolutePos(new BlockPos(SUN.getX(), TestStructures.HALL_SIZE - 2, SUN.getZ())));
         Player player = standing(helper, eye, 0.0F);
@@ -377,7 +400,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunIsNotSetDownOnSomethingAlive(GameTestHelper helper) {
         Player player = holdingASun(helper);
         BlockPos core = SolItem.core(player, CaldariumRegistry.SOL.get().defaultBlockState());
@@ -390,7 +413,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL)
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aLargeSunIsSmoothToTheTouch(GameTestHelper helper) {
         double radius = 32.0;
         Vec3 centre = Vec3.ZERO;

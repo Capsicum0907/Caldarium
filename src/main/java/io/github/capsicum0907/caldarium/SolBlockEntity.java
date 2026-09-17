@@ -1,6 +1,7 @@
 package io.github.capsicum0907.caldarium;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -16,6 +17,13 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 public class SolBlockEntity extends BlockEntity {
+    private static Consumer<SolBlockEntity> leftClient = sol -> {
+    };
+
+    public static void onLeavingClient(Consumer<SolBlockEntity> hook) {
+        leftClient = hook;
+    }
+
     private int left = -1;
 
     public SolBlockEntity(BlockPos pos, BlockState state) {
@@ -35,6 +43,9 @@ public class SolBlockEntity extends BlockEntity {
         super.setRemoved();
         if (level != null) {
             Suns.remove(level, worldPosition);
+            if (level.isClientSide()) {
+                leftClient.accept(this);
+            }
         }
     }
 
@@ -43,6 +54,9 @@ public class SolBlockEntity extends BlockEntity {
         super.onChunkUnloaded();
         if (level != null) {
             Suns.remove(level, worldPosition);
+            if (level.isClientSide()) {
+                leftClient.accept(this);
+            }
         }
     }
 
