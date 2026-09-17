@@ -47,8 +47,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     private static final int HALO_SEGMENTS = 96;
     // Straight up faces both world diffuse lights, so the shader's shading comes out at full.
     private static final Vector3f LIT = new Vector3f(0.0F, 1.0F, 0.0F);
-    private static final float RIM_INSIDE = 0.98F;
-    private static final float RIM_OUTSIDE = 1.025F;
+    private static final double RIM_ANGLE = 0.0025;
     private static final float CORONA = 1.3F;
     private static final float BLAZING_CORONA = 1.6F;
     private static final float GLOW_ALPHA = 0.55F;
@@ -138,26 +137,29 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         Vec3 upward = across.cross(facing);
         Vec3 plane = towards.scale(radius * radius / distance);
         double edge = radius * Math.sqrt(1.0 - (radius / distance) * (radius / distance));
+        double line = RIM_ANGLE * Math.sqrt(distance * distance - radius * radius);
+        double inner = edge - line;
+        double outer = edge + line;
 
         PoseStack.Pose at = pose.last();
         VertexConsumer solid = buffers.getBuffer(RenderType.entitySolid(SKIN));
         for (int i = 0; i < HALO_SEGMENTS; i++) {
             Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
             Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
-            rim(at, solid, overlay, plane.add(a.scale(edge * RIM_INSIDE)), towards);
-            rim(at, solid, overlay, plane.add(a.scale(edge * RIM_OUTSIDE)), towards);
-            rim(at, solid, overlay, plane.add(b.scale(edge * RIM_OUTSIDE)), towards);
-            rim(at, solid, overlay, plane.add(b.scale(edge * RIM_INSIDE)), towards);
+            rim(at, solid, overlay, plane.add(a.scale(inner)), towards);
+            rim(at, solid, overlay, plane.add(a.scale(outer)), towards);
+            rim(at, solid, overlay, plane.add(b.scale(outer)), towards);
+            rim(at, solid, overlay, plane.add(b.scale(inner)), towards);
         }
 
         VertexConsumer glow = buffers.getBuffer(RenderType.debugQuads());
         for (int i = 0; i < HALO_SEGMENTS; i++) {
             Vec3 a = direction(across, upward, Mth.TWO_PI * i / HALO_SEGMENTS);
             Vec3 b = direction(across, upward, Mth.TWO_PI * (i + 1) / HALO_SEGMENTS);
-            shine(at, glow, plane.add(a.scale(edge * RIM_OUTSIDE)), colour, alpha);
+            shine(at, glow, plane.add(a.scale(outer)), colour, alpha);
             shine(at, glow, plane.add(a.scale(edge * corona)), colour, 0.0F);
             shine(at, glow, plane.add(b.scale(edge * corona)), colour, 0.0F);
-            shine(at, glow, plane.add(b.scale(edge * RIM_OUTSIDE)), colour, alpha);
+            shine(at, glow, plane.add(b.scale(outer)), colour, alpha);
         }
     }
 

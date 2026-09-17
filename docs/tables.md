@@ -280,7 +280,9 @@ injection is required.
 through red and orange to yellow and stop there - no white - and the heat is weighted
 towards the dark end, so the hot cells are islands. `SolPalette` holds the colours for
 both the drawn ball and the particle picture. Outside the ball, facing the camera, a
-thin dark-red rim cuts it out of the background, and past the rim an orange corona fades
+thin dark-red rim cuts it out of the background - thin on the screen, whatever the
+size: its width grows with the distance to the edge, not with the ball, the way an inked
+outline would - and past the rim an orange corona fades
 out; the corona is alpha-blended rather than added, so it stays orange against a blue sky
 instead of washing to white. Neither is drawn from inside the ball, nor on the icon.
 
