@@ -115,13 +115,15 @@ on top of that one, not instead of it.
 
 ## The one that runs on what a player earned
 
-Experience is the one resource in the game that a machine cannot make. Something has
-to go and get it, which is why it can be worth a great deal without breaking anything:
-there is no rate to optimise, only a person deciding to spend what they have.
+Experience is the one resource in the game that a machine cannot make, but it is not a
+scarce one: a player who can build a farm for it gets it by the thousand. **So a point is
+worth little** - ten FE on the first rung - and a better machine is what makes it worth
+more. By the time a farm is built, the rung that pays for it is within reach too.
 
-**It is a burner whose fuel is not a thing.** Experience is poured in from the screen,
-turned into burning time at a rate the config sets, and spent the way a log is spent.
-There is no slot, no tank, no flame and no glow — the block holds a number.
+**It is paid for as it is poured.** Each point is worth the row's own number at once, and
+nothing burns afterwards. Only as much is taken as the block has room for, so a full one
+takes nothing and no experience is lost into it. There is no slot, no tank, no flame and
+no glow.
 
 **It has tiers**, by the same rule as the panel and for the same reason: there is no
 better experience to feed it, so a better machine is the only way it gets better.
@@ -155,7 +157,9 @@ has, scaled by how far the swing has come back, which is `0.2 + scale * scale * 
 `Player#attack`. What one point of it is worth is the row's own number, so the ladder
 scales the hit. ⚠ **Enchantments are not in it.** The game asks `getEnchantedDamage`
 with the thing being hit, and nothing is being hit here, so this measures the arm and
-the weapon rather than the sharpness on it.
+the weapon rather than the sharpness on it. ⚠ **A mace's smash is not in it either**: its
+fall bonus is worked out against the thing being hit in the same way, so a drop from a
+height is worth one ordinary blow here and the swing's own recovery is the ceiling.
 
 ⚠ **The swing is reset afterwards.** Hitting a block does not reset it the way hitting
 something alive does, so without that a held-down click lands at full strength every

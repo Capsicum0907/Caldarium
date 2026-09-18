@@ -194,13 +194,12 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             return 0;
         }
         int wanted = points < 0 ? Experience.points(player) : points;
-        int taken = Experience.take(player, wanted);
+        int each = Math.max(1, rates.makes().get());
+        int taken = Experience.take(player, Math.min(wanted, store.room() / each));
         if (taken <= 0) {
             return 0;
         }
-        long added = (long) taken * CaldariumConfig.ticksPerPoint();
-        burning = (int) Math.min(Integer.MAX_VALUE, burning + added);
-        burnLength = Math.max(burnLength, burning);
+        store.fill((int) Math.min(Integer.MAX_VALUE, (long) taken * each));
         setChanged();
         return taken;
     }
@@ -224,10 +223,9 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
-            case EXPERIENCE, LIFE -> generator.burn();
+            case LIFE -> generator.burn();
             case SUN, HEAT, LAMP -> generator.soak(server, pos);
-            // Nothing between strikes. See Storm.
-            case STORM, BLOW -> { }
+            case EXPERIENCE, STORM, BLOW -> { }
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
 

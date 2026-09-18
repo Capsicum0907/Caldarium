@@ -20,7 +20,6 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `generatesPerEightTicks` | Forge Energy a generator makes every eight ticks while it is working. Eight rather than one so a rate below one a tick can be written down: the panel that reads lamplight makes two of these, which is a quarter of a unit a tick, and the block keeps the eighths rather than rounding them away. |
 | `tank` | Millibuckets of fuel a crucible holds. A bucket is spent at a time. |
 | `experience.pourSteps` | The amounts, in experience points, that the buttons on an experience generator pour in. An "all" button always follows. |
-| `experience.ticksPerPoint` | How long one point of experience burns for. What that is worth depends on the tier, since the tier decides what is made per tick. |
 | `sol.durability` | Ticks an artificial sun lasts. The default is thirty in-game days, at 24,000 ticks to a day. |
 | `sol.weatherCost` | Ticks of durability spent per tick while rain or snow is falling on it. |
 | `storm.natural` / `storm.summoned` | What a strike is worth, when nobody called it down and when somebody did. |

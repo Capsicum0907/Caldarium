@@ -33,10 +33,10 @@ public record Generator(String id, Source source, Tier top, int makes, int every
     public static final Generator SOLAR = new Generator("solar_panel", Source.SUN, Tier.SUPER_COMPRESSED_NETHER_STAR, 8, 1, 5_000, 4096);
     /** Hot on one face, cold on the one opposite. Placement is the whole of it. */
     public static final Generator HYPOCAUSTUM =
-            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000, 4096);
+            new Generator("hypocaustum", Source.HEAT, Tier.SUPER_COMPRESSED_NETHER_STAR, 8, 1, 5_000, 4096);
     /** What a player earned, poured in by hand. No better experience exists, so it tiers. */
     public static final Generator EXPERIENTIA =
-            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000, 4096);
+            new Generator("experientia", Source.EXPERIENCE, Tier.SUPER_COMPRESSED_NETHER_STAR, 10, 1, 5_000, 4096);
     /** Where the dead were taken out of the arena. Stand on it and it takes yours. */
     /** Lamplight rather than daylight. Weakest of them, and the only one you can light. */
     public static final Generator LUCERNARIUM =
@@ -59,7 +59,7 @@ public record Generator(String id, Source source, Tier top, int makes, int every
      */
     public static final Generator PALUS =
             new Generator("palus", Source.BLOW, Tier.SUPER_COMPRESSED_NETHER_STAR,
-                    100, 1, 5_000, 4096);
+                    5, 1, 5_000, 4096);
 
     public static final Generator SPOLIARIUM =
             new Generator("spoliarium", Source.LIFE, Tier.SUPER_COMPRESSED_NETHER_STAR, 5, 1, 5_000, 4096);

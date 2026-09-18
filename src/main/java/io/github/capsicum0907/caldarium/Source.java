@@ -17,8 +17,8 @@ public enum Source {
     SUN(false, true, false),
     /** The difference between what is on one face and what is on the one opposite. */
     HEAT(false, false, false),
-    /** What a player has earned, poured in by hand. Held and spent, but not alight. */
-    EXPERIENCE(false, false, true),
+    /** What a player has earned, poured in by hand and paid for at once. */
+    EXPERIENCE(false, false, false),
     /** The health of whatever stands on it, and only what actually left. */
     LIFE(false, false, true),
     /** Whatever light is falling on it, from lamps rather than from the sky. */
