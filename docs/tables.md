@@ -122,8 +122,11 @@ more. By the time a farm is built, the rung that pays for it is within reach too
 
 **It is paid for as it is poured.** Each point is worth the row's own number at once, and
 nothing burns afterwards. Only as much is taken as the block has room for, so a full one
-takes nothing and no experience is lost into it. There is no slot, no tank, no flame and
-no glow.
+takes nothing and no experience is lost into it. There is no slot, no tank and no flame.
+
+**Everything paid at once lights for a moment when it is paid** - experience, a blow, a
+death, a strike - so a payment can be seen from where it happened. The face changes; no
+light is given off.
 
 **It has tiers**, by the same rule as the panel and for the same reason: there is no
 better experience to feed it, so a better machine is the only way it gets better.

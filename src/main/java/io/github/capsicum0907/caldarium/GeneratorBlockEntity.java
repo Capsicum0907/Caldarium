@@ -45,6 +45,8 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
     private int burning;
     private int burnLength;
+    private int flash;
+    private static final int FLASH_TICKS = 10;
 
     /** Measured now and then rather than every tick; see {@link #SUN_EVERY}. */
     private int lookAgain;
@@ -133,6 +135,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             return 0;
         }
         give(had);
+        flash = FLASH_TICKS;
         setChanged();
         return Math.round(had);
     }
@@ -164,6 +167,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         long worth = (long) (blow * rates.makes().get());
         int given = (int) Math.min(Integer.MAX_VALUE, worth);
         store.fill(given);
+        flash = FLASH_TICKS;
         setChanged();
         return given;
     }
@@ -178,6 +182,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             return 0;
         }
         store.fill(worth);
+        flash = FLASH_TICKS;
         setChanged();
         return worth;
     }
@@ -199,6 +204,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             return 0;
         }
         store.fill((int) Math.min(Integer.MAX_VALUE, (long) taken * each));
+        flash = FLASH_TICKS;
         setChanged();
         return taken;
     }
@@ -218,17 +224,18 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         if (!(level instanceof ServerLevel server)) {
             return;
         }
-        boolean wasWorking = generator.working();
-
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
             case SUN, HEAT, LAMP -> generator.soak(server, pos);
             case EXPERIENCE, LIFE, STORM, BLOW -> { }
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
+        if (generator.flash > 0) {
+            generator.flash--;
+        }
 
         boolean working = generator.working();
-        if (wasWorking != working) {
+        if (state.getValue(GeneratorBlock.LIT) != working) {
             level.setBlock(pos, state.setValue(GeneratorBlock.LIT, working), Block.UPDATE_ALL);
         }
     }
@@ -240,7 +247,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
     /** Whether it is doing its work, whatever that work is. */
     private boolean working() {
-        return row.source().stored() ? burning > 0 : reaching > 0.0F;
+        return flash > 0 || (row.source().stored() ? burning > 0 : reaching > 0.0F);
     }
 
     /**

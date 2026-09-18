@@ -158,6 +158,18 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
+    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 60)
+    public static void aPaymentLightsItForAMoment(GameTestHelper helper) {
+        GeneratorBlockEntity made = spoliarium(helper);
+        made.reap(helper.getLevel(), helper.spawn(EntityType.PIG, WHERE.above()));
+        helper.startSequence()
+                .thenExecuteAfter(2, () -> check(helper.getBlockState(WHERE).getValue(GeneratorBlock.LIT),
+                        "it should light when it is paid"))
+                .thenExecuteAfter(20, () -> check(!helper.getBlockState(WHERE).getValue(GeneratorBlock.LIT),
+                        "and go out again soon after"))
+                .thenSucceed();
+    }
+
     @GameTest(template = TestStructures.FLOOR)
     public static void aRungKillsNothingLargerThanItsLimit(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
