@@ -222,16 +222,16 @@ public class SolBlock extends BaseEntityBlock {
         int start = (int) Math.floor(centre.y - under);
         BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos(x, start, z);
         int found = Integer.MIN_VALUE;
-        if (!solid(level.getBlockState(at))) {
+        if (!solid(level, at)) {
             for (int y = start; y > lowest; y--) {
-                if (solid(level.getBlockState(at.setY(y - 1)))) {
+                if (solid(level, at.setY(y - 1))) {
                     found = y;
                     break;
                 }
             }
         } else {
             for (int y = start + 1; y <= highest; y++) {
-                if (!solid(level.getBlockState(at.setY(y)))) {
+                if (!solid(level, at.setY(y))) {
                     found = y;
                     break;
                 }
@@ -249,8 +249,9 @@ public class SolBlock extends BaseEntityBlock {
         return null;
     }
 
-    private static boolean solid(BlockState state) {
-        return state.blocksMotion() || !state.getFluidState().isEmpty();
+    private static boolean solid(Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return !state.getCollisionShape(level, pos).isEmpty() || !state.getFluidState().isEmpty();
     }
 
     private static List<BlockPos> columnGlows(Level level, BlockPos core, float radius) {
