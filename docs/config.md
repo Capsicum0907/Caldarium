@@ -25,7 +25,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `transferRate` | How much crosses its boundary per tick, each way and each side. Also how fast a charger fills what is in its slots, and what a generator offers each neighbour. |
 | `generatesPerEightTicks` | Forge Energy a generator makes every eight ticks while it is working. Eight rather than one so a rate below one a tick can be written down: the panel that reads lamplight makes two of these, which is a quarter of a unit a tick, and the block keeps the eighths rather than rounding them away. |
 | `tank` | Millibuckets of fuel a crucible holds. A bucket is spent at a time. |
-| `lethalHealth` | The largest maximum health a spoliarium will kill, on that rung. Anything larger is left alone, unhurt and unpaid for. Measured against the maximum rather than what is left, so a wither worn down first is still a wither. |
+| `lethalHealth` | The largest maximum health a spoliarium will kill, on that rung. Anything larger is left alone, unhurt and unpaid for. Measured against the maximum rather than what is left, so a wither worn down first is still a wither. What it kills drops nothing and leaves no experience - except a player, whose own belongings still fall where they died, since losing them is no one's gain. |
 | `experience.pourSteps` | The amounts, in experience points, that the buttons on an experience generator pour in. An "all" button always follows. |
 | `sol.durability` | Ticks an artificial sun lasts. The default is thirty in-game days, at 24,000 ticks to a day. |
 | `sol.weatherCost` | Ticks of durability spent per tick while rain or snow is falling on it. |

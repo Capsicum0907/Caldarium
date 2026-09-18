@@ -158,6 +158,20 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
+    @GameTest(template = TestStructures.FLOOR)
+    public static void whatDiesThereDropsNothing(GameTestHelper helper) {
+        GeneratorBlockEntity made = spoliarium(helper);
+        LivingEntity pig = helper.spawn(EntityType.PIG, WHERE.above());
+        made.reap(helper.getLevel(), pig);
+        helper.runAfterDelay(2, () -> {
+            var near = new net.minecraft.world.phys.AABB(helper.absolutePos(WHERE)).inflate(4);
+            var left = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, near);
+            check(pig.isDeadOrDying(), "the pig should be dead");
+            check(left.isEmpty(), "and have left nothing behind: " + left);
+            helper.succeed();
+        });
+    }
+
     @GameTest(template = TestStructures.FLOOR, timeoutTicks = 60)
     public static void aPaymentLightsItForAMoment(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);

@@ -113,8 +113,12 @@ public final class CaldariumDataGen {
     }
 
     private static final RegistrySetBuilder DAMAGES = new RegistrySetBuilder()
-            .add(Registries.DAMAGE_TYPE, context -> context.register(CaldariumRegistry.SOL_DAMAGE,
-                    new DamageType("caldarium.sol", DamageScaling.NEVER, 0.0F, DamageEffects.BURNING)));
+            .add(Registries.DAMAGE_TYPE, context -> {
+                context.register(CaldariumRegistry.SOL_DAMAGE,
+                        new DamageType("caldarium.sol", DamageScaling.NEVER, 0.0F, DamageEffects.BURNING));
+                context.register(CaldariumRegistry.SPOLIARIUM_DAMAGE,
+                        new DamageType("caldarium.spoliarium", DamageScaling.NEVER, 0.0F));
+            });
 
     private static class Damages extends DatapackBuiltinEntriesProvider {
         Damages(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
@@ -472,6 +476,7 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "Your experience: %s");
             add("gui.caldarium.pour.all", "All");
             add("death.attack.caldarium.sol", "%1$s touched a sun");
+            add("death.attack.caldarium.spoliarium", "%1$s was carried out of the arena");
         }
     }
 

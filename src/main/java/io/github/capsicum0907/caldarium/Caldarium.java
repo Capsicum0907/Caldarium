@@ -20,6 +20,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -49,6 +50,7 @@ public class Caldarium {
         NeoForge.EVENT_BUS.addListener(Caldarium::lightning);
         NeoForge.EVENT_BUS.addListener(Caldarium::placing);
         NeoForge.EVENT_BUS.addListener(Caldarium::aiming);
+        NeoForge.EVENT_BUS.addListener(Caldarium::spoils);
         modEventBus.addListener(Caldarium::addToCreativeTab);
 
         LOGGER.info("Caldarium {} loaded.", modContainer.getModInfo().getVersion());
@@ -63,6 +65,13 @@ public class Caldarium {
      * a routing decision, and this mod does not make those. The generator also offers
      * its fuel slot as an item handler, which is how a hopper feeds it.
      */
+    private static void spoils(LivingDropsEvent event) {
+        if (event.getSource().is(CaldariumRegistry.SPOLIARIUM_DAMAGE)
+                && !(event.getEntity() instanceof net.minecraft.world.entity.player.Player)) {
+            event.setCanceled(true);
+        }
+    }
+
     private static void lightning(EntityTickEvent.Pre event) {
         if (event.getEntity() instanceof net.minecraft.world.entity.LightningBolt bolt) {
             Storm.struck(bolt);

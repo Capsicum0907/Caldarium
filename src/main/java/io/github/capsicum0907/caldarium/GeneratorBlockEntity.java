@@ -2,9 +2,11 @@ package io.github.capsicum0907.caldarium;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.MenuProvider;
@@ -130,7 +132,11 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
                 || living.getMaxHealth() > CaldariumConfig.lethalHealth(row)) {
             return 0;
         }
-        living.hurt(level.damageSources().generic(), Float.MAX_VALUE);
+        if (!(living instanceof Player)) {
+            living.skipDropExperience();
+        }
+        living.hurt(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(CaldariumRegistry.SPOLIARIUM_DAMAGE)), Float.MAX_VALUE);
         if (!living.isDeadOrDying()) {
             return 0;
         }

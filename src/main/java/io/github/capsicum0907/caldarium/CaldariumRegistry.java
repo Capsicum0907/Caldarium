@@ -122,6 +122,9 @@ public final class CaldariumRegistry {
     public static final ResourceKey<DamageType> SOL_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
             ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "sol"));
 
+    public static final ResourceKey<DamageType> SPOLIARIUM_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "spoliarium"));
+
     public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerItem("sol",
             properties -> new SolItem(SOL.get(), properties));
 
