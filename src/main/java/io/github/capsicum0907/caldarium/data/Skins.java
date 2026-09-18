@@ -24,9 +24,6 @@ import net.minecraft.util.Mth;
 public final class Skins {
     public static final int SIZE = 16;
 
-    private static final int BODY = 0x8A8F94;
-    private static final int EDGE = 0x51565A;
-    private static final int RIVET = 0xA8AEB3;
 
     private static final int MOUTH_LIT = 0xFF9A2E;
     private static final int EMBER = 0xC8461B;
@@ -69,8 +66,6 @@ public final class Skins {
     private static final int SPECKLE = 8;
 
 
-    private static final int WINDOW_FROM = 4;
-    private static final int WINDOW_TO = 12;
 
     private Skins() {
     }
@@ -250,11 +245,10 @@ public final class Skins {
      * dark, which is what makes a square post read as a round wire from any side.
      */
     public static int[][] armSkin(Tier tier) {
-        int body = mix(BODY, tier.colour(), EDGE_TINT);
         int[][] pixels = new int[SIZE][SIZE];
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
-                pixels[y][x] = 0xFF000000 | shift(grain(body, x, y), round(x) + round(y));
+                pixels[y][x] = 0xFF000000 | shift(metal(tier, x, y), round(x) + round(y));
             }
         }
         return pixels;
@@ -282,12 +276,11 @@ public final class Skins {
      * the same picture, which a gradient across the square would not give.
      */
     public static int[][] drillSkin(Tier tier) {
-        int body = mix(BODY, tier.colour(), EDGE_TINT);
         int[][] pixels = new int[SIZE][SIZE];
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 int ring = Math.min(Math.min(x, y), Math.min(SIZE - 1 - x, SIZE - 1 - y));
-                pixels[y][x] = 0xFF000000 | shift(grain(body, x, y), band(ring));
+                pixels[y][x] = 0xFF000000 | shift(metal(tier, x, y), band(ring));
             }
         }
         return pixels;
@@ -325,6 +318,10 @@ public final class Skins {
         return kind.id(tier);
     }
 
+    public static String kind(Kind kind, Tier tier, Face face) {
+        return kind.id(tier) + "_" + face.id;
+    }
+
     /**
      * The names this will write. The model provider has to be told about them before
      * they exist, because it checks that a texture is there and the pictures are made
@@ -347,7 +344,9 @@ public final class Skins {
                 continue;
             }
             for (Tier tier : Tier.upTo(kind.top())) {
-                names.add(kind(kind, tier));
+                for (Face face : Face.values()) {
+                    names.add(kind(kind, tier, face));
+                }
             }
         }
         for (Tier tier : Tier.upTo(Kind.highestCarried())) {
@@ -730,52 +729,66 @@ public final class Skins {
                 | Math.round((colour & 0xFF) * by);
     }
 
-    /**
-     * The same plate for every kind; only what is in the window differs. They are one
-     * machine seen doing different jobs, and the picture should say so.
-     */
-    public static int[][] kindSkin(Kind kind, Tier tier) {
-        int colour = tier.colour();
-        int[][] pixels = plate();
-        for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
-            for (int x = WINDOW_FROM; x < WINDOW_TO; x++) {
-                pixels[y][x] = 0xFF000000 | (marked(kind, x, y) ? colour : EDGE);
+    public static int[][] kindSkin(Kind kind, Tier tier, Face face) {
+        return switch (kind) {
+            case BATTERY -> battery(tier, face);
+            case CHARGER -> charger(tier, face);
+            case CABLE, IMPORTER, EXPORTER -> throw new IllegalStateException(kind + " carries");
+        };
+    }
+
+    private static final int INSULATOR = 0x2A2D33;
+    private static final int CELL_LIFT = 18;
+    private static final int CELL_SINK = 14;
+    private static final int CELL_EVERY = 4;
+    private static final int COIL = 0xB8663A;
+    private static final int COIL_DARK = 0x7A3F22;
+    private static final float CONTACT_SHINE = 0.45F;
+
+    private static int[][] battery(Tier tier, Face face) {
+        int[][] pixels = new int[SIZE][SIZE];
+        plated(pixels, tier, 0, 0, 15, 15);
+        switch (face) {
+            case SIDE -> paint(pixels, 2, 3, 13, 12, (x, y) -> switch ((x - 2) % CELL_EVERY) {
+                case 0 -> shift(metal(tier, x, y), BEVEL_LIT);
+                case 1 -> grain(shift(INSULATOR, CELL_LIFT), x, y);
+                case 2 -> grain(INSULATOR, x, y);
+                default -> grain(shift(INSULATOR, -CELL_SINK), x, y);
+            });
+            case TOP -> {
+                paint(pixels, 2, 2, 13, 13, (x, y) -> grain(INSULATOR, x, y));
+                plated(pixels, tier, 4, 6, 6, 9);
+                plated(pixels, tier, 9, 6, 11, 9);
             }
+            case BOTTOM -> rivets(pixels, tier);
         }
         return pixels;
     }
 
-    /**
-     * What the window shows: cells stood side by side, a socket to plug into, a
-     * junction, or an arrow saying which way across the boundary it works.
-     *
-     * <p>⭐ An exhaustive switch, so a kind added to the table is a compiler error
-     * here rather than a block wearing another one's face.
-     *
-     * <p>The three that carry are told apart by that arrow alone, and it is drawn as
-     * large as the window will hold: an importer and an exporter placed next to each
-     * other have to be legible from across the room, which is the only place anybody
-     * ever looks at a line of cable from.
-     */
-    private static boolean marked(Kind kind, int x, int y) {
-        int across = x - WINDOW_FROM;
-        int down = y - WINDOW_FROM;
-        int span = WINDOW_TO - WINDOW_FROM;
-        return switch (kind) {
-            // Every third column is the gap between two cells.
-            case BATTERY -> across % 3 != 2;
-            // A ring one pixel in, and a contact in the middle of it.
-            case CHARGER -> {
-                int in = Math.min(Math.min(across, down),
-                        Math.min(span - 1 - across, span - 1 - down));
-                yield in == 1 || in == 3;
+    private static int[][] charger(Tier tier, Face face) {
+        int[][] pixels = new int[SIZE][SIZE];
+        plated(pixels, tier, 0, 0, 15, 15);
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 1, 5, 14, 10, (x, y) -> x == 1 || x == 14 ? INSULATOR
+                        : grain(y % 2 == 0 ? COIL : COIL_DARK, x, y));
+                paint(pixels, 1, 4, 14, 4, (x, y) -> scale(tier.colour(), METAL_DEEP));
             }
-            // ⭐ Nothing at all. These have no face to put a window in: two pixels of
-            // wire shows two pixels of picture, and what they are is said by the shape
-            // instead — a drill that widens towards what it draws from, or narrows
-            // towards what it feeds. An arrow here was read by nobody.
-            case CABLE, IMPORTER, EXPORTER -> false;
-        };
+            case TOP -> {
+                for (int top : new int[] { 2, 9 }) {
+                    for (int left : new int[] { 2, 9 }) {
+                        int right = left + 4;
+                        int bottom = top + 4;
+                        paint(pixels, left, top, right, bottom, (x, y) -> x == left || y == top
+                                ? shift(INSULATOR, -CELL_SINK) : grain(INSULATOR, x, y));
+                        paint(pixels, left + 2, top + 2, left + 3, top + 3,
+                                (x, y) -> mix(metal(tier, x, y), SHINE, CONTACT_SHINE));
+                    }
+                }
+            }
+            case BOTTOM -> rivets(pixels, tier);
+        }
+        return pixels;
     }
 
     /**
@@ -911,25 +924,6 @@ public final class Skins {
 
     /** How far the pictures are pulled towards the metal of the rung they are on. */
     private static final float TIER_TINT = 0.34F;
-    private static final float EDGE_TINT = 0.30F;
-
-    private static int[][] plate() {
-        return plate(BODY);
-    }
-
-    /** Metal with a darker rim and a rivet in each corner. */
-    private static int[][] plate(int body) {
-        int[][] pixels = new int[SIZE][SIZE];
-        for (int y = 0; y < SIZE; y++) {
-            for (int x = 0; x < SIZE; x++) {
-                boolean rim = x == 0 || y == 0 || x == SIZE - 1 || y == SIZE - 1;
-                boolean rivet = (x == 2 || x == SIZE - 3) && (y == 2 || y == SIZE - 3);
-                int colour = rim ? EDGE : rivet ? RIVET : grain(body, x, y);
-                pixels[y][x] = 0xFF000000 | colour;
-            }
-        }
-        return pixels;
-    }
 
     /**
      * A little unevenness so a flat colour does not read as plastic. Deterministic on

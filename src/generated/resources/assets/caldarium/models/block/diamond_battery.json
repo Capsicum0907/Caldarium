@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/diamond_battery"
+    "bottom": "caldarium:block/diamond_battery_bottom",
+    "side": "caldarium:block/diamond_battery_side",
+    "top": "caldarium:block/diamond_battery_top"
   }
 }

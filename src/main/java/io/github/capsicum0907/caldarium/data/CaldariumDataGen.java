@@ -165,7 +165,10 @@ public final class CaldariumDataGen {
                     continue;
                 }
                 for (Tier tier : Tier.upTo(kind.top())) {
-                    draw(output, writing, Skins.kindSkin(kind, tier), Skins.kind(kind, tier));
+                    for (Skins.Face face : Skins.Face.values()) {
+                        draw(output, writing, Skins.kindSkin(kind, tier, face),
+                                Skins.kind(kind, tier, face));
+                    }
                 }
             }
             // Two pictures for the things laid in lines, each drawn for the strip of
@@ -252,8 +255,10 @@ public final class CaldariumDataGen {
                         carrier(kind, tier);
                         continue;
                     }
-                    simpleBlock(CaldariumRegistry.block(kind, tier).get(),
-                            models().cubeAll(name, modLoc("block/" + name)));
+                    simpleBlock(CaldariumRegistry.block(kind, tier).get(), models().cubeBottomTop(name,
+                            modLoc("block/" + Skins.kind(kind, tier, Skins.Face.SIDE)),
+                            modLoc("block/" + Skins.kind(kind, tier, Skins.Face.BOTTOM)),
+                            modLoc("block/" + Skins.kind(kind, tier, Skins.Face.TOP))));
                     itemModels().withExistingParent(name, modLoc("block/" + name));
                 }
             }
@@ -394,12 +399,6 @@ public final class CaldariumDataGen {
             element.end();
         }
 
-        /**
-         * A plate as tall as {@link Skins#PANEL_HEIGHT}: the face it points at the
-         * sky, and plain metal everywhere else. The sides take the top of the edge
-         * texture, so what is seen is the top few pixels of a sheet of metal rather
-         * than a squashed copy of the whole of it.
-         */
         private ModelFile machine(Generator.Made made, String name, boolean lit) {
             if (made.source().flat()) {
                 return panel(made, name, lit);
@@ -410,6 +409,12 @@ public final class CaldariumDataGen {
                     modLoc("block/" + Skins.generator(made, Skins.Face.TOP, lit)));
         }
 
+        /**
+         * A plate as tall as {@link Skins#PANEL_HEIGHT}: the face it points at the
+         * sky, and plain metal everywhere else. The sides take the top of the edge
+         * texture, so what is seen is the top few pixels of a sheet of metal rather
+         * than a squashed copy of the whole of it.
+         */
         private ModelFile panel(Generator.Made made, String name, boolean lit) {
             String top = Skins.generator(made, Skins.Face.TOP, lit);
             String side = Skins.generator(made, Skins.Face.SIDE, lit);
