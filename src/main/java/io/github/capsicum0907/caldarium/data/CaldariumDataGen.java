@@ -481,10 +481,6 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "Your experience: %s");
             add("gui.caldarium.pour.all", "All");
             add("death.attack.caldarium.sol", "%1$s touched a sun");
-            for (Tier tier : Tier.values()) {
-                add(Tooltips.tierKey(tier), titled(tier.id()));
-            }
-            add("tooltip.caldarium.tier", "Tier: %s (%s) / %s");
             add("tooltip.caldarium.makes.rate", "Generates: %s FE/t");
             add("tooltip.caldarium.makes.point", "Generates: %s FE per point of experience");
             add("tooltip.caldarium.makes.health", "Generates: %s FE per point of health");
@@ -523,10 +519,6 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "所持経験値：%s");
             add("gui.caldarium.pour.all", "全部");
             add("death.attack.caldarium.sol", "%1$sは太陽に触れた");
-            for (Tier tier : Tier.values()) {
-                add(Tooltips.tierKey(tier), tier(tier));
-            }
-            add("tooltip.caldarium.tier", "ティア: %s(%s) / %s");
             add("tooltip.caldarium.makes.rate", "発電量: %s FE/t");
             add("tooltip.caldarium.makes.point", "発電量: 経験値1ポイントにつき %s FE");
             add("tooltip.caldarium.makes.health", "発電量: 体力1につき %s FE");

@@ -18,15 +18,10 @@ public final class Tooltips {
         return tier.ordinal() + 1;
     }
 
-    public static String tierKey(Tier tier) {
-        return "tier." + Caldarium.MODID + "." + tier.id();
-    }
-
     public static void generator(Generator.Made made, List<Component> lines) {
         if (!CaldariumConfig.SPEC.isLoaded()) {
             return;
         }
-        tier(made.tier(), made.generator().top(), lines);
         CaldariumConfig.Rates rates = CaldariumConfig.GENERATORS.get(made);
         double each = rates.makes().get() / (double) Math.max(1, rates.every().get());
         switch (made.source()) {
@@ -44,19 +39,9 @@ public final class Tooltips {
         if (!CaldariumConfig.SPEC.isLoaded()) {
             return;
         }
-        tier(tier, kind.top(), lines);
         CaldariumConfig.Rates rates = CaldariumConfig.rates(kind, tier);
         line(lines, "holds", rates.capacity().get());
         line(lines, "sends", rates.transfer().get());
-    }
-
-    private static void tier(Tier tier, Tier top, List<Component> lines) {
-        if (tier == null) {
-            return;
-        }
-        lines.add(Component.translatable("tooltip." + Caldarium.MODID + ".tier",
-                number(tier), Component.translatable(tierKey(tier)), number(top))
-                .withStyle(ChatFormatting.GRAY));
     }
 
     private static void line(List<Component> lines, String key, double value) {

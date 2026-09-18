@@ -105,20 +105,11 @@
   "gui.caldarium.pour.points": "%s",
   "gui.caldarium.stored": "%s / %s FE",
   "itemGroup.caldarium": "Caldarium",
-  "tier.caldarium.compressed_nether_star": "圧縮ネザースター",
-  "tier.caldarium.copper": "銅",
-  "tier.caldarium.diamond": "ダイヤモンド",
-  "tier.caldarium.gold": "金",
-  "tier.caldarium.iron": "鉄",
-  "tier.caldarium.nether_star": "ネザースター",
-  "tier.caldarium.netherite": "ネザライト",
-  "tier.caldarium.super_compressed_nether_star": "超圧縮ネザースター",
   "tooltip.caldarium.holds": "蓄電量: %s FE",
   "tooltip.caldarium.makes.damage": "発電量: 1ダメージにつき %s FE",
   "tooltip.caldarium.makes.health": "発電量: 体力1につき %s FE",
   "tooltip.caldarium.makes.point": "発電量: 経験値1ポイントにつき %s FE",
   "tooltip.caldarium.makes.rate": "発電量: %s FE/t",
   "tooltip.caldarium.makes.strike": "発電量: 落雷1回につき %s FE",
-  "tooltip.caldarium.sends": "送電量: %s FE/t",
-  "tooltip.caldarium.tier": "ティア: %s(%s) / %s"
+  "tooltip.caldarium.sends": "送電量: %s FE/t"
 }
