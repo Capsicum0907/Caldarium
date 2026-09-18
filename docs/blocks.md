@@ -9,7 +9,8 @@ The tables show the default values for each tier. They can be changed in the
 
 ## Generators
 
-Every generator sends the energy it makes into the blocks next to it.
+Every generator sends the energy it makes into the machines next to it. To send it along a
+cable, place an importer against the generator.
 
 ### Burner
 
@@ -200,10 +201,12 @@ Experientia, spoliarium, palus and bidental light up for a moment when they gene
 
 ## Cables
 
-- **Cable**: carries energy between this mod's blocks. It does not connect to blocks from
-  other mods.
-- **Importer**: takes energy out of a block from another mod and into the cable.
-- **Exporter**: sends energy from the cable into a block from another mod.
+- **Cable**: carries energy between importers and exporters. It connects only to cables,
+  importers and exporters.
+- **Importer**: takes energy out of the block it faces, from this mod or another, and into
+  the cables.
+- **Exporter**: takes energy from the cables and sends it into the block it faces, from this
+  mod or another.
 
 Cables, importers and exporters share these values.
 
