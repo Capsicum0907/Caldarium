@@ -13,7 +13,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -131,8 +130,7 @@ public class SolBlockEntity extends BlockEntity {
         Vec3 centre = Vec3.atCenterOf(pos);
         AABB around = new AABB(pos).inflate(Math.ceil(reach));
         List<LivingEntity> within = level.getEntitiesOfClass(LivingEntity.class, around,
-                living -> !(living instanceof Player)
-                        && nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
+                living -> nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
         for (LivingEntity living : within) {
             living.hurt(sunlight(level), CaldariumConfig.solReachDamage());
         }

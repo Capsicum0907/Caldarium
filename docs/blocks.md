@@ -226,6 +226,7 @@ Cables, importers and exporters share these values.
   wears down.
 - Touching it deals heavy damage, and standing within 1 block of its surface sets you on
   fire.
-- Creatures other than players within 14 blocks of its surface take 5 damage every second.
+- Anything living within 14 blocks of its surface, players included, takes 5 damage every
+  second.
 - It can only be broken with a diamond pickaxe or better. Breaking it causes an explosion
   that deals 1,000 damage within 8 blocks of its surface. It drops nothing.
