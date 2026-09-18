@@ -42,6 +42,9 @@ How it looks and what touching it costs.
 - A spoliarium kills nothing larger than its tier allows, and a generator paid all at
   once lights for a moment when it is paid.
 
+- A tooltip's readings - generation, storage and transfer - drawn in columns, with the
+  figures lined up on their decimal point.
+
 ## Not yet watched
 
 - Hypocaustum, experientia, palus, bidental and lucernarium have no watch recorded here.
