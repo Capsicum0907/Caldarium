@@ -65,8 +65,9 @@ Every generator sends the energy it makes into the blocks next to it.
 
 ### Lucernarium
 
-- Generates from the block light (torches, lamps and so on) in the space above it.
-- The table shows light level 15. Dimmer light gives less.
+- Generates from the light in the space above it, whether sunlight or block light (torches,
+  lamps and so on).
+- The table shows light level 15, such as a clear day outdoors. Dimmer light gives less.
 
 | Tier | Generates (FE/t) | Stores (FE) | Transfers (FE/t) |
 |---|---:|---:|---:|

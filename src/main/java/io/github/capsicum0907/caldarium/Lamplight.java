@@ -2,7 +2,6 @@ package io.github.capsicum0907.caldarium;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.LightLayer;
 
 public final class Lamplight {
     private Lamplight() {
@@ -12,6 +11,6 @@ public final class Lamplight {
         if (Suns.shining(level, pos)) {
             return 1.0F;
         }
-        return level.getBrightness(LightLayer.BLOCK, pos.above()) / 15.0F;
+        return level.getMaxLocalRawBrightness(pos.above()) / 15.0F;
     }
 }

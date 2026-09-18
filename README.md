@@ -11,7 +11,7 @@ Generators, batteries, chargers and cables for Forge Energy (FE).
 | Burner | Generates from anything a furnace burns |
 | Crucible | Generates from fluid fuels such as lava |
 | Solar Panel | Generates from sunlight |
-| Lucernarium | Generates from block light |
+| Lucernarium | Generates from light, sunlight or block light |
 | Hypocaustum | Generates from the difference in temperature between opposite faces |
 | Experientia | Generates from experience poured into it |
 | Spoliarium | Generates from the health of creatures that stand on it |
