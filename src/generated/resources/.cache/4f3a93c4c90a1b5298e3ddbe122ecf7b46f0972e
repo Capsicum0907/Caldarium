@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-19T06:50:51.4010051	Block States: caldarium
+// 1.21.1	2026-09-19T07:00:50.0738372	Block States: caldarium
 6f505fdafbbb72f38e9882c318e1545704013d19 assets/caldarium/blockstates/bidental.json
 1e4a7c2572d5bc44933568c4f8e752d4ca131c8e assets/caldarium/blockstates/compressed_nether_star_burner.json
 e62dc434de298581851c82c87b89c371d9e11fda assets/caldarium/blockstates/compressed_nether_star_crucible.json
@@ -377,7 +377,7 @@ e78e770aed10d3bd706ec3fc3254f6f28c55887f assets/caldarium/models/item/compressed
 381e52daaa7c119c23e5a41bb7e84b130422887f assets/caldarium/models/item/compressed_nether_star_spoliarium.json
 ff4e04602afd143c752089708666187852aa8761 assets/caldarium/models/item/copper_battery.json
 61d2fac875b097dc3c0b77ea6f57d896760a2436 assets/caldarium/models/item/copper_burner.json
-698a8db3cf740ca25f3c52a153724d36bb12f606 assets/caldarium/models/item/copper_cable.json
+38fc215f33002664dd890a6e3686c4f6c740bf66 assets/caldarium/models/item/copper_cable.json
 f3423522cbdb214532c88283370e45a5f07c7f85 assets/caldarium/models/item/copper_charger.json
 2c7ca320169c28923970453bdebcc71f4ed78589 assets/caldarium/models/item/copper_crucible.json
 be6da7872a50031df629d1bab438a28b1f80dea1 assets/caldarium/models/item/copper_experientia.json
@@ -390,7 +390,7 @@ f256c7c32ec207ed746e0c700f611594ba9ae8bc assets/caldarium/models/item/copper_sol
 8bbbffb734b1133aa586ad1b59bdb15d8e954df4 assets/caldarium/models/item/copper_spoliarium.json
 2116fc202c9dbc597c28271d81879832fdce1ed9 assets/caldarium/models/item/diamond_battery.json
 43533b2c84b7b9ade2da9fdb80fa66aad581cf47 assets/caldarium/models/item/diamond_burner.json
-38ba92408608fc90c47fe61529eb0ea501c36e0b assets/caldarium/models/item/diamond_cable.json
+d36b86b1c56a86e9e507e235eb869710ea887f43 assets/caldarium/models/item/diamond_cable.json
 481e5d53f46d9008f7872be7662d3df053021701 assets/caldarium/models/item/diamond_charger.json
 8ab316d775c189f82a312845e947083ff0e0507f assets/caldarium/models/item/diamond_crucible.json
 aafaeacc369c63934bf0887c3a0ee8a291adc200 assets/caldarium/models/item/diamond_experientia.json
@@ -403,7 +403,7 @@ d20dfd1e9e7da40498cc9c1301030f806690b938 assets/caldarium/models/item/diamond_so
 d063622315aa86521120c1065c7867ddb6f80b9b assets/caldarium/models/item/diamond_spoliarium.json
 ee62415daf18b9ddb84e988b57a70ea5f5866def assets/caldarium/models/item/gold_battery.json
 9559124be09396d6cdb5c5d96b86e733b34cab7f assets/caldarium/models/item/gold_burner.json
-e217b3c09efda1d305ebc7b3c2cffa6f1ccf4c34 assets/caldarium/models/item/gold_cable.json
+43d8bb5d84bd5e1b8c186af229d9dcc2b858e7ab assets/caldarium/models/item/gold_cable.json
 7c5b0df645719de7032fb186f6b3956862795c5e assets/caldarium/models/item/gold_charger.json
 5de35fb3d54fab5517f8278c9a19c681aee6f7c7 assets/caldarium/models/item/gold_crucible.json
 0544d321ded7a281eec165b53dcca0c01f32ddea assets/caldarium/models/item/gold_experientia.json
@@ -416,7 +416,7 @@ ee3915f3c55a324cb4606987871bc2c1fa42b4f4 assets/caldarium/models/item/gold_solar
 e9d72f4258a9de77220f4bafca6f10d2cba6a7e3 assets/caldarium/models/item/gold_spoliarium.json
 a63df0f713e92e2c7893d59f8c9402e229b59c8d assets/caldarium/models/item/iron_battery.json
 2a0906b6b457b676a566050d3ea7df44e5d31f5f assets/caldarium/models/item/iron_burner.json
-f2df4f25d955d502ab90a5eb2a8f029475bd080f assets/caldarium/models/item/iron_cable.json
+e8e5fabcc2411bd81a8cb93e98abeb5c4bf725b0 assets/caldarium/models/item/iron_cable.json
 6735496dd7d5f1d95ca7ee7b80d5e8e145f6d888 assets/caldarium/models/item/iron_charger.json
 a1f7b5c6abb92f70daa84e4e672c909cba630fcb assets/caldarium/models/item/iron_crucible.json
 3738862bc8dfd183a0db678fd267344793c488b4 assets/caldarium/models/item/iron_experientia.json
@@ -429,7 +429,7 @@ d5dc6c9102a16bcdd69c0b5f683c9db0e46f1496 assets/caldarium/models/item/iron_hypoc
 cfc3c2f2eb28b45fb047cba9e9b1548450efdf92 assets/caldarium/models/item/iron_spoliarium.json
 ae7d43ce412fd459c6fe6bf9a5c628e17e880e7d assets/caldarium/models/item/netherite_battery.json
 0ae67cf6ec35d9487fedbdb668f56eb61990b3d2 assets/caldarium/models/item/netherite_burner.json
-e97187f1f055446d1dc5ff9209ec183777a31e37 assets/caldarium/models/item/netherite_cable.json
+56ad66c09b994ad69b8946e6c69a2394c54715ac assets/caldarium/models/item/netherite_cable.json
 092468541e6c9b9826d140e29c28763237ce53b0 assets/caldarium/models/item/netherite_charger.json
 1ab1759ac0a7e84f0b0cde40a68ce434d917a7ad assets/caldarium/models/item/netherite_crucible.json
 1aa3d9511ecbb3eb0a5a64d2de8081717fcde957 assets/caldarium/models/item/netherite_experientia.json
@@ -442,7 +442,7 @@ fdf25f83c4e5c9b27394aadccb0d4ec2a26d4535 assets/caldarium/models/item/netherite_
 39d2af3f5c292bf3d6d03eb85eb85b3ac7841701 assets/caldarium/models/item/netherite_spoliarium.json
 784cb78a28e604bf116b09b6fb2e8b3c3fd5d3c7 assets/caldarium/models/item/nether_star_battery.json
 5a3a7b5ca7a20efd4bfc1ac1a91e62cab0e681b6 assets/caldarium/models/item/nether_star_burner.json
-539e18d2e48cc2db2755b4115d5adf337c651386 assets/caldarium/models/item/nether_star_cable.json
+23faa4ca841ebdb0a23be0897cbf823169e26d91 assets/caldarium/models/item/nether_star_cable.json
 537c38707985152ed7ad28c7a7115ce55716c5cd assets/caldarium/models/item/nether_star_charger.json
 12509e1ec9ecd34932037db458e287934dedbf87 assets/caldarium/models/item/nether_star_crucible.json
 0807891720fc7e274def184eaa93e38b77e28466 assets/caldarium/models/item/nether_star_experientia.json

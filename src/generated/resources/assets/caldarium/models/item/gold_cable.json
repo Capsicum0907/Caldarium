@@ -61,6 +61,35 @@
         9,
         16
       ]
+    },
+    {
+      "faces": {
+        "down": {
+          "texture": "#arm"
+        },
+        "east": {
+          "texture": "#arm"
+        },
+        "north": {
+          "texture": "#arm"
+        },
+        "up": {
+          "texture": "#arm"
+        },
+        "west": {
+          "texture": "#arm"
+        }
+      },
+      "from": [
+        7,
+        7,
+        0
+      ],
+      "to": [
+        9,
+        9,
+        7
+      ]
     }
   ],
   "textures": {

@@ -299,19 +299,21 @@ public final class CaldariumDataGen {
             held(kind, tier);
         }
 
-        /** What the block looks like in a hand: a door is a cable with a drill on the end. */
+        /** What the block looks like in a hand: a straight length, with a drill at one end for a door. */
         private void held(Kind kind, Tier tier) {
             var held = itemModels().getBuilder(Skins.kind(kind, tier))
                     .parent(models().getExistingFile(mcLoc("block/block")));
             ResourceLocation metal = modLoc("block/" + Skins.arm(tier));
             box(held, "middle", metal, Skins.middleBox(kind.core()));
             box(held, "arm", metal, Skins.armBox(Direction.SOUTH), Direction.NORTH);
-            if (kind.door()) {
-                ResourceLocation steps = modLoc("block/" + Skins.drill(tier));
-                for (int step = 0; step < Skins.DRILL_STEPS; step++) {
-                    box(held, "drill", steps,
-                            Skins.drillBox(Direction.NORTH, step, kind.mouth()));
-                }
+            if (!kind.door()) {
+                box(held, "arm", metal, Skins.armBox(Direction.NORTH), Direction.SOUTH);
+                return;
+            }
+            ResourceLocation steps = modLoc("block/" + Skins.drill(tier));
+            for (int step = 0; step < Skins.DRILL_STEPS; step++) {
+                box(held, "drill", steps,
+                        Skins.drillBox(Direction.NORTH, step, kind.mouth()));
             }
         }
 
