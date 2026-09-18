@@ -1,31 +1,42 @@
 # Caldarium
 
-Forge Energy: something that makes it, something that keeps it.
+English | [日本語](README.ja.md)
+
+Forge Energy: something that makes it, something that keeps it, and something that
+carries it.
 
 *Caldarium* is the hot room of a Roman bath — the one the fire under the
 floor keeps warm.
 
-> **Status: it makes energy and moves it.** A burner and an iron battery, watched
-> working in a running game on 2026-08-30 — the burner runs, the batteries fill and
-> level off against each other, a hopper feeds it and does not empty it, and the
-> level shows in a tooltip. Both blocks open a screen — a bar for the charge, a
-> flame for the fuel, and the exact figures on hover — watched working the same day.
->
-> **The line carries, and it carries across the boundary.** Watched working on
-> 2026-08-31. Between this mod's own blocks first: a burner, an importer, three
-> cables, an exporter and a netherite battery — the burner holds nothing because what
-> it makes leaves the same tick, each cable holds one tick of it in transit, and the
-> battery climbed from nothing to 200.36 kFE. Then across it, with two other mods: an
-> importer held a Generator Galore netherite generator at nothing while a diamond
-> battery of ours climbed to 151.04 kFE, and an exporter filled an Acervus energy
-> heap. Every block in the line had grown an arm towards the next, and the doors had
-> grown one towards the other mod as well.
->
-> **And the refusal holds, which is the claim the whole boundary is drawn for.**
-> Watched the same day: a cable laid straight against a Generator Galore generator
-> shows no arm and takes nothing from it, an importer between the two carries it
-> again, and a burner of ours against the same cable feeds it as it always did. The
-> line is closed to other mods in both directions and open to this one throughout.
+> **Status: in development, and private.** Every block below is in the game. What
+> has been watched working in a running game, and what has not yet, is in
+> [Status](docs/status.md).
+
+## What is in it
+
+| | |
+|---|---|
+| **Generators** | Nine, each drawing on something different — see below |
+| **Battery** | Keeps energy. Four times what a burner of the same tier holds |
+| **Charger** | Puts energy into what is in its slots |
+| **Cable, importer, exporter** | Carry energy between this mod's blocks. Only an importer or an exporter reaches into another mod's |
+| **Sol** | An artificial sun. It makes no energy itself |
+
+| Generator | Draws on |
+|---|---|
+| Burner | Anything a furnace burns |
+| Crucible | The same fuels, molten, in a tank |
+| Solar panel | Daylight |
+| Lucernarium | Lamplight |
+| Hypocaustum | A difference in heat between opposite faces |
+| Experientia | Experience, poured in from its screen |
+| Spoliarium | The life of whatever stands on it |
+| Palus | Being hit |
+| Bidental | Lightning |
+
+**Everything that has a size comes in tiers**: copper, iron, gold, diamond, netherite
+and nether star, and above those two compressed tiers that only generators reach.
+Bidental is the one generator with no tiers.
 
 ## Target
 
@@ -39,12 +50,9 @@ floor keeps warm.
 
 ## Design
 
-A generator that turns fuel into Forge Energy, a battery that keeps it, and a
-charger that puts it into the things you carry.
-
-They ship together because a battery on its own has nothing to fill it. Everything
-else in this set is one thing; this is one thing that needs more than one block to
-be a thing at all.
+A generator on its own has nowhere to put what it makes, and a battery on its own has
+nothing to fill it. Everything else in this set is one thing; this is one thing that
+needs more than one block to be a thing at all.
 
 The design is in `docs/`, a file to a subject:
 
@@ -53,6 +61,8 @@ The design is in `docs/`, a file to a subject:
 | [Types, tiers and the ladder](docs/tables.md) | What the tables hold, how far a row climbs, and where the numbers come from |
 | [How energy moves](docs/energy.md) | No network, the one asymmetry in pushing, the boundary, and what it measured |
 | [Config](docs/config.md) | Every setting, and why the file itself carries no prose |
+| [Status](docs/status.md) | What has been watched working in a running game, and when |
+| [Ideas](docs/ideas.md) | Not built, and kept so they are not lost |
 
 ## Build
 
@@ -60,7 +70,7 @@ The design is in `docs/`, a file to a subject:
 run.bat                   # compile and launch a dev client - double-clickable
 gradlew build             # produce the jar
 gradlew runGameTestServer # run every game test, headless, then exit
-gradlew runData           # regenerate models, recipes and language
+gradlew runData           # regenerate textures, models, recipes and language
 ```
 
 `JAVA_HOME` must point at a JDK 21, or `java` must be on `PATH`.
