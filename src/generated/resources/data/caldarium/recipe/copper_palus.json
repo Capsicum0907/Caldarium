@@ -6,7 +6,7 @@
       "item": "minecraft:copper_ingot"
     },
     "L": {
-      "item": "minecraft:oak_log"
+      "tag": "minecraft:logs"
     },
     "R": {
       "item": "minecraft:redstone"

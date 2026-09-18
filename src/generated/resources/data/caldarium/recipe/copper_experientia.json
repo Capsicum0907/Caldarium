@@ -8,13 +8,16 @@
     "C": {
       "item": "minecraft:copper_ingot"
     },
+    "G": {
+      "item": "minecraft:glass"
+    },
     "R": {
       "item": "minecraft:redstone"
     }
   },
   "pattern": [
-    "CCC",
-    "CBC",
+    "CGC",
+    "GBG",
     "CRC"
   ],
   "result": {

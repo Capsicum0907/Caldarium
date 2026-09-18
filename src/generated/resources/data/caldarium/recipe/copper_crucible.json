@@ -10,11 +10,14 @@
     },
     "R": {
       "item": "minecraft:redstone"
+    },
+    "T": {
+      "item": "minecraft:terracotta"
     }
   },
   "pattern": [
     "III",
-    "ICI",
+    "TCT",
     "IRI"
   ],
   "result": {

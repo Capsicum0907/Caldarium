@@ -5,6 +5,9 @@
     "C": {
       "item": "minecraft:copper_ingot"
     },
+    "K": {
+      "item": "minecraft:blackstone"
+    },
     "R": {
       "item": "minecraft:redstone"
     },
@@ -14,8 +17,8 @@
   },
   "pattern": [
     "CCC",
-    "CSC",
-    "CRC"
+    "KSK",
+    "KRK"
   ],
   "result": {
     "count": 1,

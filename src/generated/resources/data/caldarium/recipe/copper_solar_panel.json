@@ -2,6 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "redstone",
   "key": {
+    "D": {
+      "item": "minecraft:daylight_detector"
+    },
     "G": {
       "item": "minecraft:glass"
     },
@@ -14,7 +17,7 @@
   },
   "pattern": [
     "GGG",
-    "RRR",
+    "RDR",
     "III"
   ],
   "result": {

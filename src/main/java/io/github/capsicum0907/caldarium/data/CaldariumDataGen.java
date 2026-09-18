@@ -37,6 +37,7 @@ import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -595,44 +596,49 @@ public final class CaldariumDataGen {
                             .unlockedBy("has_furnace", has(Blocks.FURNACE));
                     case FLUID -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("III")
-                            .pattern("ICI")
+                            .pattern("TCT")
                             .pattern("IRI")
                             .define('I', own)
+                            .define('T', Blocks.TERRACOTTA)
                             .define('C', Blocks.CAULDRON)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_cauldron", has(Blocks.CAULDRON));
                     case SUN -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("GGG")
-                            .pattern("RRR")
+                            .pattern("RDR")
                             .pattern("III")
                             .define('G', Blocks.GLASS)
                             .define('R', Items.REDSTONE)
+                            .define('D', Blocks.DAYLIGHT_DETECTOR)
                             .define('I', own)
-                            .unlockedBy("has_glass", has(Blocks.GLASS));
+                            .unlockedBy("has_daylight_detector", has(Blocks.DAYLIGHT_DETECTOR));
                     case EXPERIENCE -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
-                            .pattern("CCC")
-                            .pattern("CBC")
+                            .pattern("CGC")
+                            .pattern("GBG")
                             .pattern("CRC")
                             .define('C', own)
+                            .define('G', Blocks.GLASS)
                             .define('B', Blocks.BOOKSHELF)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_bookshelf", has(Blocks.BOOKSHELF));
                     case LIFE -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("CCC")
-                            .pattern("CSC")
-                            .pattern("CRC")
+                            .pattern("KSK")
+                            .pattern("KRK")
                             .define('C', own)
+                            .define('K', Blocks.BLACKSTONE)
                             .define('S', Blocks.SOUL_SAND)
                             .define('R', Items.REDSTONE)
                             .unlockedBy("has_soul_sand", has(Blocks.SOUL_SAND));
                     case LAMP -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("GGG")
-                            .pattern("RRR")
+                            .pattern("LRL")
                             .pattern("CCC")
                             .define('G', Blocks.GLASS)
+                            .define('L', Items.GLOWSTONE_DUST)
                             .define('R', Items.REDSTONE)
                             .define('C', own)
-                            .unlockedBy("has_redstone", has(Items.REDSTONE));
+                            .unlockedBy("has_glowstone_dust", has(Items.GLOWSTONE_DUST));
                     // ⚠ A first pass and known to be one. What this must not be is the
                     // answer to "what do I power the early game with" - a strike is
                     // worth more than anything else here makes in a minute, so the way
@@ -650,9 +656,9 @@ public final class CaldariumDataGen {
                             .pattern("CLC")
                             .pattern("CRC")
                             .define('C', own)
-                            .define('L', Blocks.OAK_LOG)
+                            .define('L', ItemTags.LOGS)
                             .define('R', Items.REDSTONE)
-                            .unlockedBy("has_redstone", has(Items.REDSTONE));
+                            .unlockedBy("has_log", has(ItemTags.LOGS));
                     case HEAT -> ShapedRecipeBuilder.shaped(RecipeCategory.REDSTONE, block)
                             .pattern("IBI")
                             .pattern("BRB")

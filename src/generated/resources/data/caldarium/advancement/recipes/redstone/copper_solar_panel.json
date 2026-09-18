@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_glass": {
+    "has_daylight_detector": {
       "conditions": {
         "items": [
           {
-            "items": "minecraft:glass"
+            "items": "minecraft:daylight_detector"
           }
         ]
       },
@@ -21,7 +21,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_glass"
+      "has_daylight_detector"
     ]
   ],
   "rewards": {
