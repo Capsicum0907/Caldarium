@@ -206,7 +206,7 @@ public final class CaldariumConfig {
         SOL_GLOW_SPACING = builder.defineInRange("glowSpacing", 7, 1, 64);
         SOL_PULSE_LENGTH = builder.defineInRange("pulseLength", 40, 0, 72_000);
         SOL_BLAST_DAMAGE = builder.defineInRange("blastDamage", 1_000.0, 0.0, 1_000_000.0);
-        SOL_SIZE = builder.defineInRange("size", 4.0, 0.5, 64.0);
+        SOL_SIZE = builder.defineInRange("size", 64.0, 0.5, 64.0);
         builder.pop();
 
         builder.push("storm");
