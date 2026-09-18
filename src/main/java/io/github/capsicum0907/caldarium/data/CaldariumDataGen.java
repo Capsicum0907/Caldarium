@@ -486,10 +486,10 @@ public final class CaldariumDataGen {
             add(Tooltips.key("label.sends"), "Transfers");
             add(Tooltips.key("unit.rate"), "FE/t");
             add(Tooltips.key("unit.stored"), "FE");
-            add(Tooltips.key("unit.point"), "FE per point of experience");
-            add(Tooltips.key("unit.health"), "FE per point of health");
-            add(Tooltips.key("unit.damage"), "FE per point of damage");
-            add(Tooltips.key("unit.strike"), "FE per strike");
+            add(Tooltips.key("unit.point"), "FE/exp");
+            add(Tooltips.key("unit.health"), "FE/health");
+            add(Tooltips.key("unit.damage"), "FE/damage");
+            add(Tooltips.key("unit.strike"), "FE/strike");
             add("death.attack.caldarium.spoliarium", "%1$s was carried out of the arena");
         }
     }
@@ -526,10 +526,10 @@ public final class CaldariumDataGen {
             add(Tooltips.key("label.sends"), "送電量");
             add(Tooltips.key("unit.rate"), "FE/t");
             add(Tooltips.key("unit.stored"), "FE");
-            add(Tooltips.key("unit.point"), "FE / 経験値1ポイント");
-            add(Tooltips.key("unit.health"), "FE / 体力1");
-            add(Tooltips.key("unit.damage"), "FE / 1ダメージ");
-            add(Tooltips.key("unit.strike"), "FE / 落雷1回");
+            add(Tooltips.key("unit.point"), "FE/経験値");
+            add(Tooltips.key("unit.health"), "FE/体力");
+            add(Tooltips.key("unit.damage"), "FE/ダメージ");
+            add(Tooltips.key("unit.strike"), "FE/一撃");
             add("death.attack.caldarium.spoliarium", "%1$sは闘技場から運び出された");
         }
 

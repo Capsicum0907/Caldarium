@@ -108,10 +108,10 @@
   "tooltip.caldarium.label.holds": "Stores",
   "tooltip.caldarium.label.makes": "Generates",
   "tooltip.caldarium.label.sends": "Transfers",
-  "tooltip.caldarium.unit.damage": "FE per point of damage",
-  "tooltip.caldarium.unit.health": "FE per point of health",
-  "tooltip.caldarium.unit.point": "FE per point of experience",
+  "tooltip.caldarium.unit.damage": "FE/damage",
+  "tooltip.caldarium.unit.health": "FE/health",
+  "tooltip.caldarium.unit.point": "FE/exp",
   "tooltip.caldarium.unit.rate": "FE/t",
   "tooltip.caldarium.unit.stored": "FE",
-  "tooltip.caldarium.unit.strike": "FE per strike"
+  "tooltip.caldarium.unit.strike": "FE/strike"
 }
