@@ -222,8 +222,8 @@ Cables, importers and exporters share these values.
   overlap a creature.
 - Solar panels and lucernaria within 14 blocks of its surface generate at their full rate,
   day and night. It lights the ground within the same distance.
-- It lasts 30 in-game days. Rain and snow wear it down five times as fast. It shrinks as it
-  wears down.
+- It lasts 30 in-game days (720,000 ticks). Rain and snow wear it down five times as fast.
+  It shrinks as it wears down.
 - Touching it deals heavy damage, and standing within 1 block of its surface sets you on
   fire.
 - Anything living within 14 blocks of its surface, players included, takes 5 damage every
