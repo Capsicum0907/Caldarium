@@ -33,6 +33,7 @@ public final class CaldariumConfig {
      * only ever the starting point of a file the player then owns.
      */
     private static final int FIRST_TRANSFER = 4_096;
+    private static final int BATTERY_BURNERS = 4;
 
     /** What the first tier of each kind is worth. Every tier above is derived. */
     private record First(int capacity, int transfer) {
@@ -53,9 +54,9 @@ public final class CaldariumConfig {
         return switch (kind) {
             // A battery is capacity; a charger is a doorway, so it is quicker and
             // holds only enough to keep working while it waits for more.
-            case BATTERY -> new First(128_000, FIRST_TRANSFER);
+            case BATTERY -> new First((int) Math.min(Integer.MAX_VALUE,
+                    (long) Generator.BURNER.capacity() * BATTERY_BURNERS), FIRST_TRANSFER);
             case CHARGER -> new First(16_000, FIRST_TRANSFER);
-            // Four times what a battery moves, and a fiftieth of what one holds.
             case CABLE, IMPORTER, EXPORTER -> new First(FIRST_TRANSFER * 2, FIRST_TRANSFER);
         };
     }
