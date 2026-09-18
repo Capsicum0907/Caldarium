@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/iron_hypocaustum_on"
+    "bottom": "caldarium:block/iron_hypocaustum_bottom",
+    "side": "caldarium:block/iron_hypocaustum_side_on",
+    "top": "caldarium:block/iron_hypocaustum_top_on"
   }
 }

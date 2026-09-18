@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/netherite_burner_on"
+    "bottom": "caldarium:block/netherite_burner_bottom",
+    "side": "caldarium:block/netherite_burner_side_on",
+    "top": "caldarium:block/netherite_burner_top_on"
   }
 }

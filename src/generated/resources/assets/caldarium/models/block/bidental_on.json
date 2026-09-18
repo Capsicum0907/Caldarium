@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/bidental_on"
+    "bottom": "caldarium:block/bidental_bottom",
+    "side": "caldarium:block/bidental_side_on",
+    "top": "caldarium:block/bidental_top_on"
   }
 }

@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/netherite_experientia"
+    "bottom": "caldarium:block/netherite_experientia_bottom",
+    "side": "caldarium:block/netherite_experientia_side",
+    "top": "caldarium:block/netherite_experientia_top"
   }
 }

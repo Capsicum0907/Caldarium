@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/iron_experientia_on"
+    "bottom": "caldarium:block/iron_experientia_bottom",
+    "side": "caldarium:block/iron_experientia_side_on",
+    "top": "caldarium:block/iron_experientia_top_on"
   }
 }

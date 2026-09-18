@@ -151,18 +151,13 @@ public final class CaldariumDataGen {
             draw(output, writing, Skins.solSkin(0.0F), Skins.SOL);
             draw(output, writing, Skins.litSkin(), Skins.SOL_LIT);
             for (Generator.Made made : Generator.made()) {
-                if (made.source().flat()) {
-                    for (boolean lit : new boolean[] { false, true }) {
-                        draw(output, writing, Skins.solarSkin(made.tier(), lit),
-                                Skins.generatorTop(made, lit));
+                for (Skins.Face face : Skins.faces(made)) {
+                    draw(output, writing, Skins.generatorSkin(made, face, false),
+                            Skins.generator(made, face, false));
+                    if (Skins.lights(made, face)) {
+                        draw(output, writing, Skins.generatorSkin(made, face, true),
+                                Skins.generator(made, face, true));
                     }
-                    draw(output, writing, Skins.plainSkin(made.tier()),
-                            Skins.generatorSide(made));
-                    continue;
-                }
-                for (boolean lit : new boolean[] { false, true }) {
-                    draw(output, writing, Skins.generatorSkin(made, lit),
-                            Skins.generator(made, lit));
                 }
             }
             for (Kind kind : Kind.values()) {
@@ -221,13 +216,10 @@ public final class CaldariumDataGen {
         @Override
         protected void registerStatesAndModels() {
             for (Generator.Made made : Generator.made()) {
-                boolean flat = made.source().flat();
-                String cold = flat ? made.id() : Skins.generator(made, false);
-                String hot = flat ? made.id() + "_on" : Skins.generator(made, true);
-                ModelFile unlit = flat ? panel(made, cold, false)
-                        : models().cubeAll(cold, modLoc("block/" + cold));
-                ModelFile lit = flat ? panel(made, hot, true)
-                        : models().cubeAll(hot, modLoc("block/" + hot));
+                String cold = made.id();
+                String hot = made.id() + "_on";
+                ModelFile unlit = machine(made, cold, false);
+                ModelFile lit = machine(made, hot, true);
                 getVariantBuilder(CaldariumRegistry.generators().get(made).get())
                         .forAllStates(state -> ConfiguredModel.builder()
                                 .modelFile(state.getValue(GeneratorBlock.LIT) ? lit : unlit)
@@ -408,9 +400,19 @@ public final class CaldariumDataGen {
          * texture, so what is seen is the top few pixels of a sheet of metal rather
          * than a squashed copy of the whole of it.
          */
+        private ModelFile machine(Generator.Made made, String name, boolean lit) {
+            if (made.source().flat()) {
+                return panel(made, name, lit);
+            }
+            return models().cubeBottomTop(name,
+                    modLoc("block/" + Skins.generator(made, Skins.Face.SIDE, lit)),
+                    modLoc("block/" + Skins.generator(made, Skins.Face.BOTTOM, lit)),
+                    modLoc("block/" + Skins.generator(made, Skins.Face.TOP, lit)));
+        }
+
         private ModelFile panel(Generator.Made made, String name, boolean lit) {
-            String top = Skins.generatorTop(made, lit);
-            String side = Skins.generatorSide(made);
+            String top = Skins.generator(made, Skins.Face.TOP, lit);
+            String side = Skins.generator(made, Skins.Face.SIDE, lit);
             int tall = Skins.PANEL_HEIGHT;
             // ⚠ block/block, for its display transforms and nothing else. Without a
             // parent a model carries none, and the game drew this one square on to

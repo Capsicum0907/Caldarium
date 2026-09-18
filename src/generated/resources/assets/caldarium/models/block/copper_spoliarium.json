@@ -1,6 +1,8 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "all": "caldarium:block/copper_spoliarium"
+    "bottom": "caldarium:block/copper_spoliarium_bottom",
+    "side": "caldarium:block/copper_spoliarium_side",
+    "top": "caldarium:block/copper_spoliarium_top"
   }
 }

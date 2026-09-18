@@ -2,6 +2,7 @@ package io.github.capsicum0907.caldarium.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import io.github.capsicum0907.caldarium.SolPalette;
 import io.github.capsicum0907.caldarium.Generator;
@@ -19,10 +20,6 @@ import net.minecraft.util.Mth;
  * routine is a colour that has to be found again to change, so the constants below
  * are the one place the mod says what it looks like, and everything underneath takes
  * them as arguments.
- *
- * <p>A picture is a plate of metal with a window in it. What the window shows is the
- * only difference between the blocks, which is the point: they are one machine seen
- * doing two jobs.
  */
 public final class Skins {
     public static final int SIZE = 16;
@@ -31,7 +28,6 @@ public final class Skins {
     private static final int EDGE = 0x51565A;
     private static final int RIVET = 0xA8AEB3;
 
-    private static final int MOUTH_COLD = 0x2B2724;
     private static final int MOUTH_LIT = 0xFF9A2E;
     private static final int EMBER = 0xC8461B;
 
@@ -56,6 +52,8 @@ public final class Skins {
      */
     private static final int CELL_RESTING = 0x24405E;
     private static final int CELL_WORKING = 0x3A8CD4;
+    private static final int LAMP_CELL_RESTING = 0x4A3418;
+    private static final int LAMP_CELL_WORKING = 0xE0A040;
 
     /**
      * ⚠ Lines, not grain. Measured off the reference rather than guessed at: the
@@ -304,19 +302,23 @@ public final class Skins {
         return ring < drillAt(1) ? EDGE_LIT : 0;
     }
 
-    /** The name of the texture for a generator, resting or working. */
-    public static String generator(Generator.Made made, boolean lit) {
-        return lit ? made.id() + "_on" : made.id();
+    public enum Face {
+        TOP, SIDE, BOTTOM;
+
+        private final String id = name().toLowerCase(Locale.ROOT);
     }
 
-    /** The face a panel points at the sky. */
-    public static String generatorTop(Generator.Made made, boolean lit) {
-        return lit ? made.id() + "_top_on" : made.id() + "_top";
+    public static List<Face> faces(Generator.Made made) {
+        return made.source().flat() ? List.of(Face.TOP, Face.SIDE) : List.of(Face.values());
     }
 
-    /** Its edge and its underside, which are the same plain metal. */
-    public static String generatorSide(Generator.Made made) {
-        return made.id() + "_side";
+    public static boolean lights(Generator.Made made, Face face) {
+        return face == Face.TOP || face == Face.SIDE && !made.source().flat();
+    }
+
+    public static String generator(Generator.Made made, Face face, boolean lit) {
+        String name = made.id() + "_" + face.id;
+        return lit && lights(made, face) ? name + "_on" : name;
     }
 
     public static String kind(Kind kind, Tier tier) {
@@ -333,13 +335,11 @@ public final class Skins {
         names.add(SOL);
         names.add(SOL_LIT);
         for (Generator.Made made : Generator.made()) {
-            if (made.source().flat()) {
-                names.add(generatorTop(made, false));
-                names.add(generatorTop(made, true));
-                names.add(generatorSide(made));
-            } else {
-                names.add(generator(made, false));
-                names.add(generator(made, true));
+            for (Face face : faces(made)) {
+                names.add(generator(made, face, false));
+                if (lights(made, face)) {
+                    names.add(generator(made, face, true));
+                }
             }
         }
         for (Kind kind : Kind.values()) {
@@ -357,25 +357,377 @@ public final class Skins {
         return names;
     }
 
-    /**
-     * The same plate for every generator that is a box, and the window says what it
-     * draws on: a mouth to feed, or a pool to fill. What is flat has its own face.
-     */
-    public static int[][] generatorSkin(Generator.Made made, boolean lit) {
-        int[][] pixels = plate();
-        int span = WINDOW_TO - WINDOW_FROM - 1;
-        for (int y = WINDOW_FROM; y < WINDOW_TO; y++) {
-            for (int x = WINDOW_FROM; x < WINDOW_TO; x++) {
-                float down = (y - WINDOW_FROM) / (float) span;
-                // A fire is brightest at its base, so the mouth is graded rather than
-                // filled: a flat orange square reads as a sticker on the front. A pool
-                // is the other way up, because its light is at the surface.
-                pixels[y][x] = 0xFF000000 | (made.source() == Source.ITEM
-                        ? (lit ? mix(EMBER, MOUTH_LIT, down) : MOUTH_COLD)
-                        : (lit ? mix(MOUTH_LIT, EMBER, down) : MOLTEN_COLD));
+    public static int[][] generatorSkin(Generator.Made made, Face face, boolean lit) {
+        if (made.source().flat()) {
+            return face == Face.TOP ? solarSkin(made.source(), made.tier(), lit) : plainSkin(made.tier());
+        }
+        Tier tier = made.tier() == null ? UNTIERED_METAL : made.tier();
+        return switch (made.source()) {
+            case ITEM -> burner(tier, face, lit);
+            case FLUID -> crucible(tier, face, lit);
+            case HEAT -> hypocaustum(tier, face, lit);
+            case EXPERIENCE -> experientia(tier, face, lit);
+            case LIFE -> spoliarium(tier, face, lit);
+            case BLOW -> palus(tier, face, lit);
+            case STORM -> bidental(tier, face, lit);
+            case SUN, LAMP -> throw new IllegalStateException(made.id() + " is flat");
+        };
+    }
+
+    private static final Tier UNTIERED_METAL = Tier.COPPER;
+
+    private static final int SHINE = 0xFFFFFF;
+    private static final int PATINA = 0x4FA88A;
+    private static final int CAVITY = 0x1A1614;
+    private static final int ASH = 0x3A3532;
+    private static final int FIRE_CORE = 0xFFE08A;
+    private static final int CRUST = 0x5A5560;
+
+    private static final int BRICK = 0x94492F;
+    private static final int BRICK_DARK = 0x7A3A25;
+    private static final int MORTAR = 0x6B625A;
+    private static final int TILE = 0x9A8E80;
+    private static final int GROUT = 0x5E564E;
+    private static final int CLAY = 0xA86A45;
+    private static final int CLAY_DARK = 0x8A5436;
+    private static final int OAK = 0x9C7447;
+    private static final int OAK_DARK = 0x7A5832;
+    private static final int OAK_END = 0xB48C5C;
+    private static final int OAK_RING = 0x7E5E38;
+    private static final int OAK_DENT = 0x5E4226;
+    private static final int SPLINTER = 0xF0E2B8;
+    private static final int STONE = 0x7D7D7A;
+    private static final int STONE_DARK = 0x6A6A67;
+    private static final int STONE_SEAM = 0x4E4E4C;
+    private static final int SCORCH = 0x33302E;
+    private static final int BLACKSTONE = 0x2F2A31;
+    private static final int BLACKSTONE_LIGHT = 0x3B353E;
+    private static final int BLACKSTONE_SEAM = 0x1A171C;
+    private static final int GLASS = 0x1C2A24;
+    private static final int GLASS_SHINE = 0x5A7A70;
+    private static final int XP_COLD = 0x3A5222;
+    private static final int XP_DEEP = 0x1E3012;
+    private static final int XP_LIT = 0x9CF03A;
+    private static final int XP_BUBBLE = 0xEAFFB8;
+    private static final int BLOOD_COLD = 0x3A1418;
+    private static final int BLOOD_LIT = 0xD01830;
+    private static final int BOLT_LIT = 0xE4F8FF;
+    private static final int BOLT_GLOW = 0x5AB8FF;
+
+    private static final float METAL_MID = 0.78F;
+    private static final float METAL_DARK = 0.55F;
+    private static final float METAL_DEEP = 0.35F;
+    private static final int BEVEL_LIT = 22;
+    private static final int BEVEL_DARK = 30;
+
+    private static final int PATINA_SHARE = 14;
+    private static final float PATINA_DEPTH = 0.7F;
+    private static final int BRUSH = 7;
+    private static final int BRUSH_LENGTH = 5;
+    private static final int POLISH_EVERY = 9;
+    private static final int FACET = 4;
+    private static final int SPARKLE_SHARE = 4;
+    private static final int STREAK_LENGTH = 4;
+    private static final int STREAK_EVERY = 7;
+    private static final int GLEAM_PER_RUNG = 3;
+
+    private static final int FLICKER = 18;
+    private static final int CRACKS = 6;
+    private static final float CLAY_HEAT = 0.25F;
+    private static final int SCORCH_SHARE = 22;
+    private static final int XP_LEVEL = 6;
+    private static final int BUBBLES = 10;
+
+    private enum Finish { PATINA, BRUSHED, POLISHED, FACETED, DARK, GLEAM }
+
+    private static Finish finish(Tier tier) {
+        return switch (tier) {
+            case COPPER -> Finish.PATINA;
+            case IRON -> Finish.BRUSHED;
+            case GOLD -> Finish.POLISHED;
+            case DIAMOND -> Finish.FACETED;
+            case NETHERITE -> Finish.DARK;
+            case NETHER_STAR, COMPRESSED_NETHER_STAR, SUPER_COMPRESSED_NETHER_STAR -> Finish.GLEAM;
+        };
+    }
+
+    private static int metal(Tier tier, int x, int y) {
+        int light = tier.colour();
+        int mid = scale(light, METAL_MID);
+        int dark = scale(light, METAL_DARK);
+        int roll = hash(x, y) % 100;
+        return switch (finish(tier)) {
+            case PATINA -> roll < PATINA_SHARE ? mix(mid, PATINA, PATINA_DEPTH) : grain(mid, x, y);
+            case BRUSHED -> shift(mid, hash(y, x / BRUSH_LENGTH) % (2 * BRUSH + 1) - BRUSH);
+            case POLISHED -> {
+                int band = Math.floorMod(x + y, POLISH_EVERY);
+                yield band < 2 ? light : band == 2 ? mix(light, mid, 0.5F) : mid;
+            }
+            case FACETED -> roll < SPARKLE_SHARE ? SHINE
+                    : Math.floorMod(x, FACET) > Math.floorMod(y, FACET) ? mix(light, mid, 0.4F) : mid;
+            case DARK -> hash(y, x / STREAK_LENGTH) % STREAK_EVERY == 0 ? mid : dark;
+            case GLEAM -> {
+                int gleams = (tier.ordinal() - Tier.NETHER_STAR.ordinal() + 1) * GLEAM_PER_RUNG;
+                yield roll < gleams ? SHINE : roll < 2 * gleams ? mix(light, SHINE, 0.4F) : mid;
+            }
+        };
+    }
+
+    @FunctionalInterface
+    private interface Paint {
+        int at(int x, int y);
+    }
+
+    private static void paint(int[][] pixels, int left, int top, int right, int bottom, Paint paint) {
+        for (int y = top; y <= bottom; y++) {
+            for (int x = left; x <= right; x++) {
+                pixels[y][x] = 0xFF000000 | paint.at(x, y);
+            }
+        }
+    }
+
+    private static void plated(int[][] pixels, Tier tier, int left, int top, int right, int bottom) {
+        paint(pixels, left, top, right, bottom, (x, y) -> {
+            int colour = metal(tier, x, y);
+            if (y == top || x == left) {
+                return shift(colour, BEVEL_LIT);
+            }
+            return y == bottom || x == right ? shift(colour, -BEVEL_DARK) : colour;
+        });
+    }
+
+    private static void rivets(int[][] pixels, Tier tier) {
+        int stud = mix(tier.colour(), SHINE, 0.5F);
+        for (int y : new int[] { 2, SIZE - 3 }) {
+            for (int x : new int[] { 2, SIZE - 3 }) {
+                pixels[y][x] = 0xFF000000 | stud;
+            }
+        }
+    }
+
+    private static int fire(int x, int y, int top, int bottom) {
+        float down = (y - top) / (float) Math.max(1, bottom - top);
+        if (down > 0.5F && hash(x, y) % 100 < FLICKER) {
+            return FIRE_CORE;
+        }
+        return mix(EMBER, MOUTH_LIT, down);
+    }
+
+    private static int molten(int x, int y) {
+        int roll = hash(x, y) % 100;
+        return roll < FLICKER ? FIRE_CORE : mix(EMBER, MOUTH_LIT, roll / 100.0F);
+    }
+
+    private static int brick(int x, int y) {
+        int course = y / 3;
+        int along = x + (course % 2) * 4;
+        if (y % 3 == 2 || along % 8 == 7) {
+            return MORTAR;
+        }
+        return grain(hash(along / 8, course) % 3 == 0 ? BRICK_DARK : BRICK, x, y);
+    }
+
+    private static int blocks(int x, int y, int face, int shade, int seam) {
+        int course = y / 5;
+        int along = x + (course % 2) * 4;
+        if (y % 5 == 4 || along % 8 == 7) {
+            return seam;
+        }
+        return grain(hash(along / 8, course) % 3 == 0 ? shade : face, x, y);
+    }
+
+    private static int stone(int x, int y) {
+        return blocks(x, y, STONE, STONE_DARK, STONE_SEAM);
+    }
+
+    private static int blackstone(int x, int y) {
+        return blocks(x, y, BLACKSTONE, BLACKSTONE_LIGHT, BLACKSTONE_SEAM);
+    }
+
+    private static int clay(int x, int y) {
+        return grain(hash(x / 2, y / 2) % 5 == 0 ? CLAY_DARK : CLAY, x, y);
+    }
+
+    private static int oak(int x, int y) {
+        return x % 4 == (hash(x / 4, y / 6) % 2) ? OAK_DARK : grain(OAK, x, y);
+    }
+
+    private static int endGrain(int x, int y) {
+        float middle = (SIZE - 1) / 2.0F;
+        int ring = (int) Math.hypot(x - middle, y - middle);
+        return ring % 3 == 0 ? OAK_RING : grain(OAK_END, x, y);
+    }
+
+    private static int[][] burner(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        plated(pixels, tier, 0, 0, 15, 15);
+        int slot = scale(tier.colour(), METAL_DEEP);
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 3, 2, 12, 2, (x, y) -> slot);
+                paint(pixels, 3, 4, 12, 4, (x, y) -> slot);
+                plated(pixels, tier, 2, 6, 13, 14);
+                paint(pixels, 3, 7, 12, 13, (x, y) -> x % 3 == 2 ? scale(tier.colour(), METAL_DARK)
+                        : lit ? fire(x, y, 7, 13) : y == 13 ? ASH : CAVITY);
+            }
+            case TOP -> {
+                plated(pixels, tier, 4, 4, 11, 11);
+                paint(pixels, 6, 6, 9, 9, (x, y) -> lit ? fire(x, y, 6, 9) : CAVITY);
+            }
+            case BOTTOM -> rivets(pixels, tier);
+        }
+        return pixels;
+    }
+
+    private static int[][] crucible(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 0, 0, 15, 15, (x, y) -> {
+                    int body = lit ? mix(clay(x, y), EMBER, CLAY_HEAT) : clay(x, y);
+                    return lit && y > 3 && y < 12 && hash(x, y) % 100 < CRACKS ? MOUTH_LIT : body;
+                });
+                plated(pixels, tier, 0, 1, 15, 3);
+                plated(pixels, tier, 0, 12, 15, 14);
+            }
+            case TOP -> {
+                plated(pixels, tier, 0, 0, 15, 15);
+                paint(pixels, 2, 2, 13, 13, Skins::clay);
+                paint(pixels, 3, 3, 12, 12, (x, y) -> lit ? molten(x, y)
+                        : hash(x, y) % 100 < FLICKER ? CRUST : MOLTEN_COLD);
+            }
+            case BOTTOM -> paint(pixels, 0, 0, 15, 15, Skins::clay);
+        }
+        return pixels;
+    }
+
+    private static int[][] hypocaustum(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 0, 0, 15, 8, Skins::brick);
+                plated(pixels, tier, 0, 9, 15, 10);
+                paint(pixels, 0, 11, 15, 15, (x, y) -> {
+                    boolean pila = x <= 2 || x >= 6 && x <= 9 || x >= 13;
+                    if (pila) {
+                        return y % 2 == 0 ? MORTAR : grain(BRICK, x, y);
+                    }
+                    return lit ? fire(x, y, 11, 15) : CAVITY;
+                });
+            }
+            case TOP -> paint(pixels, 0, 0, 15, 15, (x, y) -> x % 8 == 0 || y % 8 == 0
+                    ? (lit ? mix(GROUT, EMBER, 0.6F) : GROUT)
+                    : grain(hash(x / 8, y / 8) % 2 == 0 ? TILE : shift(TILE, -10), x, y));
+            case BOTTOM -> paint(pixels, 0, 0, 15, 15, Skins::brick);
+        }
+        return pixels;
+    }
+
+    private static int[][] experientia(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        plated(pixels, tier, 0, 0, 15, 15);
+        switch (face) {
+            case SIDE -> paint(pixels, 3, 2, 12, 13, (x, y) -> {
+                boolean shine = x - y == 4 || x - y == 5;
+                if (y < XP_LEVEL) {
+                    return shine ? GLASS_SHINE : GLASS;
+                }
+                float down = (y - XP_LEVEL) / (float) (13 - XP_LEVEL);
+                int liquid = lit
+                        ? (hash(x, y) % 100 < BUBBLES ? XP_BUBBLE : mix(XP_LIT, XP_COLD, down))
+                        : mix(XP_COLD, XP_DEEP, down);
+                return shine ? shift(liquid, 24) : liquid;
+            });
+            case TOP -> {
+                plated(pixels, tier, 3, 3, 12, 12);
+                paint(pixels, 5, 5, 10, 10, (x, y) -> scale(tier.colour(), METAL_DEEP));
+                paint(pixels, 7, 7, 8, 8, (x, y) -> lit ? XP_LIT : XP_COLD);
+            }
+            case BOTTOM -> rivets(pixels, tier);
+        }
+        return pixels;
+    }
+
+    private static int[][] spoliarium(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 0, 0, 15, 15, Skins::blackstone);
+                plated(pixels, tier, 0, 0, 15, 2);
+                paint(pixels, 7, 3, 8, 15, (x, y) -> lit
+                        ? (y % 3 == 0 ? shift(BLOOD_LIT, -40) : BLOOD_LIT) : BLOOD_COLD);
+            }
+            case TOP -> {
+                plated(pixels, tier, 0, 0, 15, 15);
+                paint(pixels, 2, 2, 13, 13, (x, y) -> (x - 2) % 3 == 2 || y == 7 || y == 8
+                        ? metal(tier, x, y)
+                        : lit ? BLOOD_LIT : BLACKSTONE_SEAM);
+            }
+            case BOTTOM -> paint(pixels, 0, 0, 15, 15, Skins::blackstone);
+        }
+        return pixels;
+    }
+
+    private static int[][] palus(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 0, 0, 15, 15, (x, y) -> y >= 5 && y <= 10 && x >= 3 && x <= 12
+                        && (x + y) % 6 == 0 ? (lit ? SPLINTER : OAK_DENT) : oak(x, y));
+                plated(pixels, tier, 0, 2, 15, 3);
+                plated(pixels, tier, 0, 12, 15, 13);
+            }
+            case TOP, BOTTOM -> {
+                plated(pixels, tier, 0, 0, 15, 15);
+                paint(pixels, 1, 1, 14, 14, Skins::endGrain);
             }
         }
         return pixels;
+    }
+
+    private static int[][] bidental(Tier tier, Face face, boolean lit) {
+        int[][] pixels = new int[SIZE][SIZE];
+        switch (face) {
+            case SIDE -> {
+                paint(pixels, 0, 0, 15, 15, (x, y) -> y < 8 && hash(x, y) % 100 < SCORCH_SHARE
+                        ? SCORCH : stone(x, y));
+                plated(pixels, tier, 0, 0, 15, 1);
+                for (int y = 2; y < SIZE; y++) {
+                    int at = 6 + (y / 2) % 3;
+                    pixels[y][at] = 0xFF000000 | (lit ? BOLT_LIT : SCORCH);
+                    if (lit) {
+                        pixels[y][at - 1] = 0xFF000000 | mix(stone(at - 1, y), BOLT_GLOW, 0.6F);
+                        pixels[y][at + 1] = 0xFF000000 | mix(stone(at + 1, y), BOLT_GLOW, 0.6F);
+                    }
+                }
+            }
+            case TOP -> {
+                paint(pixels, 0, 0, 15, 15, Skins::stone);
+                plated(pixels, tier, 7, 0, 8, 15);
+                plated(pixels, tier, 0, 7, 15, 8);
+                plated(pixels, tier, 5, 5, 10, 10);
+                if (lit) {
+                    paint(pixels, 7, 7, 8, 8, (x, y) -> BOLT_LIT);
+                    paint(pixels, 6, 6, 9, 6, (x, y) -> BOLT_GLOW);
+                    paint(pixels, 6, 9, 9, 9, (x, y) -> BOLT_GLOW);
+                }
+            }
+            case BOTTOM -> paint(pixels, 0, 0, 15, 15, Skins::stone);
+        }
+        return pixels;
+    }
+
+    private static int hash(int x, int y) {
+        int h = x * 73856093 ^ y * 19349663;
+        h ^= h >>> 13;
+        h *= 0x5BD1E995;
+        return (h ^ h >>> 15) & 0x7FFFFFFF;
+    }
+
+    private static int scale(int colour, float by) {
+        return Math.round(((colour >> 16) & 0xFF) * by) << 16
+                | Math.round(((colour >> 8) & 0xFF) * by) << 8
+                | Math.round((colour & 0xFF) * by);
     }
 
     /**
@@ -433,12 +785,15 @@ public final class Skins {
      * and each cell is lighter towards its top left - a flat blue square looks
      * painted on, while a sheen looks like something under glass.
      */
-    public static int[][] solarSkin(Tier tier, boolean lit) {
+    public static int[][] solarSkin(Source source, Tier tier, boolean lit) {
         int[][] pixels = new int[SIZE][SIZE];
         // ⭐ The glass is the same glass on every rung; what the rung changes is the
         // cast of it. Mixing towards the metal keeps one picture for all of them and
         // still tells them apart from above, which is the only side anybody sees.
-        int base = mix(lit ? CELL_WORKING : CELL_RESTING, tier.colour(), TIER_TINT);
+        int cell = source == Source.LAMP
+                ? (lit ? LAMP_CELL_WORKING : LAMP_CELL_RESTING)
+                : (lit ? CELL_WORKING : CELL_RESTING);
+        int base = mix(cell, tier.colour(), TIER_TINT);
         for (int y = 0; y < SIZE; y++) {
             for (int x = 0; x < SIZE; x++) {
                 int colour = x % LINE_EVERY == 0 ? shift(base, LINE_LIFT) : base;
@@ -548,7 +903,9 @@ public final class Skins {
     }
 
     public static int[][] plainSkin(Tier tier) {
-        return plate(mix(BODY, tier.colour(), EDGE_TINT));
+        int[][] pixels = new int[SIZE][SIZE];
+        plated(pixels, tier, 0, 0, SIZE - 1, SIZE - 1);
+        return pixels;
     }
 
 
