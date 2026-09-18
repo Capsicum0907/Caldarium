@@ -457,6 +457,37 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
+    private static LivingEntity pigAt(GameTestHelper helper, Vec3 where) {
+        LivingEntity pig = EntityType.PIG.create(helper.getLevel());
+        pig.moveTo(where);
+        helper.getLevel().addFreshEntity(pig);
+        return pig;
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void whatTouchesASunIsHurtFarWorseThanWhatStandsNearIt(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockState state = helper.getLevel().getBlockState(core);
+        double radius = SolBlock.radius(state);
+        Vec3 centre = SolBlock.centre(core);
+        double touchWas = CaldariumConfig.SOL_TOUCH_DAMAGE.get();
+        double bite = 6.0;
+        try {
+            CaldariumConfig.SOL_TOUCH_DAMAGE.set(bite);
+            LivingEntity inside = pigAt(helper, centre);
+            LivingEntity beside = pigAt(helper, centre.add(radius + inside.getBbWidth(), 0.0, 0.0));
+            float whole = inside.getHealth();
+            SolBlockEntity.burnWhatIsNear(helper.getLevel(), core, state);
+            check(Math.abs(whole - inside.getHealth() - bite) < 0.01F,
+                    "one in the ball should take the touch damage: " + (whole - inside.getHealth()));
+            check(Math.abs(whole - beside.getHealth() - CaldariumConfig.solBurnDamage()) < 0.01F,
+                    "one beside it should take only the burn damage: " + (whole - beside.getHealth()));
+        } finally {
+            CaldariumConfig.SOL_TOUCH_DAMAGE.set(touchWas);
+        }
+        helper.succeed();
+    }
+
     @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunLightsWhatIsAroundIt(GameTestHelper helper) {
         BlockPos core = sun(helper);

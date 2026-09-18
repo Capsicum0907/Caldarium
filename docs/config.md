@@ -28,6 +28,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `sol.size` | How wide the ball is, in blocks. The drawing, the solid shape, the outline and the heat all follow it. |
 | `sol.reach` | How far its light counts as daylight for a solar panel. ⚠ Provisional. |
 | `sol.burnReach` / `burnSeconds` / `burnDamage` | How far past the surface the heat reaches, in blocks, and what it costs. At 0 only touching burns. |
+| `sol.touchDamage` | What a tick inside the ball costs, in place of the burn damage. |
 | `sol.hold` | The least gap between a held sun and the body holding it, in blocks. Keep it above `burnReach`, or holding a sun burns. |
 | `sol.glowSpacing` | Roughly how far apart the light sources around a sun are, in blocks. Smaller is brighter and even, and places more blocks. |
 | `sol.pulseEvery` / `pulseLength` | How often a sun flares, and for how long, in ticks. A length of 0 turns it off. |

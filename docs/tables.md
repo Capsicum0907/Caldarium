@@ -217,6 +217,11 @@ would not be a sun. The heat reaches `burnReach` blocks past the surface, measur
 ball rather than a box, so a sun can be touched from outside the heat as long as the
 player's reach is longer than that.
 
+Reaching the ball itself costs `touchDamage` a tick in place of the burn damage, which
+at its default kills anything that walks into a sun. It is dealt as an ordinary fire,
+not as a damage of this mod's own, so it is the fire that the game already knows: fire
+resistance turns it aside, and the way out of a sun is to be a thing that does not burn.
+
 **It is drawn as a ball, not as a block.** A block model cannot leave its own three
 cubes and is made of boxes besides, so the sphere is drawn by a block entity renderer
 instead - a cube with its six faces blown out into a ball, sixteen by sixteen quads to a

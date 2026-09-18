@@ -73,7 +73,7 @@ public class SolBlockEntity extends BlockEntity {
         if (!(level instanceof ServerLevel server)) {
             return;
         }
-        sol.burnWhatIsNear(server, pos, state);
+        burnWhatIsNear(server, pos, state);
         burnWhatFlies(server, pos, state);
         if (Math.floorMod(server.getGameTime() + pos.asLong(), GLOW_REFRESH) == 0) {
             SolBlock.glow(server, pos, state);
@@ -101,15 +101,18 @@ public class SolBlockEntity extends BlockEntity {
      * Being near it is being near a fire. Nothing else here hurts anything, so the
      * damage is the ordinary one a fire does rather than a type of this mod's own.
      */
-    private void burnWhatIsNear(ServerLevel level, BlockPos pos, BlockState state) {
-        double reach = SolBlock.radius(state) + CaldariumConfig.solBurns();
+    public static void burnWhatIsNear(ServerLevel level, BlockPos pos, BlockState state) {
+        double radius = SolBlock.radius(state);
+        double reach = radius + CaldariumConfig.solBurns();
         Vec3 centre = Vec3.atCenterOf(pos);
         AABB around = new AABB(pos).inflate(Math.ceil(reach));
         List<LivingEntity> caught = level.getEntitiesOfClass(LivingEntity.class, around,
                 living -> nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
         for (LivingEntity living : caught) {
             living.igniteForSeconds(CaldariumConfig.solBurnSeconds());
-            living.hurt(level.damageSources().inFire(), CaldariumConfig.solBurnDamage());
+            boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= radius * radius;
+            living.hurt(level.damageSources().inFire(),
+                    touching ? CaldariumConfig.solTouchDamage() : CaldariumConfig.solBurnDamage());
         }
     }
 

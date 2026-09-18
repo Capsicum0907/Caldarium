@@ -96,6 +96,7 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue SOL_BURNS;
     public static ModConfigSpec.IntValue SOL_BURN_SECONDS;
     public static ModConfigSpec.DoubleValue SOL_BURN_DAMAGE;
+    public static ModConfigSpec.DoubleValue SOL_TOUCH_DAMAGE;
     public static ModConfigSpec.IntValue SOL_BLAST_REACH;
     public static ModConfigSpec.DoubleValue SOL_HOLD;
     public static ModConfigSpec.IntValue SOL_PULSE_EVERY;
@@ -181,6 +182,7 @@ public final class CaldariumConfig {
         SOL_BURNS = builder.defineInRange("burnReach", 1, 0, 32);
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
+        SOL_TOUCH_DAMAGE = builder.defineInRange("touchDamage", 100.0, 0.0, 1_000_000.0);
         SOL_BLAST_REACH = builder.defineInRange("blastReach", 8, 0, 64);
         SOL_HOLD = builder.defineInRange("hold", 8.0, 0.0, 64.0);
         SOL_PULSE_EVERY = builder.defineInRange("pulseEvery", 200, 1, 72_000);
@@ -316,6 +318,10 @@ public final class CaldariumConfig {
 
     public static float solBurnDamage() {
         return SOL_BURN_DAMAGE.get().floatValue();
+    }
+
+    public static float solTouchDamage() {
+        return SOL_TOUCH_DAMAGE.get().floatValue();
     }
 
     public static int ticksPerHealth() {
