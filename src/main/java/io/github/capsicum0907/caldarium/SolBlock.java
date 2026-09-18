@@ -60,7 +60,7 @@ public class SolBlock extends BaseEntityBlock {
 
     /** Light for a quarter of its life spent, so it visibly dims as it goes. */
     public static int light(BlockState state) {
-        return Math.max(1, BRIGHTEST - state.getValue(SPENT) * 3);
+        return BRIGHTEST;
     }
 
     public static float radius(BlockState state) {

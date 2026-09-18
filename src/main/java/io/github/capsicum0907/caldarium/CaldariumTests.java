@@ -327,6 +327,28 @@ public final class CaldariumTests {
     }
 
     @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void aSunReachesPanelsWellOutsideItsBall(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        helper.runAfterDelay(1, () -> {
+            int out = (int) Math.ceil(radius(helper, core)) + 6;
+            BlockPos panel = core.offset(out, 0, 0);
+            int reachWas = CaldariumConfig.SOL_REACH.get();
+            CaldariumConfig.SOL_REACH.set(7);
+            boolean near = Suns.shining(helper.getLevel(), panel);
+            float sun = Sunlight.reaching(helper.getLevel(), panel);
+            float lamp = Lamplight.reaching(helper.getLevel(), panel);
+            CaldariumConfig.SOL_REACH.set(2);
+            boolean beyond = Suns.shining(helper.getLevel(), panel);
+            CaldariumConfig.SOL_REACH.set(reachWas);
+            check(near, "a place six blocks past the ball should count as sunlit");
+            check(sun == 1.0F, "so a solar panel there should read full daylight: " + sun);
+            check(lamp == 1.0F, "and a lucernarium full light: " + lamp);
+            check(!beyond, "but not once the reach is shorter than the gap");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunThatIsGoneStopsNothing(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {

@@ -161,20 +161,6 @@ public class SolBlockEntity extends BlockEntity {
         return left;
     }
 
-
-
-    /** Whether an artificial sun stands close enough to that place to count as day. */
-    public static boolean shining(ServerLevel level, BlockPos where) {
-        int reach = CaldariumConfig.solReach();
-        for (BlockPos at : BlockPos.betweenClosed(where.offset(-reach, -reach, -reach),
-                where.offset(reach, reach, reach))) {
-            if (level.getBlockState(at).getBlock() instanceof SolBlock) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);

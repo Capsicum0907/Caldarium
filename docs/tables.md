@@ -208,8 +208,15 @@ minute - so the way in has to sit well past the early game.
 ## Sol, which makes no energy at all
 
 Not a generator: it is a sun, and what a sun does is shine on the panels somebody else
-put down. Inside its reach a solar panel is told it is midday with a clear sky, so a
-field of them keeps working at night and underground.
+put down. Inside its reach a solar panel is told it is midday with a clear sky and a
+lucernarium that it stands in full light, so a field of them keeps working at night and
+underground.
+
+**Its reach is measured from the surface of the ball**, not from the block at its middle,
+and is fourteen blocks by default - about as far as its light visibly goes, so a panel
+works where the light can be seen. ⚠ It was measured from the middle block and was one
+block long, and every place that close is inside the ball: no panel anyone could put down
+was ever reached.
 
 **It is paid for in durability rather than in energy.** A sun that ate energy to let
 panels make energy would be either free power or pointless, depending on which way the
@@ -217,9 +224,9 @@ sum came out. So it has none: it is crafted whole, it burns for thirty in-game d
 720,000 ticks, at 24,000 a day - and then it is gone. ⚠ **Rain and snow spend it five
 times as fast**, which takes those thirty days down to six.
 
-**It is a light and it is hot.** Brightest light the game has, dimming by a third of
-its range for each quarter of its durability spent, so how far through it is can be
-read off the room. And standing near it sets you alight - a sun that was only bright
+**It is a light and it is hot.** Brightest light the game has, and it stays that bright
+until it is gone; how far through it is shows in its size instead. And standing near it
+sets you alight - a sun that was only bright
 would not be a sun. The heat reaches `burnReach` blocks past the surface, measured as a
 ball rather than a box, so a sun can be touched from outside the heat as long as the
 player's reach is longer than that.
@@ -255,7 +262,7 @@ instead - a cube with its six faces blown out into a ball, sixteen by sixteen qu
 face, turning slowly on two axes, every vertex at full brightness so it lights rather than being lit. The block itself renders
 nothing at all. `size` is its width. It shrinks a step for each quarter of its
 durability spent, down to a little over half, so a sun near the end of it is visibly
-smaller as well as dimmer.
+smaller.
 
 ⚠ **The faces are wound outward.** The render type culls back faces, and the ball was
 first wound the other way: the near half was culled and the inside of the far half was

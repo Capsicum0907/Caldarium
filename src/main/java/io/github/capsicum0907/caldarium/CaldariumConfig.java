@@ -195,7 +195,7 @@ public final class CaldariumConfig {
         SOL_DURABILITY = builder.defineInRange("durability", MC_DAY * SOL_DAYS,
                 1, Integer.MAX_VALUE);
         SOL_WEATHER = builder.defineInRange("weatherCost", 5, 1, 1_000);
-        SOL_REACH = builder.defineInRange("reach", 1, 0, 32);
+        SOL_REACH = builder.defineInRange("reach", 14, 0, 64);
         SOL_BURNS = builder.defineInRange("burnReach", 1, 0, 32);
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);

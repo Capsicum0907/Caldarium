@@ -32,7 +32,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `storm.natural` / `storm.summoned` | What a strike is worth, when nobody called it down and when somebody did. |
 | `storm.reach` | How far from where the bolt lands a bidental will still take it. |
 | `sol.size` | How wide the ball is, in blocks. The drawing, the solid shape, the outline and the heat all follow it. |
-| `sol.reach` | How far its light counts as daylight for a solar panel. ⚠ Provisional. |
+| `sol.reach` | How far past the ball's surface a solar panel is told it is midday and a lucernarium that it is in full light. |
 | `sol.burnReach` / `burnSeconds` / `burnDamage` | How far past the surface the heat reaches, in blocks, and what it costs. At 0 only touching burns. |
 | `sol.touchDamage` | What a tick touching the ball costs, in place of the burn damage. |
 | `sol.hold` | The least gap between a held sun and the body holding it, in blocks. Keep it above `burnReach`, or holding a sun burns. |

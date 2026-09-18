@@ -9,6 +9,9 @@ public final class Lamplight {
     }
 
     public static float reaching(ServerLevel level, BlockPos pos) {
+        if (Suns.shining(level, pos)) {
+            return 1.0F;
+        }
         return level.getBrightness(LightLayer.BLOCK, pos.above()) / 15.0F;
     }
 }

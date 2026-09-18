@@ -93,6 +93,17 @@ public final class Suns {
         return false;
     }
 
+    public static boolean shining(Level level, BlockPos cell) {
+        Vec3 point = Vec3.atCenterOf(cell);
+        int reach = CaldariumConfig.solReach();
+        for (BlockPos pos : in(level)) {
+            if (SolBlock.gap(level.getBlockState(pos), pos, point) <= reach) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static boolean inside(Level level, BlockPos cell) {
         Vec3 point = Vec3.atCenterOf(cell);
         for (BlockPos pos : in(level)) {

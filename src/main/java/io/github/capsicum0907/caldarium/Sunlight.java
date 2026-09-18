@@ -21,7 +21,7 @@ public final class Sunlight {
 
     /** What is left of the generation rate here, as a fraction of one. */
     public static float reaching(ServerLevel level, BlockPos pos) {
-        if (SolBlockEntity.shining(level, pos)) {
+        if (Suns.shining(level, pos)) {
             return 1.0F;
         }
         if (!level.isDay() || level.isRaining() || level.isThundering()) {

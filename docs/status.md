@@ -49,6 +49,7 @@ How it looks and what touching it costs.
   held in the hand, capacity and transfer worked out from a generator's own rate, a
   battery at four burners, and a spoliarium leaving nothing behind. Game tests cover the
   last and the spoliarium's limit; the rest has only been built.
-- ⚠ **Read from the code, not watched:** a sol probably does not reach a solar panel.
-  It counts as daylight within `sol.reach` of its own block, one by default, and every
-  place that close is inside its ball.
+- A sol reaching solar panels and lucernaria fourteen blocks past its surface, and
+  staying at full brightness until it is gone. A game test covers the reach. Before this
+  it reached no panel at all - one block from its middle, which is inside the ball -
+  found by reading the code.
