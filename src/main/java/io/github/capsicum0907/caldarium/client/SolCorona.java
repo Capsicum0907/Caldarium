@@ -30,9 +30,9 @@ public final class SolCorona {
     private static final float HALO_FALLOFF = 2.6F;
     private static final float RAY_REACH = 2.0F;
     private static final float BLAZING_RAY_REACH = 2.4F;
-    private static final float RAY_ALPHA = 0.42F;
-    private static final float BLAZING_RAY_ALPHA = 0.6F;
-    private static final float RAY_FALLOFF = 2.2F;
+    private static final float RAY_ALPHA = 0.6F;
+    private static final float BLAZING_RAY_ALPHA = 0.8F;
+    private static final float RAY_FALLOFF = 1.6F;
     private static final float RAY_SHARP = 3.5F;
     private static final float DRIFT = 0.004F;
     private static final int BUFFER = SEGMENTS * RINGS * 2 * 4
