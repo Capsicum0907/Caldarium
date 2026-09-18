@@ -95,6 +95,7 @@
           "texture": "#side"
         },
         "east": {
+          "cullface": "east",
           "texture": "#side",
           "uv": [
             0.0,
@@ -104,6 +105,7 @@
           ]
         },
         "north": {
+          "cullface": "north",
           "texture": "#side",
           "uv": [
             0.0,
@@ -113,6 +115,7 @@
           ]
         },
         "south": {
+          "cullface": "south",
           "texture": "#side",
           "uv": [
             0.0,
@@ -125,6 +128,7 @@
           "texture": "#top"
         },
         "west": {
+          "cullface": "west",
           "texture": "#side",
           "uv": [
             0.0,

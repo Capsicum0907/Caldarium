@@ -429,10 +429,10 @@ public final class CaldariumDataGen {
                     .to(16, tall, 16)
                     .face(Direction.DOWN).texture("#side").cullface(Direction.DOWN).end()
                     .face(Direction.UP).texture("#top").end()
-                    .face(Direction.NORTH).texture("#side").uvs(0, 0, 16, tall).end()
-                    .face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, tall).end()
-                    .face(Direction.WEST).texture("#side").uvs(0, 0, 16, tall).end()
-                    .face(Direction.EAST).texture("#side").uvs(0, 0, 16, tall).end()
+                    .face(Direction.NORTH).texture("#side").uvs(0, 0, 16, tall).cullface(Direction.NORTH).end()
+                    .face(Direction.SOUTH).texture("#side").uvs(0, 0, 16, tall).cullface(Direction.SOUTH).end()
+                    .face(Direction.WEST).texture("#side").uvs(0, 0, 16, tall).cullface(Direction.WEST).end()
+                    .face(Direction.EAST).texture("#side").uvs(0, 0, 16, tall).cullface(Direction.EAST).end()
                     .end()
                     // ⚠ A panel held in a hand sits where a whole block would, which
                     // for three pixels means down by the wrist and out of sight. It

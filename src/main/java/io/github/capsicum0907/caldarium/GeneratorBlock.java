@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
@@ -119,6 +120,15 @@ public class GeneratorBlock extends BaseEntityBlock {
     @Override
     protected RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
+    }
+
+    @Override
+    protected boolean skipRendering(BlockState state, BlockState adjacent, Direction side) {
+        if (row.source().flat() && side.getAxis().isHorizontal()
+                && adjacent.getBlock() instanceof GeneratorBlock other && other.row().source().flat()) {
+            return true;
+        }
+        return super.skipRendering(state, adjacent, side);
     }
 
     @Override
