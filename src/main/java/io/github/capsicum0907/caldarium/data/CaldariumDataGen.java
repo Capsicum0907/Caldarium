@@ -291,30 +291,19 @@ public final class CaldariumDataGen {
             held(kind, tier);
         }
 
-        /**
-         * What the block looks like in a hand.
-         *
-         * <p>A cable is joined on all six sides, because one in a hand is not pointing
-         * anywhere yet and a bare middle would be a small grey box. A door gets one
-         * drill and one arm instead, which is the shape of what it is for: a fitting
-         * with a line on one side of it and something else on the other.
-         */
+        /** What the block looks like in a hand: a door is a cable with a drill on the end. */
         private void held(Kind kind, Tier tier) {
             var held = itemModels().getBuilder(Skins.kind(kind, tier))
                     .parent(models().getExistingFile(mcLoc("block/block")));
             ResourceLocation metal = modLoc("block/" + Skins.arm(tier));
             box(held, "middle", metal, Skins.middleBox(kind.core()));
+            box(held, "arm", metal, Skins.armBox(Direction.SOUTH), Direction.NORTH);
             if (kind.door()) {
-                box(held, "arm", metal, Skins.armBox(Direction.SOUTH), Direction.NORTH);
                 ResourceLocation steps = modLoc("block/" + Skins.drill(tier));
                 for (int step = 0; step < Skins.DRILL_STEPS; step++) {
                     box(held, "drill", steps,
                             Skins.drillBox(Direction.NORTH, step, kind.mouth()));
                 }
-                return;
-            }
-            for (Direction side : Direction.values()) {
-                box(held, "arm", metal, Skins.armBox(side), side.getOpposite());
             }
         }
 
