@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
@@ -115,6 +118,9 @@ public final class CaldariumRegistry {
                     .lightLevel(SolBlock::light)
                     .randomTicks()
                     .pushReaction(PushReaction.DESTROY));
+
+    public static final ResourceKey<DamageType> SOL_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
+            ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "sol"));
 
     public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerItem("sol",
             properties -> new SolItem(SOL.get(), properties));

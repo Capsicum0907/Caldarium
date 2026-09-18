@@ -217,10 +217,22 @@ would not be a sun. The heat reaches `burnReach` blocks past the surface, measur
 ball rather than a box, so a sun can be touched from outside the heat as long as the
 player's reach is longer than that.
 
-Touching the ball costs `touchDamage` a tick in place of the burn damage, which at its
-default kills whatever laid a hand on a sun. It is dealt as an ordinary fire, not as a
-damage of this mod's own, so it is the fire the game already knows: fire resistance
-turns it aside, and the way to survive a sun is to be a thing that does not burn.
+Touching the ball costs `touchDamage` a tick in place of the burn damage, and at its
+default nothing survives laying a hand on a sun. Only how much health a thing has buys
+it any time at all, which is the one thing that ought to.
+
+⚠ **The touch is a damage type of this mod's own, and deliberately not a fire.** The
+game keeps one tag, `is_fire`, for both the fire resistance effect and the mobs born
+proof against fire, so a fire cannot turn one aside without turning the other aside too
+- and a wither standing in a star unharmed is worse than a potion being no help. The
+type carries no `is_fire`, so a blaze, a wither and a warden all burn.
+
+⚠ It does carry `bypasses_cooldown`. Damage normally leaves ten ticks of grace in which
+only a bigger hit lands, which would have made a hundred a tick into a hundred every
+twenty. A sun does not wait.
+
+The heat around it is still an ordinary fire, so a blaze standing beside one is
+untroubled by the warmth. It is the surface that kills.
 
 ⚠ **Touching means within a skin of the surface, not inside the sphere.** Nothing can
 be inside it - the ball is solid - so a mob standing on top of one rests on the solid,

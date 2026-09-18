@@ -96,6 +96,7 @@
   "block.caldarium.super_compressed_nether_star_palus": "Super Compressed Nether Star Palus",
   "block.caldarium.super_compressed_nether_star_solar_panel": "Super Compressed Nether Star Solar Panel",
   "block.caldarium.super_compressed_nether_star_spoliarium": "Super Compressed Nether Star Spoliarium",
+  "death.attack.caldarium.sol": "%1$s touched a sun",
   "gui.caldarium.burning": "Burning: %s",
   "gui.caldarium.experience": "Your experience: %s",
   "gui.caldarium.held": "%s / %s mB",

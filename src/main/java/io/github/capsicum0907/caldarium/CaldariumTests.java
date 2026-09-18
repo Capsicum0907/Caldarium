@@ -457,11 +457,15 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    private static LivingEntity pigAt(GameTestHelper helper, Vec3 where) {
-        LivingEntity pig = EntityType.PIG.create(helper.getLevel());
-        pig.moveTo(where);
-        helper.getLevel().addFreshEntity(pig);
-        return pig;
+    private static <T extends LivingEntity> T livingAt(GameTestHelper helper, EntityType<T> what, Vec3 where) {
+        T living = what.create(helper.getLevel());
+        living.moveTo(where);
+        helper.getLevel().addFreshEntity(living);
+        return living;
+    }
+
+    private static float lost(LivingEntity living) {
+        return living.getMaxHealth() - living.getHealth();
     }
 
     @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
@@ -471,21 +475,27 @@ public final class CaldariumTests {
         double radius = SolBlock.radius(state);
         Vec3 centre = SolBlock.centre(core);
         double touchWas = CaldariumConfig.SOL_TOUCH_DAMAGE.get();
-        double bite = 6.0;
+        double bite = 3.0;
         try {
             CaldariumConfig.SOL_TOUCH_DAMAGE.set(bite);
-            LivingEntity inside = pigAt(helper, centre);
+            LivingEntity inside = livingAt(helper, EntityType.PIG, centre);
+            LivingEntity fireproof = livingAt(helper, EntityType.BLAZE, centre);
             double half = inside.getBbWidth() / 2.0;
-            LivingEntity against = pigAt(helper, centre.add(radius + SolBlock.SKIN + half, 0.0, 0.0));
-            LivingEntity beside = pigAt(helper, centre.add(radius + SolBlock.SKIN + half + 0.1, 0.0, 0.0));
-            float whole = inside.getHealth();
+            LivingEntity against = livingAt(helper, EntityType.PIG,
+                    centre.add(radius + SolBlock.SKIN + half, 0.0, 0.0));
+            LivingEntity beside = livingAt(helper, EntityType.PIG,
+                    centre.add(radius + SolBlock.SKIN + half + 0.1, 0.0, 0.0));
             SolBlockEntity.burnWhatIsNear(helper.getLevel(), core, state);
-            check(Math.abs(whole - inside.getHealth() - bite) < 0.01F,
-                    "one in the ball should take the touch damage: " + (whole - inside.getHealth()));
-            check(Math.abs(whole - against.getHealth() - bite) < 0.01F,
-                    "one resting on the far side of the solid too: " + (whole - against.getHealth()));
-            check(Math.abs(whole - beside.getHealth() - CaldariumConfig.solBurnDamage()) < 0.01F,
-                    "one beside it should take only the burn damage: " + (whole - beside.getHealth()));
+            SolBlockEntity.burnWhatIsNear(helper.getLevel(), core, state);
+
+            check(Math.abs(lost(inside) - 2.0 * bite) < 0.01F,
+                    "a sun should not wait out the hurt cooldown: " + lost(inside));
+            check(Math.abs(lost(against) - 2.0 * bite) < 0.01F,
+                    "one resting on the solid should be touching it: " + lost(against));
+            check(Math.abs(lost(fireproof) - 2.0 * bite) < 0.01F,
+                    "being proof against fire should not be being proof against a sun: " + lost(fireproof));
+            check(Math.abs(lost(beside) - CaldariumConfig.solBurnDamage()) < 0.01F,
+                    "one beside it should take the burn damage, once: " + lost(beside));
         } finally {
             CaldariumConfig.SOL_TOUCH_DAMAGE.set(touchWas);
         }

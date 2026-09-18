@@ -57,6 +57,14 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.LanguageProvider;
+import net.minecraft.core.RegistrySetBuilder;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.tags.DamageTypeTagsProvider;
+import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.world.damagesource.DamageEffects;
+import net.minecraft.world.damagesource.DamageScaling;
+import net.minecraft.world.damagesource.DamageType;
+import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
 /**
@@ -97,6 +105,32 @@ public final class CaldariumDataGen {
         generator.addProvider(event.includeServer(), new TestStructures(output));
         generator.addProvider(event.includeServer(),
                 new Tags(output, lookup, helper));
+        Damages damages = new Damages(output, lookup);
+        generator.addProvider(event.includeServer(), damages);
+        generator.addProvider(event.includeServer(),
+                new DamageTags(output, damages.getRegistryProvider(), helper));
+    }
+
+    private static final RegistrySetBuilder DAMAGES = new RegistrySetBuilder()
+            .add(Registries.DAMAGE_TYPE, context -> context.register(CaldariumRegistry.SOL_DAMAGE,
+                    new DamageType("caldarium.sol", DamageScaling.NEVER, 0.0F, DamageEffects.BURNING)));
+
+    private static class Damages extends DatapackBuiltinEntriesProvider {
+        Damages(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
+            super(output, registries, DAMAGES, Set.of(Caldarium.MODID));
+        }
+    }
+
+    private static class DamageTags extends DamageTypeTagsProvider {
+        DamageTags(PackOutput output, CompletableFuture<HolderLookup.Provider> registries,
+                ExistingFileHelper existingFileHelper) {
+            super(output, registries, Caldarium.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider registries) {
+            tag(DamageTypeTags.BYPASSES_COOLDOWN).add(CaldariumRegistry.SOL_DAMAGE);
+        }
     }
 
     /** The pictures, from {@link Skins}. */
@@ -440,6 +474,7 @@ public final class CaldariumDataGen {
             add("gui.caldarium.pour.points", "%s");
             add("gui.caldarium.experience", "Your experience: %s");
             add("gui.caldarium.pour.all", "All");
+            add("death.attack.caldarium.sol", "%1$s touched a sun");
         }
     }
 

@@ -5,6 +5,8 @@ import java.util.function.Consumer;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -112,9 +114,17 @@ public class SolBlockEntity extends BlockEntity {
         for (LivingEntity living : caught) {
             living.igniteForSeconds(CaldariumConfig.solBurnSeconds());
             boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= touch * touch;
-            living.hurt(level.damageSources().inFire(),
-                    touching ? CaldariumConfig.solTouchDamage() : CaldariumConfig.solBurnDamage());
+            if (touching) {
+                living.hurt(sunlight(level), CaldariumConfig.solTouchDamage());
+            } else {
+                living.hurt(level.damageSources().inFire(), CaldariumConfig.solBurnDamage());
+            }
         }
+    }
+
+    private static DamageSource sunlight(ServerLevel level) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
+                .getHolderOrThrow(CaldariumRegistry.SOL_DAMAGE));
     }
 
     private static Vec3 nearest(AABB box, Vec3 to) {
