@@ -1,5 +1,9 @@
 package io.github.capsicum0907.caldarium;
 
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.Item;
+import net.minecraft.network.chat.Component;
+import java.util.List;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -50,6 +54,13 @@ public class GeneratorBlock extends BaseEntityBlock {
         super(properties);
         this.row = row;
         registerDefaultState(stateDefinition.any().setValue(LIT, Boolean.FALSE));
+    }
+
+    @Override
+    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> lines,
+            TooltipFlag flag) {
+        super.appendHoverText(stack, context, lines, flag);
+        Tooltips.generator(row, lines);
     }
 
     public Generator.Made row() {

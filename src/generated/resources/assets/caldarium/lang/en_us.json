@@ -104,5 +104,21 @@
   "gui.caldarium.pour.all": "All",
   "gui.caldarium.pour.points": "%s",
   "gui.caldarium.stored": "%s / %s FE",
-  "itemGroup.caldarium": "Caldarium"
+  "itemGroup.caldarium": "Caldarium",
+  "tier.caldarium.compressed_nether_star": "Compressed Nether Star",
+  "tier.caldarium.copper": "Copper",
+  "tier.caldarium.diamond": "Diamond",
+  "tier.caldarium.gold": "Gold",
+  "tier.caldarium.iron": "Iron",
+  "tier.caldarium.nether_star": "Nether Star",
+  "tier.caldarium.netherite": "Netherite",
+  "tier.caldarium.super_compressed_nether_star": "Super Compressed Nether Star",
+  "tooltip.caldarium.holds": "Stores: %s FE",
+  "tooltip.caldarium.makes.damage": "Generates: %s FE per point of damage",
+  "tooltip.caldarium.makes.health": "Generates: %s FE per point of health",
+  "tooltip.caldarium.makes.point": "Generates: %s FE per point of experience",
+  "tooltip.caldarium.makes.rate": "Generates: %s FE/t",
+  "tooltip.caldarium.makes.strike": "Generates: %s FE per strike",
+  "tooltip.caldarium.sends": "Transfers: %s FE/t",
+  "tooltip.caldarium.tier": "Tier: %s (%s) / %s (%s)"
 }

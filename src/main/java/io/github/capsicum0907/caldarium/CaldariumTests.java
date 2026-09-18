@@ -159,6 +159,27 @@ public final class CaldariumTests {
     }
 
     @GameTest(template = TestStructures.FLOOR)
+    public static void aTooltipReadsTheSettings(GameTestHelper helper) {
+        List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
+        Tooltips.generator(new Generator.Made(Generator.BURNER, Tier.COPPER), lines);
+        List<String> read = lines.stream().map(line -> {
+            var contents = (net.minecraft.network.chat.contents.TranslatableContents) line.getContents();
+            return contents.getKey() + " " + java.util.Arrays.toString(contents.getArgs());
+        }).toList();
+        check(read.size() == 4, "tier, makes, holds and sends: " + read);
+        check(read.get(1).equals("tooltip.caldarium.makes.rate [167]"), "the rate: " + read.get(1));
+        check(read.get(2).equals("tooltip.caldarium.holds [1,002,000]"), "the capacity: " + read.get(2));
+        check(read.get(3).equals("tooltip.caldarium.sends [3,340]"), "the transfer: " + read.get(3));
+
+        lines.clear();
+        Tooltips.generator(new Generator.Made(Generator.LUCERNARIUM, Tier.COPPER), lines);
+        var lamp = (net.minecraft.network.chat.contents.TranslatableContents) lines.get(1).getContents();
+        check(java.util.Arrays.toString(lamp.getArgs()).equals("[0.125]"), "a rate below one: "
+                + java.util.Arrays.toString(lamp.getArgs()));
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
     public static void whatDiesThereDropsNothing(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
         LivingEntity pig = helper.spawn(EntityType.PIG, WHERE.above());

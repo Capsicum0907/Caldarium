@@ -1,5 +1,6 @@
 package io.github.capsicum0907.caldarium.data;
 
+import io.github.capsicum0907.caldarium.Tooltips;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
@@ -478,6 +479,17 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "Your experience: %s");
             add("gui.caldarium.pour.all", "All");
             add("death.attack.caldarium.sol", "%1$s touched a sun");
+            for (Tier tier : Tier.values()) {
+                add(Tooltips.tierKey(tier), titled(tier.id()));
+            }
+            add("tooltip.caldarium.tier", "Tier: %s (%s) / %s (%s)");
+            add("tooltip.caldarium.makes.rate", "Generates: %s FE/t");
+            add("tooltip.caldarium.makes.point", "Generates: %s FE per point of experience");
+            add("tooltip.caldarium.makes.health", "Generates: %s FE per point of health");
+            add("tooltip.caldarium.makes.damage", "Generates: %s FE per point of damage");
+            add("tooltip.caldarium.makes.strike", "Generates: %s FE per strike");
+            add("tooltip.caldarium.holds", "Stores: %s FE");
+            add("tooltip.caldarium.sends", "Transfers: %s FE/t");
             add("death.attack.caldarium.spoliarium", "%1$s was carried out of the arena");
         }
     }
@@ -492,11 +504,11 @@ public final class CaldariumDataGen {
             for (Generator.Made made : Generator.made()) {
                 String name = generator(made.source());
                 add(CaldariumRegistry.generators().get(made).get(),
-                        made.tier() == null ? name : tier(made.tier()) + "の" + name);
+                        made.tier() == null ? name : tiered(name, made.tier()));
             }
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
-                    add(CaldariumRegistry.block(kind, tier).get(), tier(tier) + "の" + kind(kind));
+                    add(CaldariumRegistry.block(kind, tier).get(), tiered(kind(kind), tier));
                 }
             }
             add(CaldariumRegistry.SOL.get(), "人工太陽 ソル");
@@ -509,7 +521,22 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "所持経験値：%s");
             add("gui.caldarium.pour.all", "全部");
             add("death.attack.caldarium.sol", "%1$sは太陽に触れた");
+            for (Tier tier : Tier.values()) {
+                add(Tooltips.tierKey(tier), tier(tier));
+            }
+            add("tooltip.caldarium.tier", "ティア: %s(%s) / %s(%s)");
+            add("tooltip.caldarium.makes.rate", "発電量: %s FE/t");
+            add("tooltip.caldarium.makes.point", "発電量: 経験値1ポイントにつき %s FE");
+            add("tooltip.caldarium.makes.health", "発電量: 体力1につき %s FE");
+            add("tooltip.caldarium.makes.damage", "発電量: 1ダメージにつき %s FE");
+            add("tooltip.caldarium.makes.strike", "発電量: 落雷1回につき %s FE");
+            add("tooltip.caldarium.holds", "蓄電量: %s FE");
+            add("tooltip.caldarium.sends", "送電量: %s FE/t");
             add("death.attack.caldarium.spoliarium", "%1$sは闘技場から運び出された");
+        }
+
+        private static String tiered(String name, Tier tier) {
+            return name + "(Tier" + Tooltips.number(tier) + ")";
         }
 
         private static String tier(Tier tier) {
