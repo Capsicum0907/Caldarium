@@ -14,6 +14,7 @@ import com.google.common.hash.Hashing;
 import io.github.capsicum0907.caldarium.Caldarium;
 import io.github.capsicum0907.caldarium.CaldariumRegistry;
 import io.github.capsicum0907.caldarium.Generator;
+import io.github.capsicum0907.caldarium.Source;
 import io.github.capsicum0907.caldarium.CarrierBlock;
 import io.github.capsicum0907.caldarium.Joint;
 import io.github.capsicum0907.caldarium.Kind;
@@ -100,6 +101,7 @@ public final class CaldariumDataGen {
         generator.addProvider(event.includeClient(), new Textures(output));
         generator.addProvider(event.includeClient(), new Models(output, helper));
         generator.addProvider(event.includeClient(), new Language(output));
+        generator.addProvider(event.includeClient(), new Japanese(output));
 
         generator.addProvider(event.includeServer(), new Loot(output, lookup));
         generator.addProvider(event.includeServer(), new Recipes(output, lookup));
@@ -477,6 +479,74 @@ public final class CaldariumDataGen {
             add("gui.caldarium.pour.all", "All");
             add("death.attack.caldarium.sol", "%1$s touched a sun");
             add("death.attack.caldarium.spoliarium", "%1$s was carried out of the arena");
+        }
+    }
+
+    private static class Japanese extends LanguageProvider {
+        Japanese(PackOutput output) {
+            super(output, Caldarium.MODID, "ja_jp");
+        }
+
+        @Override
+        protected void addTranslations() {
+            for (Generator.Made made : Generator.made()) {
+                String name = generator(made.source());
+                add(CaldariumRegistry.generators().get(made).get(),
+                        made.tier() == null ? name : tier(made.tier()) + "の" + name);
+            }
+            for (Kind kind : Kind.values()) {
+                for (Tier tier : Tier.upTo(kind.top())) {
+                    add(CaldariumRegistry.block(kind, tier).get(), tier(tier) + "の" + kind(kind));
+                }
+            }
+            add(CaldariumRegistry.SOL.get(), "人工太陽 ソル");
+            add(CaldariumRegistry.SOL_GLOW.get(), "人工太陽光");
+            add("itemGroup." + Caldarium.MODID, "Caldarium");
+            add("gui.caldarium.stored", "%s / %s FE");
+            add("gui.caldarium.held", "%s / %s mB");
+            add("gui.caldarium.burning", "燃焼中：%s");
+            add("gui.caldarium.pour.points", "%s");
+            add("gui.caldarium.experience", "所持経験値：%s");
+            add("gui.caldarium.pour.all", "全部");
+            add("death.attack.caldarium.sol", "%1$sは太陽に触れた");
+            add("death.attack.caldarium.spoliarium", "%1$sは闘技場から運び出された");
+        }
+
+        private static String tier(Tier tier) {
+            return switch (tier) {
+                case COPPER -> "銅";
+                case IRON -> "鉄";
+                case GOLD -> "金";
+                case DIAMOND -> "ダイヤモンド";
+                case NETHERITE -> "ネザライト";
+                case NETHER_STAR -> "ネザースター";
+                case COMPRESSED_NETHER_STAR -> "圧縮ネザースター";
+                case SUPER_COMPRESSED_NETHER_STAR -> "超圧縮ネザースター";
+            };
+        }
+
+        private static String kind(Kind kind) {
+            return switch (kind) {
+                case BATTERY -> "蓄電器";
+                case CHARGER -> "充電台";
+                case CABLE -> "ケーブル";
+                case IMPORTER -> "インポーター";
+                case EXPORTER -> "エクスポーター";
+            };
+        }
+
+        private static String generator(Source source) {
+            return switch (source) {
+                case ITEM -> "火力発電機";
+                case FLUID -> "溶岩発電機";
+                case SUN -> "太陽光発電機";
+                case LAMP -> "人工光発電機";
+                case HEAT -> "温度差発電機";
+                case EXPERIENCE -> "経験値発電機";
+                case LIFE -> "生命発電機";
+                case BLOW -> "ダメージ発電機";
+                case STORM -> "雷変換機";
+            };
         }
     }
 
