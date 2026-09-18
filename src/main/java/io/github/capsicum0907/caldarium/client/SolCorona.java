@@ -41,7 +41,9 @@ public final class SolCorona {
     private static final RenderType GLOW = RenderType.create("caldarium_corona",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, BUFFER, false, true,
             RenderType.CompositeState.builder()
-                    .setShaderState(RenderStateShard.POSITION_COLOR_SHADER)
+                    // ⚠ position_color has no fog at all. Lightning takes the same vertices
+                    // and fades them with the distance, so the corona goes with the ball.
+                    .setShaderState(RenderStateShard.RENDERTYPE_LIGHTNING_SHADER)
                     .setTransparencyState(RenderStateShard.TRANSLUCENT_TRANSPARENCY)
                     .setCullState(RenderStateShard.NO_CULL)
                     .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)

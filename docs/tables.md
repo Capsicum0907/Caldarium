@@ -332,6 +332,12 @@ and its strength varies with the angle round the ball, so it comes out as rays o
 uneven length that drift slowly. Both fade as a power of the distance, not in a straight
 line, which is what keeps the bright part narrow.
 
+⚠ **The corona is drawn with the lightning shader, for its fog.** `position_color` has
+no fog of any kind, so a distant sun faded into the weather while its corona stayed as
+sharp as ever. The lightning shader takes the same position-and-colour vertices and
+fades them out with the distance. The ball turns towards the colour of the fog and the
+corona turns transparent, which is the right end for a glow.
+
 ⚠ **The corona is drawn last, and writes no depth.** A render type left at its default
 writes depth, and the corona first used one that did: a sun behind another's corona
 failed the depth test and vanished. The corona now has its own render type with depth
