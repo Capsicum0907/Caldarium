@@ -1,7 +1,7 @@
 package io.github.capsicum0907.caldarium;
 
 public final class SolPalette {
-    private static final int[] STOPS = { 0xA81200, 0xE03800, 0xFF7800, 0xFFB414, 0xFFE258 };
+    private static final int[] STOPS = { 0x7E0C00, 0xC02800, 0xFF7800, 0xFFB414, 0xFFE258 };
     private static final double CONTRAST = 0.9;
     private static final int[] BLAZING = { 0xF04000, 0xFF8C00, 0xFFC814, 0xFFE850, 0xFFF9A0 };
     private static final double BLAZING_CONTRAST = 0.8;

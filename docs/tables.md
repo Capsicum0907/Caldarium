@@ -325,6 +325,13 @@ outline would - and past the rim an orange corona fades
 out; the corona is alpha-blended rather than added, so it stays orange against a blue sky
 instead of washing to white.
 
+The corona is two rings drawn one over the other, because a single even band of glow
+reads as fog rather than as a sun. The near one is bright, hugs the rim and falls away
+in a few tenths of the radius. The far one reaches past twice the radius but is faint,
+and its strength varies with the angle round the ball, so it comes out as rays of
+uneven length that drift slowly. Both fade as a power of the distance, not in a straight
+line, which is what keeps the bright part narrow.
+
 ⚠ **The corona is drawn last, and writes no depth.** A render type left at its default
 writes depth, and the corona first used one that did: a sun behind another's corona
 failed the depth test and vanished. The corona now has its own render type with depth

@@ -21,12 +21,22 @@ import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 public final class SolCorona {
     private static final int SEGMENTS = 96;
+    private static final int RINGS = 8;
     private static final double RIM_ANGLE = 0.0025;
-    private static final float CORONA = 1.3F;
-    private static final float BLAZING_CORONA = 1.6F;
-    private static final float GLOW_ALPHA = 0.55F;
-    private static final float BLAZING_GLOW_ALPHA = 0.8F;
-    private static final int BUFFER = 1536;
+    private static final float HALO_REACH = 1.16F;
+    private static final float BLAZING_HALO_REACH = 1.32F;
+    private static final float HALO_ALPHA = 0.75F;
+    private static final float BLAZING_HALO_ALPHA = 0.95F;
+    private static final float HALO_FALLOFF = 2.6F;
+    private static final float RAY_REACH = 2.0F;
+    private static final float BLAZING_RAY_REACH = 2.4F;
+    private static final float RAY_ALPHA = 0.42F;
+    private static final float BLAZING_RAY_ALPHA = 0.6F;
+    private static final float RAY_FALLOFF = 2.2F;
+    private static final float RAY_SHARP = 3.5F;
+    private static final float DRIFT = 0.004F;
+    private static final int BUFFER = SEGMENTS * RINGS * 2 * 4
+            * DefaultVertexFormat.POSITION_COLOR.getVertexSize();
 
     private static final RenderType GLOW = RenderType.create("caldarium_corona",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, BUFFER, false, true,
@@ -41,7 +51,7 @@ public final class SolCorona {
 
     private static final List<Pending> PENDING = new ArrayList<>();
 
-    private record Pending(Vec3 centre, float radius, float blaze) {
+    private record Pending(Vec3 centre, float radius, float blaze, float time, long seed) {
     }
 
     public record Limb(Vec3 plane, Vec3 across, Vec3 upward, double edge, double inner, double outer) {
@@ -67,15 +77,15 @@ public final class SolCorona {
     }
 
     public static float reach() {
-        return BLAZING_CORONA;
+        return BLAZING_RAY_REACH;
     }
 
     public static int segments() {
         return SEGMENTS;
     }
 
-    public static void queue(Vec3 centre, float radius, float blaze) {
-        PENDING.add(new Pending(centre, radius, blaze));
+    public static void queue(Vec3 centre, float radius, float blaze, float time, long seed) {
+        PENDING.add(new Pending(centre, radius, blaze, time, seed));
     }
 
     public static void draw(RenderLevelStageEvent event) {
@@ -91,20 +101,51 @@ public final class SolCorona {
         for (Pending pending : PENDING) {
             Vec3 offset = pending.centre().subtract(camera);
             Limb limb = Limb.of(offset.reverse(), pending.radius());
-            float corona = Mth.lerp(pending.blaze(), CORONA, BLAZING_CORONA);
-            float alpha = Mth.lerp(pending.blaze(), GLOW_ALPHA, BLAZING_GLOW_ALPHA);
             int colour = SolPalette.glow(pending.blaze());
-            for (int i = 0; i < SEGMENTS; i++) {
-                float from = Mth.TWO_PI * i / SEGMENTS;
-                float to = Mth.TWO_PI * (i + 1) / SEGMENTS;
-                shine(pose, into, offset.add(limb.at(from, limb.outer())), colour, alpha);
-                shine(pose, into, offset.add(limb.at(from, limb.edge() * corona)), colour, 0.0F);
-                shine(pose, into, offset.add(limb.at(to, limb.edge() * corona)), colour, 0.0F);
-                shine(pose, into, offset.add(limb.at(to, limb.outer())), colour, alpha);
-            }
+            float phase = pending.time() * DRIFT + Math.floorMod(pending.seed(), 1000L);
+            ring(pose, into, offset, limb, colour, Mth.lerp(pending.blaze(), HALO_ALPHA, BLAZING_HALO_ALPHA),
+                    Mth.lerp(pending.blaze(), HALO_REACH, BLAZING_HALO_REACH), HALO_FALLOFF, phase, false);
+            ring(pose, into, offset, limb, colour, Mth.lerp(pending.blaze(), RAY_ALPHA, BLAZING_RAY_ALPHA),
+                    Mth.lerp(pending.blaze(), RAY_REACH, BLAZING_RAY_REACH), RAY_FALLOFF, phase, true);
         }
         PENDING.clear();
         buffers.endBatch(GLOW);
+    }
+
+    private static void ring(PoseStack.Pose pose, VertexConsumer into, Vec3 offset, Limb limb, int colour,
+            float alpha, float reach, float falloff, float phase, boolean rays) {
+        for (int i = 0; i < SEGMENTS; i++) {
+            float from = Mth.TWO_PI * i / SEGMENTS;
+            float to = Mth.TWO_PI * (i + 1) / SEGMENTS;
+            double out = limb.edge() * reach;
+            float here = alpha * (rays ? ray(from, phase) : 1.0F);
+            float next = alpha * (rays ? ray(to, phase) : 1.0F);
+            for (int step = 0; step < RINGS; step++) {
+                float near = step / (float) RINGS;
+                float far = (step + 1) / (float) RINGS;
+                shine(pose, into, offset.add(limb.at(from, span(limb, out, near))), colour, fade(here, near, falloff));
+                shine(pose, into, offset.add(limb.at(from, span(limb, out, far))), colour, fade(here, far, falloff));
+                shine(pose, into, offset.add(limb.at(to, span(limb, out, far))), colour, fade(next, far, falloff));
+                shine(pose, into, offset.add(limb.at(to, span(limb, out, near))), colour, fade(next, near, falloff));
+            }
+        }
+    }
+
+    // ⚠ Whole turns only: a fraction here leaves the wave out of step with itself
+    // where the ring closes, which shows as a seam down one side of the corona.
+    private static float ray(float angle, float phase) {
+        float wave = Mth.sin(angle * 4.0F + phase + 1.7F) * 0.45F
+                + Mth.sin(angle * 9.0F - phase * 1.3F - 0.9F) * 0.33F
+                + Mth.sin(angle * 19.0F + phase * 0.7F + 2.4F) * 0.22F;
+        return (float) Math.pow((wave + 1.0F) * 0.5F, RAY_SHARP);
+    }
+
+    private static double span(Limb limb, double reach, float at) {
+        return Mth.lerp(at, limb.outer(), reach);
+    }
+
+    private static float fade(float alpha, float at, float falloff) {
+        return alpha * (float) Math.pow(1.0F - at, falloff);
     }
 
     private static void shine(PoseStack.Pose pose, VertexConsumer into, Vec3 point, int colour, float alpha) {

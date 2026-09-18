@@ -86,7 +86,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         Vec3 centre = SolBlock.centre(sol.getBlockPos());
         Vec3 toCamera = eye.subtract(centre);
         if (toCamera.length() >= radius) {
-            SolCorona.queue(centre, radius, blaze);
+            SolCorona.queue(centre, radius, blaze, time, sol.getBlockPos().asLong());
         }
         draw(pose, buffers, overlay, radius, time, blaze, toCamera, surface);
     }
