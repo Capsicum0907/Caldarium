@@ -105,11 +105,13 @@
   "gui.caldarium.pour.points": "%s",
   "gui.caldarium.stored": "%s / %s FE",
   "itemGroup.caldarium": "Caldarium",
-  "tooltip.caldarium.holds": "蓄電量: %s FE",
-  "tooltip.caldarium.makes.damage": "発電量: 1ダメージにつき %s FE",
-  "tooltip.caldarium.makes.health": "発電量: 体力1につき %s FE",
-  "tooltip.caldarium.makes.point": "発電量: 経験値1ポイントにつき %s FE",
-  "tooltip.caldarium.makes.rate": "発電量: %s FE/t",
-  "tooltip.caldarium.makes.strike": "発電量: 落雷1回につき %s FE",
-  "tooltip.caldarium.sends": "送電量: %s FE/t"
+  "tooltip.caldarium.label.holds": "蓄電量",
+  "tooltip.caldarium.label.makes": "発電量",
+  "tooltip.caldarium.label.sends": "送電量",
+  "tooltip.caldarium.unit.damage": "FE / 1ダメージ",
+  "tooltip.caldarium.unit.health": "FE / 体力1",
+  "tooltip.caldarium.unit.point": "FE / 経験値1ポイント",
+  "tooltip.caldarium.unit.rate": "FE/t",
+  "tooltip.caldarium.unit.stored": "FE",
+  "tooltip.caldarium.unit.strike": "FE / 落雷1回"
 }

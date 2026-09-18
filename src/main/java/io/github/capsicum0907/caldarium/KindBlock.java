@@ -1,10 +1,5 @@
 package io.github.capsicum0907.caldarium;
 
-import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Item;
-import net.minecraft.network.chat.Component;
-import java.util.List;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -36,13 +31,6 @@ public class KindBlock extends BaseEntityBlock {
         super(properties);
         this.kind = kind;
         this.tier = tier;
-    }
-
-    @Override
-    public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> lines,
-            TooltipFlag flag) {
-        super.appendHoverText(stack, context, lines, flag);
-        Tooltips.kind(kind, tier, lines);
     }
 
     public Kind kind() {

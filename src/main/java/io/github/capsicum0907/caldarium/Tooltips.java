@@ -5,8 +5,8 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.level.block.Block;
 
 public final class Tooltips {
     private static final int DECIMALS = 3;
@@ -14,39 +14,57 @@ public final class Tooltips {
     private Tooltips() {
     }
 
+    public record Row(String label, String amount, String unit) {
+    }
+
+    public record Readings(List<Row> rows) implements TooltipComponent {
+    }
+
     public static int number(Tier tier) {
         return tier.ordinal() + 1;
     }
 
-    public static void generator(Generator.Made made, List<Component> lines) {
+    public static List<Row> of(Block block) {
         if (!CaldariumConfig.SPEC.isLoaded()) {
-            return;
+            return List.of();
         }
+        if (block instanceof GeneratorBlock generator) {
+            return generator(generator.row());
+        }
+        if (block instanceof KindBlock kind) {
+            return kind(kind.kind(), kind.tier());
+        }
+        return List.of();
+    }
+
+    public static List<Row> generator(Generator.Made made) {
         CaldariumConfig.Rates rates = CaldariumConfig.GENERATORS.get(made);
         double each = rates.makes().get() / (double) Math.max(1, rates.every().get());
-        switch (made.source()) {
-            case ITEM, FLUID, SUN, HEAT, LAMP -> line(lines, "makes.rate", each);
-            case EXPERIENCE -> line(lines, "makes.point", each);
-            case LIFE -> line(lines, "makes.health", each);
-            case BLOW -> line(lines, "makes.damage", each);
-            case STORM -> line(lines, "makes.strike", CaldariumConfig.stormNatural());
-        }
-        line(lines, "holds", rates.capacity().get());
-        line(lines, "sends", rates.transfer().get());
+        Row makes = switch (made.source()) {
+            case ITEM, FLUID, SUN, HEAT, LAMP -> row("makes", each, "rate");
+            case EXPERIENCE -> row("makes", each, "point");
+            case LIFE -> row("makes", each, "health");
+            case BLOW -> row("makes", each, "damage");
+            case STORM -> row("makes", CaldariumConfig.stormNatural(), "strike");
+        };
+        return List.of(makes,
+                row("holds", rates.capacity().get(), "stored"),
+                row("sends", rates.transfer().get(), "rate"));
     }
 
-    public static void kind(Kind kind, Tier tier, List<Component> lines) {
-        if (!CaldariumConfig.SPEC.isLoaded()) {
-            return;
-        }
+    public static List<Row> kind(Kind kind, Tier tier) {
         CaldariumConfig.Rates rates = CaldariumConfig.rates(kind, tier);
-        line(lines, "holds", rates.capacity().get());
-        line(lines, "sends", rates.transfer().get());
+        return List.of(
+                row("holds", rates.capacity().get(), "stored"),
+                row("sends", rates.transfer().get(), "rate"));
     }
 
-    private static void line(List<Component> lines, String key, double value) {
-        lines.add(Component.translatable("tooltip." + Caldarium.MODID + "." + key, amount(value))
-                .withStyle(ChatFormatting.GRAY));
+    public static String key(String rest) {
+        return "tooltip." + Caldarium.MODID + "." + rest;
+    }
+
+    private static Row row(String label, double value, String unit) {
+        return new Row(key("label." + label), amount(value), key("unit." + unit));
     }
 
     private static String amount(double value) {

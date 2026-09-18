@@ -105,11 +105,13 @@
   "gui.caldarium.pour.points": "%s",
   "gui.caldarium.stored": "%s / %s FE",
   "itemGroup.caldarium": "Caldarium",
-  "tooltip.caldarium.holds": "Stores: %s FE",
-  "tooltip.caldarium.makes.damage": "Generates: %s FE per point of damage",
-  "tooltip.caldarium.makes.health": "Generates: %s FE per point of health",
-  "tooltip.caldarium.makes.point": "Generates: %s FE per point of experience",
-  "tooltip.caldarium.makes.rate": "Generates: %s FE/t",
-  "tooltip.caldarium.makes.strike": "Generates: %s FE per strike",
-  "tooltip.caldarium.sends": "Transfers: %s FE/t"
+  "tooltip.caldarium.label.holds": "Stores",
+  "tooltip.caldarium.label.makes": "Generates",
+  "tooltip.caldarium.label.sends": "Transfers",
+  "tooltip.caldarium.unit.damage": "FE per point of damage",
+  "tooltip.caldarium.unit.health": "FE per point of health",
+  "tooltip.caldarium.unit.point": "FE per point of experience",
+  "tooltip.caldarium.unit.rate": "FE/t",
+  "tooltip.caldarium.unit.stored": "FE",
+  "tooltip.caldarium.unit.strike": "FE per strike"
 }

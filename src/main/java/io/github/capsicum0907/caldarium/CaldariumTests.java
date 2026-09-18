@@ -160,22 +160,20 @@ public final class CaldariumTests {
 
     @GameTest(template = TestStructures.FLOOR)
     public static void aTooltipReadsTheSettings(GameTestHelper helper) {
-        List<net.minecraft.network.chat.Component> lines = new java.util.ArrayList<>();
-        Tooltips.generator(new Generator.Made(Generator.BURNER, Tier.COPPER), lines);
-        List<String> read = lines.stream().map(line -> {
-            var contents = (net.minecraft.network.chat.contents.TranslatableContents) line.getContents();
-            return contents.getKey() + " " + java.util.Arrays.toString(contents.getArgs());
-        }).toList();
-        check(read.size() == 3, "makes, holds and sends: " + read);
-        check(read.get(0).equals("tooltip.caldarium.makes.rate [167]"), "the rate: " + read.get(0));
-        check(read.get(1).equals("tooltip.caldarium.holds [1,002,000]"), "the capacity: " + read.get(1));
-        check(read.get(2).equals("tooltip.caldarium.sends [3,340]"), "the transfer: " + read.get(2));
+        List<Tooltips.Row> rows = Tooltips.generator(new Generator.Made(Generator.BURNER, Tier.COPPER));
+        check(rows.size() == 3, "makes, holds and sends: " + rows);
+        check(rows.get(0).amount().equals("167") && rows.get(0).unit().equals(Tooltips.key("unit.rate")),
+                "the rate: " + rows.get(0));
+        check(rows.get(1).amount().equals("1,002,000") && rows.get(1).unit().equals(Tooltips.key("unit.stored")),
+                "the capacity: " + rows.get(1));
+        check(rows.get(2).amount().equals("3,340"), "the transfer: " + rows.get(2));
 
-        lines.clear();
-        Tooltips.generator(new Generator.Made(Generator.LUCERNARIUM, Tier.COPPER), lines);
-        var lamp = (net.minecraft.network.chat.contents.TranslatableContents) lines.get(0).getContents();
-        check(java.util.Arrays.toString(lamp.getArgs()).equals("[0.125]"), "a rate below one: "
-                + java.util.Arrays.toString(lamp.getArgs()));
+        Tooltips.Row lamp = Tooltips.generator(new Generator.Made(Generator.LUCERNARIUM, Tier.COPPER)).get(0);
+        check(lamp.amount().equals("0.125"), "a rate below one: " + lamp);
+
+        Tooltips.Row point = Tooltips.generator(new Generator.Made(Generator.EXPERIENTIA, Tier.COPPER)).get(0);
+        check(point.amount().equals("10") && point.unit().equals(Tooltips.key("unit.point")),
+                "experience is paid per point: " + point);
         helper.succeed();
     }
 

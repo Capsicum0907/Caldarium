@@ -1,5 +1,11 @@
 package io.github.capsicum0907.caldarium.client;
 
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
+import net.minecraft.world.item.BlockItem;
+import io.github.capsicum0907.caldarium.Tooltips;
+import com.mojang.datafixers.util.Either;
+import java.util.List;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 
@@ -36,6 +42,22 @@ public final class CaldariumClient {
     private static final float PREVIEW_ALPHA = 0.8F;
 
     private CaldariumClient() {
+    }
+
+    public static void registerTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(Tooltips.Readings.class, ReadingsTooltip::new);
+    }
+
+    public static void readings(RenderTooltipEvent.GatherComponents event) {
+        if (!(event.getItemStack().getItem() instanceof BlockItem item)) {
+            return;
+        }
+        List<Tooltips.Row> rows = Tooltips.of(item.getBlock());
+        if (rows.isEmpty()) {
+            return;
+        }
+        var elements = event.getTooltipElements();
+        elements.add(Math.min(1, elements.size()), Either.right(new Tooltips.Readings(rows)));
     }
 
     public static void registerScreens(RegisterMenuScreensEvent event) {

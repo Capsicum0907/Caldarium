@@ -116,6 +116,8 @@ public class Caldarium {
             modEventBus.addListener(CaldariumClient::registerScreens);
             modEventBus.addListener(CaldariumClient::registerRenderers);
             modEventBus.addListener(CaldariumClient::registerExtensions);
+            modEventBus.addListener(CaldariumClient::registerTooltips);
+            NeoForge.EVENT_BUS.addListener(CaldariumClient::readings);
             NeoForge.EVENT_BUS.addListener(CaldariumClient::outline);
             NeoForge.EVENT_BUS.addListener(CaldariumClient::preview);
             NeoForge.EVENT_BUS.addListener(io.github.capsicum0907.caldarium.client.SolCorona::draw);

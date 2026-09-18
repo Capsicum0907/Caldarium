@@ -481,13 +481,15 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "Your experience: %s");
             add("gui.caldarium.pour.all", "All");
             add("death.attack.caldarium.sol", "%1$s touched a sun");
-            add("tooltip.caldarium.makes.rate", "Generates: %s FE/t");
-            add("tooltip.caldarium.makes.point", "Generates: %s FE per point of experience");
-            add("tooltip.caldarium.makes.health", "Generates: %s FE per point of health");
-            add("tooltip.caldarium.makes.damage", "Generates: %s FE per point of damage");
-            add("tooltip.caldarium.makes.strike", "Generates: %s FE per strike");
-            add("tooltip.caldarium.holds", "Stores: %s FE");
-            add("tooltip.caldarium.sends", "Transfers: %s FE/t");
+            add(Tooltips.key("label.makes"), "Generates");
+            add(Tooltips.key("label.holds"), "Stores");
+            add(Tooltips.key("label.sends"), "Transfers");
+            add(Tooltips.key("unit.rate"), "FE/t");
+            add(Tooltips.key("unit.stored"), "FE");
+            add(Tooltips.key("unit.point"), "FE per point of experience");
+            add(Tooltips.key("unit.health"), "FE per point of health");
+            add(Tooltips.key("unit.damage"), "FE per point of damage");
+            add(Tooltips.key("unit.strike"), "FE per strike");
             add("death.attack.caldarium.spoliarium", "%1$s was carried out of the arena");
         }
     }
@@ -519,13 +521,15 @@ public final class CaldariumDataGen {
             add("gui.caldarium.experience", "所持経験値：%s");
             add("gui.caldarium.pour.all", "全部");
             add("death.attack.caldarium.sol", "%1$sは太陽に触れた");
-            add("tooltip.caldarium.makes.rate", "発電量: %s FE/t");
-            add("tooltip.caldarium.makes.point", "発電量: 経験値1ポイントにつき %s FE");
-            add("tooltip.caldarium.makes.health", "発電量: 体力1につき %s FE");
-            add("tooltip.caldarium.makes.damage", "発電量: 1ダメージにつき %s FE");
-            add("tooltip.caldarium.makes.strike", "発電量: 落雷1回につき %s FE");
-            add("tooltip.caldarium.holds", "蓄電量: %s FE");
-            add("tooltip.caldarium.sends", "送電量: %s FE/t");
+            add(Tooltips.key("label.makes"), "発電量");
+            add(Tooltips.key("label.holds"), "蓄電量");
+            add(Tooltips.key("label.sends"), "送電量");
+            add(Tooltips.key("unit.rate"), "FE/t");
+            add(Tooltips.key("unit.stored"), "FE");
+            add(Tooltips.key("unit.point"), "FE / 経験値1ポイント");
+            add(Tooltips.key("unit.health"), "FE / 体力1");
+            add(Tooltips.key("unit.damage"), "FE / 1ダメージ");
+            add(Tooltips.key("unit.strike"), "FE / 落雷1回");
             add("death.attack.caldarium.spoliarium", "%1$sは闘技場から運び出された");
         }
 
