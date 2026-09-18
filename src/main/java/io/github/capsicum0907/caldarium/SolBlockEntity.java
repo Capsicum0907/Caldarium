@@ -103,14 +103,15 @@ public class SolBlockEntity extends BlockEntity {
      */
     public static void burnWhatIsNear(ServerLevel level, BlockPos pos, BlockState state) {
         double radius = SolBlock.radius(state);
-        double reach = radius + CaldariumConfig.solBurns();
+        double touch = radius + SolBlock.SKIN;
+        double reach = Math.max(radius + CaldariumConfig.solBurns(), touch);
         Vec3 centre = Vec3.atCenterOf(pos);
         AABB around = new AABB(pos).inflate(Math.ceil(reach));
         List<LivingEntity> caught = level.getEntitiesOfClass(LivingEntity.class, around,
                 living -> nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
         for (LivingEntity living : caught) {
             living.igniteForSeconds(CaldariumConfig.solBurnSeconds());
-            boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= radius * radius;
+            boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= touch * touch;
             living.hurt(level.damageSources().inFire(),
                     touching ? CaldariumConfig.solTouchDamage() : CaldariumConfig.solBurnDamage());
         }

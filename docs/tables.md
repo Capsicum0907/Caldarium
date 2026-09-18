@@ -217,10 +217,17 @@ would not be a sun. The heat reaches `burnReach` blocks past the surface, measur
 ball rather than a box, so a sun can be touched from outside the heat as long as the
 player's reach is longer than that.
 
-Reaching the ball itself costs `touchDamage` a tick in place of the burn damage, which
-at its default kills anything that walks into a sun. It is dealt as an ordinary fire,
-not as a damage of this mod's own, so it is the fire that the game already knows: fire
-resistance turns it aside, and the way out of a sun is to be a thing that does not burn.
+Touching the ball costs `touchDamage` a tick in place of the burn damage, which at its
+default kills whatever laid a hand on a sun. It is dealt as an ordinary fire, not as a
+damage of this mod's own, so it is the fire the game already knows: fire resistance
+turns it aside, and the way to survive a sun is to be a thing that does not burn.
+
+⚠ **Touching means within a skin of the surface, not inside the sphere.** Nothing can
+be inside it - the ball is solid - so a mob standing on top of one rests on the solid,
+which is built of quarter-block slabs and stands up to about 0.18 of a block proud of
+the true sphere. Asking for the sphere itself left everything that climbed a sun taking
+the two points of the burn instead of the hundred of the touch. The skin is the slab
+step, which is wider than the widest bulge, and a test holds the solid to it.
 
 **It is drawn as a ball, not as a block.** A block model cannot leave its own three
 cubes and is made of boxes besides, so the sphere is drawn by a block entity renderer

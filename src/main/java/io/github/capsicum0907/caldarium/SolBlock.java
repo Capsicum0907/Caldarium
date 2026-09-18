@@ -46,6 +46,7 @@ public class SolBlock extends BaseEntityBlock {
     private static final float SHRUNK = 0.55F;
     private static final int SLICES = 16;
     private static final double STEP = 0.25;
+    public static final double SKIN = STEP;
     private static final float BLAST_VOLUME = 4.0F;
     private static final double GLOW_OUTSIDE = 1.0;
     private static final int MIN_GLOWS = 6;

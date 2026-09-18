@@ -475,16 +475,41 @@ public final class CaldariumTests {
         try {
             CaldariumConfig.SOL_TOUCH_DAMAGE.set(bite);
             LivingEntity inside = pigAt(helper, centre);
-            LivingEntity beside = pigAt(helper, centre.add(radius + inside.getBbWidth(), 0.0, 0.0));
+            double half = inside.getBbWidth() / 2.0;
+            LivingEntity against = pigAt(helper, centre.add(radius + SolBlock.SKIN + half, 0.0, 0.0));
+            LivingEntity beside = pigAt(helper, centre.add(radius + SolBlock.SKIN + half + 0.1, 0.0, 0.0));
             float whole = inside.getHealth();
             SolBlockEntity.burnWhatIsNear(helper.getLevel(), core, state);
             check(Math.abs(whole - inside.getHealth() - bite) < 0.01F,
                     "one in the ball should take the touch damage: " + (whole - inside.getHealth()));
+            check(Math.abs(whole - against.getHealth() - bite) < 0.01F,
+                    "one resting on the far side of the solid too: " + (whole - against.getHealth()));
             check(Math.abs(whole - beside.getHealth() - CaldariumConfig.solBurnDamage()) < 0.01F,
                     "one beside it should take only the burn damage: " + (whole - beside.getHealth()));
         } finally {
             CaldariumConfig.SOL_TOUCH_DAMAGE.set(touchWas);
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void aSunIsSolidNoFurtherOutThanItsSkin(GameTestHelper helper) {
+        double radius = 8.0;
+        Vec3 centre = Vec3.ZERO;
+        AABB whole = AABB.ofSize(centre, 0.0, 0.0, 0.0).inflate(radius + 1.0);
+        double worst = 0.0;
+        for (var slab : SolBlock.slabs(radius, centre, whole)) {
+            AABB box = slab.bounds();
+            for (double x : new double[] { box.minX, box.maxX }) {
+                for (double y : new double[] { box.minY, box.maxY }) {
+                    for (double z : new double[] { box.minZ, box.maxZ }) {
+                        worst = Math.max(worst, new Vec3(x, y, z).distanceTo(centre) - radius);
+                    }
+                }
+            }
+        }
+        check(worst > 0.0, "the solid should stand proud of the sphere somewhere: " + worst);
+        check(worst <= SolBlock.SKIN, "but never further out than its skin: " + worst);
         helper.succeed();
     }
 
