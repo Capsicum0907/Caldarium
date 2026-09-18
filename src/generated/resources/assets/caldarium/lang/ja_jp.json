@@ -120,5 +120,5 @@
   "tooltip.caldarium.makes.rate": "発電量: %s FE/t",
   "tooltip.caldarium.makes.strike": "発電量: 落雷1回につき %s FE",
   "tooltip.caldarium.sends": "送電量: %s FE/t",
-  "tooltip.caldarium.tier": "ティア: %s(%s) / %s(%s)"
+  "tooltip.caldarium.tier": "ティア: %s(%s) / %s"
 }

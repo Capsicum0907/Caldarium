@@ -55,8 +55,8 @@ public final class Tooltips {
             return;
         }
         lines.add(Component.translatable("tooltip." + Caldarium.MODID + ".tier",
-                number(tier), Component.translatable(tierKey(tier)),
-                number(top), Component.translatable(tierKey(top))).withStyle(ChatFormatting.GRAY));
+                number(tier), Component.translatable(tierKey(tier)), number(top))
+                .withStyle(ChatFormatting.GRAY));
     }
 
     private static void line(List<Component> lines, String key, double value) {

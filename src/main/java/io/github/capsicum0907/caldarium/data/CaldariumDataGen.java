@@ -461,12 +461,14 @@ public final class CaldariumDataGen {
         @Override
         protected void addTranslations() {
             for (Generator.Made made : Generator.made()) {
-                add(CaldariumRegistry.generators().get(made).get(), titled(made.id()));
+                String name = titled(made.generator().id());
+                add(CaldariumRegistry.generators().get(made).get(),
+                        made.tier() == null ? name : name + " (Tier " + Tooltips.number(made.tier()) + ")");
             }
             for (Kind kind : Kind.values()) {
                 for (Tier tier : Tier.upTo(kind.top())) {
                     add(CaldariumRegistry.block(kind, tier).get(),
-                            titled(tier.id()) + " " + titled(kind.getSerializedName()));
+                            titled(kind.getSerializedName()) + " (Tier " + Tooltips.number(tier) + ")");
                 }
             }
             add(CaldariumRegistry.SOL.get(), "Sol");
@@ -482,7 +484,7 @@ public final class CaldariumDataGen {
             for (Tier tier : Tier.values()) {
                 add(Tooltips.tierKey(tier), titled(tier.id()));
             }
-            add("tooltip.caldarium.tier", "Tier: %s (%s) / %s (%s)");
+            add("tooltip.caldarium.tier", "Tier: %s (%s) / %s");
             add("tooltip.caldarium.makes.rate", "Generates: %s FE/t");
             add("tooltip.caldarium.makes.point", "Generates: %s FE per point of experience");
             add("tooltip.caldarium.makes.health", "Generates: %s FE per point of health");
@@ -524,7 +526,7 @@ public final class CaldariumDataGen {
             for (Tier tier : Tier.values()) {
                 add(Tooltips.tierKey(tier), tier(tier));
             }
-            add("tooltip.caldarium.tier", "ティア: %s(%s) / %s(%s)");
+            add("tooltip.caldarium.tier", "ティア: %s(%s) / %s");
             add("tooltip.caldarium.makes.rate", "発電量: %s FE/t");
             add("tooltip.caldarium.makes.point", "発電量: 経験値1ポイントにつき %s FE");
             add("tooltip.caldarium.makes.health", "発電量: 体力1につき %s FE");
