@@ -538,7 +538,7 @@ public final class CaldariumDataGen {
         }
 
         private static String tiered(String name, Tier tier) {
-            return name + "(Tier" + Tooltips.number(tier) + ")";
+            return name + " (Tier " + Tooltips.number(tier) + ")";
         }
 
         private static String tier(Tier tier) {
