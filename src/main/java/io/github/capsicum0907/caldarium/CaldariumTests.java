@@ -389,6 +389,25 @@ public final class CaldariumTests {
     }
 
     @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void aSunHurtsCreaturesWithinItsReach(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockState state = helper.getLevel().getBlockState(core);
+        LivingEntity pig = helper.spawn(EntityType.PIG,
+                SUN.offset((int) Math.ceil(SolBlock.radius(state)) + 4, 0, 0));
+        int was = CaldariumConfig.SOL_REACH.get();
+        CaldariumConfig.SOL_REACH.set(2);
+        SolBlockEntity.harmWhatIsInReach(helper.getLevel(), core, state);
+        float beyond = pig.getHealth();
+        CaldariumConfig.SOL_REACH.set(7);
+        SolBlockEntity.harmWhatIsInReach(helper.getLevel(), core, state);
+        float within = pig.getHealth();
+        CaldariumConfig.SOL_REACH.set(was);
+        check(beyond == pig.getMaxHealth(), "a pig past the reach should be untouched: " + beyond);
+        check(within < beyond, "and a pig within it hurt: " + within);
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
     public static void aSunThatIsGoneStopsNothing(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {

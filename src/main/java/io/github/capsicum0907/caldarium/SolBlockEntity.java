@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -76,6 +77,9 @@ public class SolBlockEntity extends BlockEntity {
             return;
         }
         burnWhatIsNear(server, pos, state);
+        if (Math.floorMod(server.getGameTime() + pos.asLong(), CaldariumConfig.solReachEvery()) == 0) {
+            harmWhatIsInReach(server, pos, state);
+        }
         burnWhatFlies(server, pos, state);
         if (Math.floorMod(server.getGameTime() + pos.asLong(), GLOW_REFRESH) == 0) {
             SolBlock.glow(server, pos, state);
@@ -119,6 +123,18 @@ public class SolBlockEntity extends BlockEntity {
             } else {
                 living.hurt(level.damageSources().inFire(), CaldariumConfig.solBurnDamage());
             }
+        }
+    }
+
+    public static void harmWhatIsInReach(ServerLevel level, BlockPos pos, BlockState state) {
+        double reach = SolBlock.radius(state) + CaldariumConfig.solReach();
+        Vec3 centre = Vec3.atCenterOf(pos);
+        AABB around = new AABB(pos).inflate(Math.ceil(reach));
+        List<LivingEntity> within = level.getEntitiesOfClass(LivingEntity.class, around,
+                living -> !(living instanceof Player)
+                        && nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
+        for (LivingEntity living : within) {
+            living.hurt(sunlight(level), CaldariumConfig.solReachDamage());
         }
     }
 

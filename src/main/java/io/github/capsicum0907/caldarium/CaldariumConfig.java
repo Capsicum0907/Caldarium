@@ -112,6 +112,8 @@ public final class CaldariumConfig {
     public static ModConfigSpec.IntValue SOL_BURN_SECONDS;
     public static ModConfigSpec.DoubleValue SOL_BURN_DAMAGE;
     public static ModConfigSpec.DoubleValue SOL_TOUCH_DAMAGE;
+    public static ModConfigSpec.DoubleValue SOL_REACH_DAMAGE;
+    public static ModConfigSpec.IntValue SOL_REACH_EVERY;
     public static ModConfigSpec.IntValue SOL_BLAST_REACH;
     public static ModConfigSpec.DoubleValue SOL_HOLD;
     public static ModConfigSpec.IntValue SOL_PULSE_EVERY;
@@ -201,6 +203,8 @@ public final class CaldariumConfig {
         SOL_BURN_SECONDS = builder.defineInRange("burnSeconds", 5, 0, 600);
         SOL_BURN_DAMAGE = builder.defineInRange("burnDamage", 2.0, 0.0, 1_000.0);
         SOL_TOUCH_DAMAGE = builder.defineInRange("touchDamage", 10.0, 0.0, 1_000_000.0);
+        SOL_REACH_DAMAGE = builder.defineInRange("reachDamage", 5.0, 0.0, 1_000_000.0);
+        SOL_REACH_EVERY = builder.defineInRange("reachEvery", 20, 1, 72_000);
         SOL_BLAST_REACH = builder.defineInRange("blastReach", 8, 0, 64);
         SOL_HOLD = builder.defineInRange("hold", 8.0, 0.0, 64.0);
         SOL_PULSE_EVERY = builder.defineInRange("pulseEvery", 200, 1, 72_000);
@@ -293,6 +297,14 @@ public final class CaldariumConfig {
 
     public static int solReach() {
         return SOL_REACH.get();
+    }
+
+    public static float solReachDamage() {
+        return SOL_REACH_DAMAGE.get().floatValue();
+    }
+
+    public static int solReachEvery() {
+        return SOL_REACH_EVERY.get();
     }
 
     public static int solBurns() {
