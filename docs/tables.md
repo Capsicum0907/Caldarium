@@ -348,6 +348,10 @@ nothing, and are only ever put into air.
 
 - The core lays them when it is placed, takes them away in `onRemove`, and lays them
   again at the new size when it shrinks.
+- It also lays glows on the ground within its reach, on a grid `groundSpacing` apart. The
+  ground in a column is found from the height of the sun: downwards to the first floor, or
+  upwards to the first open cell if that height is inside the ground. A shell alone lit
+  only what was within fifteen blocks of it, which left the ground under a large sun dark.
 - Every hundred ticks it lays any that are missing, which covers cells whose chunk was
   not loaded when it tried.
 - A glow checks on a random tick that some loaded sun's shell passes through it and

@@ -84,9 +84,11 @@ public final class Suns {
 
     public static boolean lights(Level level, BlockPos cell) {
         Vec3 point = Vec3.atCenterOf(cell);
+        double reach = CaldariumConfig.solReach() + SHELL_TOLERANCE;
         for (BlockPos pos : in(level)) {
-            double shell = SolBlock.shell(SolBlock.radius(level.getBlockState(pos)));
-            if (Math.abs(point.distanceTo(SolBlock.centre(pos)) - shell) <= SHELL_TOLERANCE) {
+            float radius = SolBlock.radius(level.getBlockState(pos));
+            double from = point.distanceTo(SolBlock.centre(pos));
+            if (Math.abs(from - SolBlock.shell(radius)) <= SHELL_TOLERANCE || from - radius <= reach) {
                 return true;
             }
         }

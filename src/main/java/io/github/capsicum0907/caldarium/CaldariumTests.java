@@ -265,6 +265,7 @@ public final class CaldariumTests {
     private static final double SOL_HOLD = 2.0;
     private static double sizeWas;
     private static double holdWas;
+    private static int reachWas;
 
     @BeforeBatch(batch = SOL_BATCH)
     public static void fixTheSun(ServerLevel level) {
@@ -272,12 +273,15 @@ public final class CaldariumTests {
         holdWas = CaldariumConfig.SOL_HOLD.get();
         CaldariumConfig.SOL_SIZE.set(SOL_SIZE);
         CaldariumConfig.SOL_HOLD.set(SOL_HOLD);
+        reachWas = CaldariumConfig.SOL_REACH.get();
+        CaldariumConfig.SOL_REACH.set(0);
     }
 
     @AfterBatch(batch = SOL_BATCH)
     public static void restoreTheSun(ServerLevel level) {
         CaldariumConfig.SOL_SIZE.set(sizeWas);
         CaldariumConfig.SOL_HOLD.set(holdWas);
+        CaldariumConfig.SOL_REACH.set(reachWas);
     }
 
     private static final BlockPos SUN = new BlockPos(TestStructures.HALL_SIZE / 2, TestStructures.HALL_SIZE / 2,
@@ -346,6 +350,23 @@ public final class CaldariumTests {
             check(!beyond, "but not once the reach is shorter than the gap");
             helper.succeed();
         });
+    }
+
+    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    public static void aSunLightsTheGroundWithinItsReach(GameTestHelper helper) {
+        BlockPos core = sun(helper);
+        BlockPos floor = helper.absolutePos(new BlockPos(SUN.getX(), 2, SUN.getZ()));
+        int was = CaldariumConfig.SOL_REACH.get();
+        CaldariumConfig.SOL_REACH.set(7);
+        BlockState state = helper.getLevel().getBlockState(core);
+        SolBlock.glow(helper.getLevel(), core, state);
+        boolean lit = helper.getLevel().getBlockState(floor).getBlock() instanceof SolGlowBlock;
+        SolBlock.unglow(helper.getLevel(), core, state);
+        boolean cleared = !(helper.getLevel().getBlockState(floor).getBlock() instanceof SolGlowBlock);
+        CaldariumConfig.SOL_REACH.set(was);
+        check(lit, "the floor under a sun within its reach should carry a glow");
+        check(cleared, "and lose it when the sun goes");
+        helper.succeed();
     }
 
     @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)

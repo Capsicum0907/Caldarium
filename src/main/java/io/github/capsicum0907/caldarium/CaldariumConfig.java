@@ -116,6 +116,7 @@ public final class CaldariumConfig {
     public static ModConfigSpec.DoubleValue SOL_HOLD;
     public static ModConfigSpec.IntValue SOL_PULSE_EVERY;
     public static ModConfigSpec.IntValue SOL_GLOW_SPACING;
+    public static ModConfigSpec.IntValue SOL_GROUND_SPACING;
     public static ModConfigSpec.IntValue SOL_PULSE_LENGTH;
     public static ModConfigSpec.DoubleValue SOL_BLAST_DAMAGE;
     public static ModConfigSpec.DoubleValue SOL_SIZE;
@@ -204,6 +205,7 @@ public final class CaldariumConfig {
         SOL_HOLD = builder.defineInRange("hold", 8.0, 0.0, 64.0);
         SOL_PULSE_EVERY = builder.defineInRange("pulseEvery", 200, 1, 72_000);
         SOL_GLOW_SPACING = builder.defineInRange("glowSpacing", 7, 1, 64);
+        SOL_GROUND_SPACING = builder.defineInRange("groundSpacing", 4, 1, 64);
         SOL_PULSE_LENGTH = builder.defineInRange("pulseLength", 40, 0, 72_000);
         SOL_BLAST_DAMAGE = builder.defineInRange("blastDamage", 1_000.0, 0.0, 1_000_000.0);
         SOL_SIZE = builder.defineInRange("size", 64.0, 0.5, 64.0);
@@ -307,6 +309,10 @@ public final class CaldariumConfig {
 
     public static int solGlowSpacing() {
         return SOL_GLOW_SPACING.get();
+    }
+
+    public static int solGroundSpacing() {
+        return SOL_GROUND_SPACING.get();
     }
 
     public static int solPulseEvery() {

@@ -50,6 +50,7 @@ public class SolBlock extends BaseEntityBlock {
     private static final float BLAST_VOLUME = 4.0F;
     private static final double GLOW_OUTSIDE = 1.0;
     private static final int MIN_GLOWS = 6;
+    private static final int CLEARING = 2;
     private static final double GOLDEN_ANGLE = Math.PI * (3.0 - Math.sqrt(5.0));
     private static final Map<Float, VoxelShape> SHAPES = new ConcurrentHashMap<>();
 
@@ -180,9 +181,106 @@ public class SolBlock extends BaseEntityBlock {
         return new ArrayList<>(cells);
     }
 
+    public static List<BlockPos> groundCells(Level level, BlockPos core, float radius) {
+        int reach = CaldariumConfig.solReach();
+        Vec3 centre = centre(core);
+        List<BlockPos> cells = new ArrayList<>();
+        for (BlockPos column : groundColumns(core, radius)) {
+            if (!level.isLoaded(column)) {
+                continue;
+            }
+            BlockPos cell = ground(level, centre, radius, reach, column.getX(), column.getZ());
+            if (cell != null && Vec3.atCenterOf(cell).distanceTo(centre) - radius <= reach) {
+                cells.add(cell);
+            }
+        }
+        return cells;
+    }
+
+    private static List<BlockPos> groundColumns(BlockPos core, float radius) {
+        int spacing = Math.max(1, CaldariumConfig.solGroundSpacing());
+        double far = radius + CaldariumConfig.solReach();
+        int steps = (int) Math.floor(far / spacing);
+        List<BlockPos> columns = new ArrayList<>();
+        for (int i = -steps; i <= steps; i++) {
+            for (int k = -steps; k <= steps; k++) {
+                if (Math.hypot(i * spacing, k * spacing) <= far) {
+                    columns.add(core.offset(i * spacing, 0, k * spacing));
+                }
+            }
+        }
+        return columns;
+    }
+
+    private static BlockPos ground(Level level, Vec3 centre, float radius, int reach, int x, int z) {
+        double far = radius + reach;
+        int lowest = Math.max(level.getMinBuildHeight(), (int) Math.floor(centre.y - far));
+        int highest = Math.min(level.getMaxBuildHeight() - 1, (int) Math.ceil(centre.y + far));
+        double shell = radius + GLOW_OUTSIDE;
+        double across = Math.hypot(x + 0.5 - centre.x, z + 0.5 - centre.z);
+        double under = across < shell ? Math.sqrt(shell * shell - across * across) : 0.0;
+        int start = (int) Math.floor(centre.y - under);
+        BlockPos.MutableBlockPos at = new BlockPos.MutableBlockPos(x, start, z);
+        int found = Integer.MIN_VALUE;
+        if (!solid(level.getBlockState(at))) {
+            for (int y = start; y > lowest; y--) {
+                if (solid(level.getBlockState(at.setY(y - 1)))) {
+                    found = y;
+                    break;
+                }
+            }
+        } else {
+            for (int y = start + 1; y <= highest; y++) {
+                if (!solid(level.getBlockState(at.setY(y)))) {
+                    found = y;
+                    break;
+                }
+            }
+        }
+        if (found == Integer.MIN_VALUE) {
+            return null;
+        }
+        for (int y = found; y <= Math.min(highest, found + CLEARING); y++) {
+            BlockState there = level.getBlockState(at.setY(y));
+            if (there.isAir() || there.getBlock() instanceof SolGlowBlock) {
+                return at.immutable();
+            }
+        }
+        return null;
+    }
+
+    private static boolean solid(BlockState state) {
+        return state.blocksMotion() || !state.getFluidState().isEmpty();
+    }
+
+    private static List<BlockPos> columnGlows(Level level, BlockPos core, float radius) {
+        int far = (int) Math.ceil(radius + CaldariumConfig.solReach()) + 1;
+        List<BlockPos> glows = new ArrayList<>();
+        for (BlockPos column : groundColumns(core, radius)) {
+            if (!level.isLoaded(column)) {
+                continue;
+            }
+            for (int y = -far; y <= far; y++) {
+                BlockPos cell = column.above(y);
+                if (level.getBlockState(cell).getBlock() instanceof SolGlowBlock) {
+                    glows.add(cell);
+                }
+            }
+        }
+        return glows;
+    }
+
     public static void glow(Level level, BlockPos core, BlockState state) {
         BlockState glow = CaldariumRegistry.SOL_GLOW.get().defaultBlockState().setValue(SPENT, state.getValue(SPENT));
-        for (BlockPos cell : glowCells(core, radius(state))) {
+        float radius = radius(state);
+        Set<BlockPos> wanted = new LinkedHashSet<>(glowCells(core, radius));
+        wanted.addAll(groundCells(level, core, radius));
+        for (BlockPos stale : columnGlows(level, core, radius)) {
+            if (!wanted.contains(stale)) {
+                level.setBlock(stale, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+            }
+        }
+        for (BlockPos cell : wanted) {
             if (!level.isLoaded(cell)) {
                 continue;
             }
@@ -194,7 +292,10 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     public static void unglow(Level level, BlockPos core, BlockState state) {
-        for (BlockPos cell : glowCells(core, radius(state))) {
+        float radius = radius(state);
+        List<BlockPos> cells = new ArrayList<>(glowCells(core, radius));
+        cells.addAll(columnGlows(level, core, radius));
+        for (BlockPos cell : cells) {
             if (level.isLoaded(cell) && level.getBlockState(cell).getBlock() instanceof SolGlowBlock) {
                 level.setBlock(cell, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
             }

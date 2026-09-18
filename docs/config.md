@@ -37,6 +37,7 @@ in paragraphs about them. Every number is a starting point the player then owns.
 | `sol.touchDamage` | What a tick touching the ball costs, in place of the burn damage. |
 | `sol.hold` | The least gap between a held sun and the body holding it, in blocks. Keep it above `burnReach`, or holding a sun burns. |
 | `sol.glowSpacing` | Roughly how far apart the light sources around a sun are, in blocks. Smaller is brighter and even, and places more blocks. |
+| `sol.groundSpacing` | How far apart the light sources laid on the ground within a sun's reach are, in blocks. At 4, flat ground is at light level 11 or more everywhere between them. |
 | `sol.pulseEvery` / `pulseLength` | How often a sun flares, and for how long, in ticks. A length of 0 turns it off. |
 | `sol.blastReach` / `blastDamage` | How far past the surface breaking a sun reaches, in blocks, and the damage it does to everything alive there. Blocks are never harmed. |
 | `heat.temperatures` | What a block is worth as a face of a hypocaustum, on the same scale the game uses for biomes. `block=value`, or `#tag=value` for a whole tag, so another mod's blocks can be given a temperature without touching this one. A face touching nothing listed here reads its biome instead. |
