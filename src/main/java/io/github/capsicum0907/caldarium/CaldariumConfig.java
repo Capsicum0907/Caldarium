@@ -81,6 +81,24 @@ public final class CaldariumConfig {
         return TANKS.get(made).get();
     }
 
+    private static final Map<Generator.Made, ModConfigSpec.IntValue> LETHAL = new LinkedHashMap<>();
+
+    public static int lethalHealth(Generator.Made made) {
+        return LETHAL.get(made).get();
+    }
+
+    private static int lethal(Tier tier) {
+        return switch (tier) {
+            case COPPER -> 20;
+            case IRON -> 40;
+            case GOLD -> 60;
+            case DIAMOND -> 80;
+            case NETHERITE -> 100;
+            case NETHER_STAR -> 200;
+            case COMPRESSED_NETHER_STAR, SUPER_COMPRESSED_NETHER_STAR -> Integer.MAX_VALUE;
+        };
+    }
+
     /** What is left of the sun through one block that light passes through. */
     public static ModConfigSpec.IntValue SUN_THROUGH;
     public static ModConfigSpec.DoubleValue HEAT_SPAN;
@@ -153,6 +171,10 @@ public final class CaldariumConfig {
             if (made.source() == Source.FLUID) {
                 TANKS.put(made, builder
                         .defineInRange("tank", TANK, 1_000, Integer.MAX_VALUE));
+            }
+            if (made.source() == Source.LIFE) {
+                LETHAL.put(made, builder
+                        .defineInRange("lethalHealth", lethal(made.tier()), 1, Integer.MAX_VALUE));
             }
             builder.pop();
         }

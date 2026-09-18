@@ -124,7 +124,8 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             return 0;
         }
         float had = living.getHealth();
-        if (had <= 0.0F || living.isDeadOrDying() || store.isFull()) {
+        if (had <= 0.0F || living.isDeadOrDying() || store.isFull()
+                || living.getMaxHealth() > CaldariumConfig.lethalHealth(row)) {
             return 0;
         }
         living.hurt(level.damageSources().generic(), Float.MAX_VALUE);

@@ -158,6 +158,19 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
+    @GameTest(template = TestStructures.FLOOR)
+    public static void aRungKillsNothingLargerThanItsLimit(GameTestHelper helper) {
+        GeneratorBlockEntity made = spoliarium(helper);
+
+        LivingEntity golem = helper.spawn(EntityType.IRON_GOLEM, WHERE.above());
+        int paid = made.reap(helper.getLevel(), golem);
+
+        check(!golem.isDeadOrDying(), "an iron golem should outlast the first rung");
+        check(golem.getHealth() == golem.getMaxHealth(), "and not even be hurt: " + golem.getHealth());
+        check(paid == 0, "and nothing should have been paid for it: " + paid);
+        helper.succeed();
+    }
+
     /**
      * ⚠ Nothing is paid for a blow that did not land.
      *
