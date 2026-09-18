@@ -45,6 +45,9 @@ public final class Tooltips {
     }
 
     private static void line(List<Component> lines, String key, double value) {
+        if (value <= 0.0) {
+            return;
+        }
         lines.add(Component.translatable("tooltip." + Caldarium.MODID + "." + key, amount(value))
                 .withStyle(ChatFormatting.GRAY));
     }
