@@ -124,16 +124,14 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             return 0;
         }
         float had = living.getHealth();
-        if (had <= 0.0F || living.isDeadOrDying()) {
+        if (had <= 0.0F || living.isDeadOrDying() || store.isFull()) {
             return 0;
         }
         living.hurt(level.damageSources().generic(), Float.MAX_VALUE);
         if (!living.isDeadOrDying()) {
             return 0;
         }
-        long added = (long) (had * CaldariumConfig.ticksPerHealth());
-        burning = (int) Math.min(Integer.MAX_VALUE, burning + added);
-        burnLength = Math.max(burnLength, burning);
+        give(had);
         setChanged();
         return Math.round(had);
     }
@@ -223,9 +221,8 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
         switch (generator.row.source()) {
             case ITEM, FLUID -> generator.burn();
-            case LIFE -> generator.burn();
             case SUN, HEAT, LAMP -> generator.soak(server, pos);
-            case EXPERIENCE, STORM, BLOW -> { }
+            case EXPERIENCE, LIFE, STORM, BLOW -> { }
         }
         Pushing.push(generator.sides, server, pos, generator.store, null, false);
 

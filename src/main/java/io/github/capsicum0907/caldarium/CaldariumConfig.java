@@ -86,7 +86,6 @@ public final class CaldariumConfig {
     public static ModConfigSpec.DoubleValue HEAT_SPAN;
     public static ModConfigSpec.ConfigValue<List<? extends Integer>> POUR_STEPS;
 
-    public static ModConfigSpec.IntValue TICKS_PER_HEALTH;
     public static ModConfigSpec.IntValue SOL_DURABILITY;
     public static ModConfigSpec.IntValue SOL_WEATHER;
     public static ModConfigSpec.IntValue SOL_REACH;
@@ -108,7 +107,6 @@ public final class CaldariumConfig {
     private static final int MC_DAY = 24_000;
     private static final int SOL_DAYS = 30;
 
-    private static final int PER_HEALTH = 200;
     public static ModConfigSpec.ConfigValue<List<? extends String>> TEMPERATURES;
 
     private static final double SPAN = 11.0;
@@ -192,10 +190,6 @@ public final class CaldariumConfig {
         STORM_NATURAL = builder.defineInRange("natural", 50_000_000, 0, Integer.MAX_VALUE);
         STORM_SUMMONED = builder.defineInRange("summoned", 100_000, 0, Integer.MAX_VALUE);
         STORM_REACH = builder.defineInRange("reach", 3, 0, 16);
-        builder.pop();
-
-        builder.push("life");
-        TICKS_PER_HEALTH = builder.defineInRange("ticksPerHealth", PER_HEALTH, 1, 200_000);
         builder.pop();
 
         builder.push("heat");
@@ -318,10 +312,6 @@ public final class CaldariumConfig {
 
     public static float solTouchDamage() {
         return SOL_TOUCH_DAMAGE.get().floatValue();
-    }
-
-    public static int ticksPerHealth() {
-        return TICKS_PER_HEALTH.get();
     }
 
     @SuppressWarnings("unchecked")

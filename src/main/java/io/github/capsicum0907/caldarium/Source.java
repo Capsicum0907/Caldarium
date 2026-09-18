@@ -20,7 +20,7 @@ public enum Source {
     /** What a player has earned, poured in by hand and paid for at once. */
     EXPERIENCE(false, false, false),
     /** The health of whatever stands on it, and only what actually left. */
-    LIFE(false, false, true),
+    LIFE(false, false, false),
     /** Whatever light is falling on it, from lamps rather than from the sky. */
     LAMP(false, true, false),
     /** Lightning, which arrives all at once or not for an hour. */

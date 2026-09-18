@@ -8,6 +8,12 @@ Capacity, transfer rates and generation rate are settings. There is no defensibl
 number to write into the code here: what is right depends entirely on what else is
 installed.
 
+**A generator that makes energy steadily starts from its own rate**: it holds five minutes
+of what it makes, and hands on twenty ticks' worth each tick, so a full one empties in
+fifteen seconds. One that is paid in lumps - experience, a blow, a death, a strike - has
+no rate to count from and keeps figures of its own. Anything a rung would put past the
+ceiling an `int` allows is clamped to that ceiling.
+
 The file is `config/caldarium-server.toml`, one section per generator and one per
 kind per tier. **It carries no prose**: what a setting is for is here, and the file
 itself is the settings and the range each one accepts, so the values are not buried

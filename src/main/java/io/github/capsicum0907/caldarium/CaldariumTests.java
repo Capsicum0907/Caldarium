@@ -147,14 +147,14 @@ public final class CaldariumTests {
     @GameTest(template = TestStructures.FLOOR)
     public static void standingOnItIsFatal(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
-        check(made.burning() == 0, "it should start with nothing to burn");
+        check(made.store().getEnergyStored() == 0, "it should start empty");
 
         LivingEntity pig = helper.spawn(EntityType.PIG, WHERE.above());
         int paid = made.reap(helper.getLevel(), pig);
 
         check(pig.isDeadOrDying(), "a pig that stepped on it should be dead");
         check(paid > 0, "and its health should have been paid for: " + paid);
-        check(made.burning() > 0, "so it has something to burn: " + made.burning());
+        check(made.store().getEnergyStored() > 0, "so it holds something: " + made.store().getEnergyStored());
         helper.succeed();
     }
 
@@ -177,7 +177,7 @@ public final class CaldariumTests {
 
         check(!dummy.isDeadOrDying(), "the invulnerable one should still be standing");
         check(paid == 0, "and nothing should have been paid for it: " + paid);
-        check(made.burning() == 0, "so there is nothing to burn: " + made.burning());
+        check(made.store().getEnergyStored() == 0, "so it holds nothing: " + made.store().getEnergyStored());
         helper.succeed();
     }
 
@@ -194,9 +194,9 @@ public final class CaldariumTests {
             made.reap(helper.getLevel(), dummy);
         }
 
-        check(made.burning() == 0,
+        check(made.store().getEnergyStored() == 0,
                 "a hundred ticks of standing on it should still be nothing: "
-                        + made.burning());
+                        + made.store().getEnergyStored());
         helper.succeed();
     }
 
