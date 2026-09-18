@@ -66,8 +66,7 @@ public class Caldarium {
      * its fuel slot as an item handler, which is how a hopper feeds it.
      */
     private static void spoils(LivingDropsEvent event) {
-        if (event.getSource().is(CaldariumRegistry.SPOLIARIUM_DAMAGE)
-                && !(event.getEntity() instanceof net.minecraft.world.entity.player.Player)) {
+        if (event.getSource().is(CaldariumRegistry.SPOLIARIUM_DAMAGE)) {
             event.setCanceled(true);
         }
     }

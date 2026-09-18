@@ -132,9 +132,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
                 || living.getMaxHealth() > CaldariumConfig.lethalHealth(row)) {
             return 0;
         }
-        if (!(living instanceof Player)) {
-            living.skipDropExperience();
-        }
+        living.skipDropExperience();
         living.hurt(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(CaldariumRegistry.SPOLIARIUM_DAMAGE)), Float.MAX_VALUE);
         if (!living.isDeadOrDying()) {
