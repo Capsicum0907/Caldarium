@@ -5,69 +5,46 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
-/**
- * The transport layer, entire: on its tick a block offers what it has to the six
- * blocks touching it. There is no route, no plan and no network — a cable here is a
- * block that holds almost nothing and moves a great deal, and this rule carries it.
- *
- * <p><b>The rule is asymmetric, and that is the whole design.</b>
- *
- * <ul>
- * <li>To another buffer of ours, only downhill — to a neighbour holding a smaller
- *     share of what it can hold. Without this, two touching batteries push into each
- *     other every tick forever. With it, a row of batteries is a line that carries,
- *     because energy can only ever move towards the emptier end.
- * <li>To anything else, freely, and let {@code receiveEnergy} decide. This half is
- *     not a convenience: a running machine keeps its own buffer near full, so a rule
- *     that compared levels would have a half-full battery refuse the one block in
- *     the world that actually wanted the energy.
- * </ul>
- *
- * <p>{@link Wiring} sits in front of both: it says which side of the boundary
- * between this mod and every other one a neighbour has to be on to be offered to at
- * all. The line is closed in the other direction as well — see
- * {@link Store#canReceive} — so what this rule refuses cannot simply arrive from the
- * other side instead.
- */
 public final class Pushing {
     private Pushing() {
     }
 
-    /**
-     * Offers up to the store's transfer rate to each side. Returns what left.
-     *
-     * <p>{@code aimed} is the face a door was pointed at, or null for anything that
-     * points nowhere, and {@code gives} says whether it hands anything through it.
-     * ⭐ That face is the end of the line and not part of it: through it a block reaches
-     * anything that is <em>not</em> the line, and on every other side it offers to this
-     * mod's own blocks the way a cable does.
-     */
-    public static int push(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
-            Direction aimed, boolean gives) {
-        int rate = store.transferRate();
-        int moved = 0;
-        // ⚠ Nothing that cannot give it up may offer. Without this a sink would hand
-        // a neighbour energy and then fail to take it out of itself, which is not a
-        // stuck machine but energy made out of nothing.
-        if (rate <= 0 || store.isEmpty() || !store.canExtract()) {
+    public static int push(Neighbours sides, ServerLevel level, BlockPos pos, Store store) {
+        if (!ready(store)) {
             return 0;
         }
+        int moved = 0;
         for (Direction side : Direction.values()) {
             IEnergyStorage neighbour = sides.at(level, pos, side);
-            if (neighbour == null || !Store.accepts(neighbour)
-                    || !mayOffer(store, neighbour, side == aimed, gives)) {
+            if (neighbour == null || Neighbours.inLine(neighbour) || !Store.accepts(neighbour)
+                    || !downhill(store, neighbour)) {
                 continue;
             }
-            int offered = Math.min(rate, store.getEnergyStored());
-            // ⚠ One of ours is handed to rather than offered to. The line refuses
-            // every offer, including this one, so that nothing outside can push into
-            // it; going around that seal is what this mod is allowed to do, and what
-            // an importer does on behalf of anything that is not.
-            int taken = neighbour instanceof Store peer
-                    ? peer.take(offered)
-                    : neighbour.receiveEnergy(offered, false);
+            moved += hand(store, neighbour);
+            if (store.isEmpty()) {
+                break;
+            }
+        }
+        return moved;
+    }
+
+    public static int along(Neighbours sides, ServerLevel level, BlockPos pos, Store store) {
+        if (!ready(store)) {
+            return 0;
+        }
+        long now = level.getGameTime();
+        int moved = 0;
+        for (Direction side : Direction.values()) {
+            if (store.arrivedRecently(side, now)) {
+                continue;
+            }
+            if (!(sides.at(level, pos, side) instanceof Store peer) || peer.wiring() != Wiring.CABLE
+                    || !downhill(store, peer)) {
+                continue;
+            }
+            int taken = hand(store, peer);
             if (taken > 0) {
-                store.extractEnergy(taken, false);
+                peer.arrivedFrom(side.getOpposite(), now);
                 moved += taken;
             }
             if (store.isEmpty()) {
@@ -77,20 +54,56 @@ public final class Pushing {
         return moved;
     }
 
-    /**
-     * The boundary first, then downhill. Downhill holds only between two buffers of
-     * ours; everything else is somebody else's business. A generator is a
-     * {@link Store.Role#SOURCE} and so is never held back: what it makes has nowhere
-     * else to go.
-     */
-    private static boolean mayOffer(Store from, IEnergyStorage to, boolean aimedAt,
-            boolean gives) {
-        boolean reaches = aimedAt
-                ? gives && !Neighbours.inLine(to)
-                : from.wiring().mayOffer(Neighbours.ours(to));
-        if (!reaches) {
-            return false;
+    public static int feed(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
+            Direction aimed) {
+        if (!ready(store)) {
+            return 0;
         }
+        long now = level.getGameTime();
+        int moved = 0;
+        for (Direction side : Direction.values()) {
+            if (side == aimed || !(sides.at(level, pos, side) instanceof Store peer)
+                    || !store.wiring().feeds(peer.wiring())) {
+                continue;
+            }
+            int taken = hand(store, peer);
+            if (taken > 0) {
+                peer.arrivedFrom(side.getOpposite(), now);
+                moved += taken;
+            }
+            if (store.isEmpty()) {
+                break;
+            }
+        }
+        return moved;
+    }
+
+    public static int give(Neighbours sides, ServerLevel level, BlockPos pos, Store store,
+            Direction aimed) {
+        if (!ready(store) || aimed == null) {
+            return 0;
+        }
+        IEnergyStorage neighbour = sides.at(level, pos, aimed);
+        if (neighbour == null || Neighbours.inLine(neighbour) || !Store.accepts(neighbour)) {
+            return 0;
+        }
+        return hand(store, neighbour);
+    }
+
+    private static boolean ready(Store store) {
+        return store.transferRate() > 0 && !store.isEmpty() && store.canExtract();
+    }
+
+    private static int hand(Store from, IEnergyStorage to) {
+        int offered = Math.min(from.transferRate(), from.getEnergyStored());
+        int taken = to instanceof Store peer ? peer.take(offered) : to.receiveEnergy(offered, false);
+        if (taken > 0) {
+            from.extractEnergy(taken, false);
+        }
+        return Math.max(0, taken);
+    }
+
+    private static boolean downhill(Store from, IEnergyStorage to) {
         if (!(to instanceof Store peer)) {
             return true;
         }

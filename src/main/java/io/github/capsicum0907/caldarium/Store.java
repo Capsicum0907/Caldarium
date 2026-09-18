@@ -2,6 +2,8 @@ package io.github.capsicum0907.caldarium;
 
 import java.util.function.IntSupplier;
 
+import net.minecraft.core.Direction;
+
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
@@ -44,6 +46,19 @@ public final class Store implements IEnergyStorage {
     private final Runnable changed;
 
     private int stored;
+    private final long[] arrived = new long[Direction.values().length];
+
+    {
+        java.util.Arrays.fill(arrived, Long.MIN_VALUE);
+    }
+
+    public void arrivedFrom(Direction side, long tick) {
+        arrived[side.ordinal()] = tick;
+    }
+
+    public boolean arrivedRecently(Direction side, long tick) {
+        return arrived[side.ordinal()] >= tick - 1;
+    }
 
     public Store(Role role, Wiring wiring, IntSupplier capacity, IntSupplier transfer,
             Runnable changed) {

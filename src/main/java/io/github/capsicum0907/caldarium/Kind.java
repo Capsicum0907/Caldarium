@@ -37,7 +37,7 @@ public enum Kind implements StringRepresentable {
      * laid past somebody else's machine without powering it — and so what makes a
      * corridor of cable possible at all.
      */
-    CABLE("cable", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.NONE, Tier.NETHER_STAR),
+    CABLE("cable", Store.Role.BUFFER, Wiring.CABLE, 0, false, Aim.NONE, Tier.NETHER_STAR),
     /**
      * The way in: it draws out of anything that is not the line and hands it to the
      * line. Other mods are full of machines that wait to be asked, and this is the
@@ -48,9 +48,9 @@ public enum Kind implements StringRepresentable {
      * went in that way would be energy in the one block whose job is to be where
      * energy starts, and the line would have two ways to move it.
      */
-    IMPORTER("importer", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.DRAWS, Tier.NETHER_STAR),
+    IMPORTER("importer", Store.Role.BUFFER, Wiring.INTAKE, 0, false, Aim.DRAWS, Tier.NETHER_STAR),
     /** The way out: the only block here that offers to another mod's machine. */
-    EXPORTER("exporter", Store.Role.BUFFER, Wiring.ALONG, 0, false, Aim.GIVES, Tier.NETHER_STAR);
+    EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUTLET, 0, false, Aim.GIVES, Tier.NETHER_STAR);
 
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
@@ -179,16 +179,7 @@ public enum Kind implements StringRepresentable {
      * thing meant to make the rule visible into something that lied about it.
      */
     public boolean touches(IEnergyStorage neighbour) {
-        boolean ours = Neighbours.ours(neighbour);
-        // What this one can hand over.
-        if (pushes() && wiring.mayOffer(ours) && Store.accepts(neighbour)) {
-            return true;
-        }
-        // What the neighbour can hand over. ⚠ Only asked of this mod's own blocks:
-        // whether another mod pushes what it holds is its business, and guessing would
-        // put an arm on a face nothing ever crosses.
-        return role != Store.Role.SOURCE && neighbour instanceof Store peer
-                && peer.canExtract() && peer.wiring().mayOffer(true);
+        return neighbour instanceof Store peer && wiring.joins(peer.wiring());
     }
 
     /**

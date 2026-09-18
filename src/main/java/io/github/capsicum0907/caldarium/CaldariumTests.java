@@ -177,6 +177,128 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
+    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 100)
+    public static void aBurnerFillsABatteryThroughADoorChain(GameTestHelper helper) {
+        BlockPos burnerAt = new BlockPos(0, 1, 2);
+        BlockPos importerAt = new BlockPos(1, 1, 2);
+        BlockPos cableAt = new BlockPos(2, 1, 2);
+        BlockPos exporterAt = new BlockPos(3, 1, 2);
+        BlockPos batteryAt = new BlockPos(4, 1, 2);
+        helper.setBlock(burnerAt, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
+        helper.setBlock(batteryAt, CaldariumRegistry.block(Kind.BATTERY, Tier.COPPER).get());
+        helper.setBlock(cableAt, CaldariumRegistry.block(Kind.CABLE, Tier.COPPER).get());
+        helper.setBlock(importerAt, CaldariumRegistry.block(Kind.IMPORTER, Tier.COPPER).get().defaultBlockState()
+                .setValue(CarrierBlock.JOINTS.get(Direction.WEST), Joint.AIMED));
+        helper.setBlock(exporterAt, CaldariumRegistry.block(Kind.EXPORTER, Tier.COPPER).get().defaultBlockState()
+                .setValue(CarrierBlock.JOINTS.get(Direction.EAST), Joint.AIMED));
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(burnerAt);
+        burner.fuel().setStackInSlot(0, new ItemStack(Items.COAL, 4));
+        KindBlockEntity battery = (KindBlockEntity) helper.getBlockEntity(batteryAt);
+        helper.succeedWhen(() -> check(battery.store().getEnergyStored() > 0,
+                "the battery should be filling: " + battery.store().getEnergyStored()
+                        + " burner holds " + burner.store().getEnergyStored()));
+    }
+
+    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 120)
+    public static void aDoorPlacedLaterStillJoinsTheLine(GameTestHelper helper) {
+        BlockPos burnerAt = new BlockPos(0, 1, 2);
+        BlockPos importerAt = new BlockPos(1, 1, 2);
+        BlockPos cableAt = new BlockPos(2, 1, 2);
+        BlockPos exporterAt = new BlockPos(3, 1, 2);
+        BlockPos batteryAt = new BlockPos(4, 1, 2);
+        helper.setBlock(burnerAt, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.DIAMOND)).get());
+        helper.setBlock(batteryAt, CaldariumRegistry.block(Kind.BATTERY, Tier.GOLD).get());
+        helper.setBlock(cableAt, CaldariumRegistry.block(Kind.CABLE, Tier.DIAMOND).get());
+        helper.setBlock(importerAt, CaldariumRegistry.block(Kind.IMPORTER, Tier.DIAMOND).get().defaultBlockState()
+                .setValue(CarrierBlock.JOINTS.get(Direction.WEST), Joint.AIMED));
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(burnerAt);
+        burner.fuel().setStackInSlot(0, new ItemStack(Items.COAL, 4));
+        KindBlockEntity battery = (KindBlockEntity) helper.getBlockEntity(batteryAt);
+        helper.startSequence()
+                .thenExecuteAfter(20, () -> helper.setBlock(exporterAt,
+                        CaldariumRegistry.block(Kind.EXPORTER, Tier.DIAMOND).get().defaultBlockState()
+                                .setValue(CarrierBlock.JOINTS.get(Direction.EAST), Joint.AIMED)))
+                .thenWaitUntil(() -> {
+                    KindBlockEntity cable = (KindBlockEntity) helper.getBlockEntity(cableAt);
+                    KindBlockEntity exporter = (KindBlockEntity) helper.getBlockEntity(exporterAt);
+                    check(battery.store().getEnergyStored() > 0,
+                            "the battery should be filling: cable " + cable.store().getEnergyStored()
+                                    + ", exporter " + exporter.store().getEnergyStored()
+                                    + ", battery " + battery.store().getEnergyStored());
+                })
+                .thenSucceed();
+    }
+
+    private static void longLine(GameTestHelper helper, boolean eastward) {
+        int from = 1;
+        int to = TestStructures.HALL_SIZE - 2;
+        int burnerX = eastward ? from : to;
+        int batteryX = eastward ? to : from;
+        int step = eastward ? 1 : -1;
+        Direction back = eastward ? Direction.WEST : Direction.EAST;
+        Direction ahead = back.getOpposite();
+        int z = TestStructures.HALL_SIZE / 2;
+        helper.setBlock(new BlockPos(burnerX, 2, z), CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.NETHERITE)).get());
+        helper.setBlock(new BlockPos(batteryX, 2, z), CaldariumRegistry.block(Kind.BATTERY, Tier.GOLD).get());
+        helper.setBlock(new BlockPos(burnerX + step, 2, z), CaldariumRegistry.block(Kind.IMPORTER, Tier.DIAMOND).get()
+                .defaultBlockState().setValue(CarrierBlock.JOINTS.get(back), Joint.AIMED));
+        helper.setBlock(new BlockPos(batteryX - step, 2, z), CaldariumRegistry.block(Kind.EXPORTER, Tier.DIAMOND).get()
+                .defaultBlockState().setValue(CarrierBlock.JOINTS.get(ahead), Joint.AIMED));
+        for (int x = burnerX + 2 * step; x != batteryX - step; x += step) {
+            helper.setBlock(new BlockPos(x, 2, z), CaldariumRegistry.block(Kind.CABLE, Tier.DIAMOND).get());
+        }
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(new BlockPos(burnerX, 2, z));
+        burner.fuel().setStackInSlot(0, new ItemStack(Items.COAL, 16));
+        KindBlockEntity battery = (KindBlockEntity) helper.getBlockEntity(new BlockPos(batteryX, 2, z));
+        helper.runAfterDelay(180, () -> {
+            StringBuilder line = new StringBuilder();
+            for (int x = burnerX + step; x != batteryX; x += step) {
+                KindBlockEntity carrier = (KindBlockEntity) helper.getBlockEntity(new BlockPos(x, 2, z));
+                line.append(carrier.store().getEnergyStored() / 1024).append(' ');
+            }
+            check(battery.store().getEnergyStored() > 0, (eastward ? "eastward" : "westward")
+                    + " line should reach the battery; carriers in kFE: " + line
+                    + "battery " + battery.store().getEnergyStored());
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 60)
+    public static void aCableTakesNothingStraightFromAMachine(GameTestHelper helper) {
+        BlockPos burnerAt = new BlockPos(1, 1, 2);
+        BlockPos cableAt = new BlockPos(2, 1, 2);
+        BlockPos batteryAt = new BlockPos(3, 1, 2);
+        helper.setBlock(burnerAt, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
+        helper.setBlock(cableAt, CaldariumRegistry.block(Kind.CABLE, Tier.COPPER).get());
+        helper.setBlock(batteryAt, CaldariumRegistry.block(Kind.BATTERY, Tier.COPPER).get());
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(burnerAt);
+        burner.fuel().setStackInSlot(0, new ItemStack(Items.COAL, 4));
+        KindBlockEntity cable = (KindBlockEntity) helper.getBlockEntity(cableAt);
+        KindBlockEntity battery = (KindBlockEntity) helper.getBlockEntity(batteryAt);
+        helper.runAfterDelay(40, () -> {
+            check(burner.store().getEnergyStored() > 0, "the burner should have made something");
+            check(cable.store().getEnergyStored() == 0,
+                    "a cable should take nothing from a burner it touches: " + cable.store().getEnergyStored());
+            check(battery.store().getEnergyStored() == 0,
+                    "so nothing reaches the battery: " + battery.store().getEnergyStored());
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.HALL, timeoutTicks = 200)
+    public static void aLongLineCarriesEastward(GameTestHelper helper) {
+        longLine(helper, true);
+    }
+
+    @GameTest(template = TestStructures.HALL, timeoutTicks = 200)
+    public static void aLongLineCarriesWestward(GameTestHelper helper) {
+        longLine(helper, false);
+    }
+
     @GameTest(template = TestStructures.FLOOR)
     public static void whatDiesThereDropsNothing(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);

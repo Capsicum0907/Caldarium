@@ -233,7 +233,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
             case SUN, HEAT, LAMP -> generator.soak(server, pos);
             case EXPERIENCE, LIFE, STORM, BLOW -> { }
         }
-        Pushing.push(generator.sides, server, pos, generator.store, null, false);
+        Pushing.push(generator.sides, server, pos, generator.store);
         if (generator.flash > 0) {
             generator.flash--;
         }
