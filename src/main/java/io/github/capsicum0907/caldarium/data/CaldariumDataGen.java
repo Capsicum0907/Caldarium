@@ -541,7 +541,7 @@ public final class CaldariumDataGen {
                 case FLUID -> "溶岩発電機";
                 case SUN -> "太陽光発電機";
                 case LAMP -> "人工光発電機";
-                case HEAT -> "温度差発電機";
+                case HEAT -> "熱電発電機";
                 case EXPERIENCE -> "経験値発電機";
                 case LIFE -> "生命発電機";
                 case BLOW -> "ダメージ発電機";
