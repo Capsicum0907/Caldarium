@@ -26,7 +26,7 @@
 
 ## 発電機
 
-節：`generator.<ティア>_<発電機>`（例：`generator.gold_crucible`）。雷変換機は `generator.bidental` です。
+セクション：`generator.<ティア>_<発電機>`（例：`generator.gold_crucible`）。雷変換機は `generator.bidental` です。
 
 | 設定 | |
 |---|---|
@@ -38,14 +38,14 @@
 
 ## 蓄電器・充電台・ケーブル
 
-節：`battery.<ティア>`・`charger.<ティア>`・`cable.<ティア>`・`importer.<ティア>`・`exporter.<ティア>`。
+セクション：`battery.<ティア>`・`charger.<ティア>`・`cable.<ティア>`・`importer.<ティア>`・`exporter.<ティア>`。
 
 | 設定 | |
 |---|---|
 | `capacity` | 蓄電量（FE）。 |
 | `transferRate` | 1 tick に接しているブロック1つずつへ送る量（FE）。充電台ではアイテムを充電する速さも兼ねます。 |
 
-## そのほかの設定
+## その他の設定
 
 | 設定 | |
 |---|---|
