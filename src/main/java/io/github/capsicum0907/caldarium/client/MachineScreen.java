@@ -136,13 +136,6 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                     count(Experience.points(minecraft.player)));
             graphics.drawString(font, held, leftPos + Skins.POUR_X, topPos + Skins.EXPERIENCE_Y, 0x404040, false);
         }
-        if (menu.pours()) {
-            Component left = Component.translatable("gui.caldarium.burning",
-                    menu.burningTicks() / 20);
-            graphics.drawString(font, left,
-                    leftPos + (imageWidth - font.width(left)) / 2,
-                    topPos + Skins.POUR_Y + Skins.POUR_H + 4, 0x404040, false);
-        }
         if (over(mouseX, mouseY, Skins.BAR_X, Skins.BAR_Y, Skins.BAR_W, Skins.BAR_H)) {
             // The exact numbers, because the bar only ever says roughly.
             graphics.renderTooltip(font, Component.translatable("gui.caldarium.stored",
