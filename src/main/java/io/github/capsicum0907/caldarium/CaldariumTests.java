@@ -300,6 +300,23 @@ public final class CaldariumTests {
     }
 
     @GameTest(template = TestStructures.FLOOR)
+    public static void aBrokenBurnerDropsItsFuel(GameTestHelper helper) {
+        helper.setBlock(WHERE, CaldariumRegistry.generators()
+                .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
+        GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
+        burner.fuel().setStackInSlot(0, new ItemStack(Items.COAL, 5));
+        helper.destroyBlock(WHERE);
+        helper.runAfterDelay(1, () -> {
+            var near = new net.minecraft.world.phys.AABB(helper.absolutePos(WHERE)).inflate(2);
+            int coal = helper.getLevel().getEntitiesOfClass(net.minecraft.world.entity.item.ItemEntity.class, near)
+                    .stream().filter(item -> item.getItem().is(Items.COAL))
+                    .mapToInt(item -> item.getItem().getCount()).sum();
+            check(coal >= 4, "the fuel left in a broken burner should drop: " + coal);
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
     public static void whatDiesThereDropsNothing(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
         LivingEntity pig = helper.spawn(EntityType.PIG, WHERE.above());

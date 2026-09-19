@@ -113,6 +113,14 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
+        if (!state.is(now.getBlock())) {
+            Machine.spill(level, pos);
+        }
+        super.onRemove(state, level, pos, now, moved);
+    }
+
+    @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new GeneratorBlockEntity(pos, state);
     }
