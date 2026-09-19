@@ -1,5 +1,6 @@
 package io.github.capsicum0907.caldarium.data;
 
+import net.minecraft.tags.TagKey;
 import io.github.capsicum0907.caldarium.Tooltips;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -654,6 +655,26 @@ public final class CaldariumDataGen {
             for (Block block : ours()) {
                 pickaxe.add(block);
             }
+            for (Generator.Made made : Generator.made()) {
+                tag(tool(made.tier())).add(CaldariumRegistry.generators().get(made).get());
+            }
+            for (Kind kind : Kind.values()) {
+                for (Tier tier : Tier.upTo(kind.top())) {
+                    tag(tool(tier)).add(CaldariumRegistry.block(kind, tier).get());
+                }
+            }
+        }
+
+        private static TagKey<Block> tool(Tier tier) {
+            if (tier == null) {
+                return BlockTags.NEEDS_DIAMOND_TOOL;
+            }
+            return switch (tier) {
+                case COPPER, IRON -> BlockTags.NEEDS_STONE_TOOL;
+                case GOLD, DIAMOND -> BlockTags.NEEDS_IRON_TOOL;
+                case NETHERITE, NETHER_STAR, COMPRESSED_NETHER_STAR, SUPER_COMPRESSED_NETHER_STAR ->
+                        BlockTags.NEEDS_DIAMOND_TOOL;
+            };
         }
     }
 

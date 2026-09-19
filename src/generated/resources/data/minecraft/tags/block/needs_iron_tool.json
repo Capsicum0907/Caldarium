@@ -1,0 +1,30 @@
+{
+  "values": [
+    "caldarium:gold_burner",
+    "caldarium:diamond_burner",
+    "caldarium:gold_crucible",
+    "caldarium:diamond_crucible",
+    "caldarium:gold_solar_panel",
+    "caldarium:diamond_solar_panel",
+    "caldarium:gold_hypocaustum",
+    "caldarium:diamond_hypocaustum",
+    "caldarium:gold_experientia",
+    "caldarium:diamond_experientia",
+    "caldarium:gold_spoliarium",
+    "caldarium:diamond_spoliarium",
+    "caldarium:gold_lucernarium",
+    "caldarium:diamond_lucernarium",
+    "caldarium:gold_palus",
+    "caldarium:diamond_palus",
+    "caldarium:gold_battery",
+    "caldarium:diamond_battery",
+    "caldarium:gold_charger",
+    "caldarium:diamond_charger",
+    "caldarium:gold_cable",
+    "caldarium:diamond_cable",
+    "caldarium:gold_importer",
+    "caldarium:diamond_importer",
+    "caldarium:gold_exporter",
+    "caldarium:diamond_exporter"
+  ]
+}

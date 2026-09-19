@@ -158,6 +158,7 @@ public final class CaldariumRegistry {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
                 .strength(3.0F, 6.0F)
+                .requiresCorrectToolForDrops()
                 .sound(SoundType.METAL);
     }
 

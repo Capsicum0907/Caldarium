@@ -300,6 +300,23 @@ public final class CaldariumTests {
     }
 
     @GameTest(template = TestStructures.FLOOR)
+    public static void eachTierAsksForAVanillaPickaxe(GameTestHelper helper) {
+        var copper = CaldariumRegistry.generators().get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get()
+                .defaultBlockState();
+        var gold = CaldariumRegistry.block(Kind.BATTERY, Tier.GOLD).get().defaultBlockState();
+        var netherite = CaldariumRegistry.block(Kind.CABLE, Tier.NETHERITE).get().defaultBlockState();
+        var bidental = CaldariumRegistry.generators().get(new Generator.Made(Generator.BIDENTAL, null)).get()
+                .defaultBlockState();
+        check(copper.requiresCorrectToolForDrops(), "a machine should need the right tool to drop");
+        check(copper.is(net.minecraft.tags.BlockTags.NEEDS_STONE_TOOL), "copper should need stone");
+        check(gold.is(net.minecraft.tags.BlockTags.NEEDS_IRON_TOOL), "gold should need iron");
+        check(netherite.is(net.minecraft.tags.BlockTags.NEEDS_DIAMOND_TOOL), "netherite should need diamond");
+        check(bidental.is(net.minecraft.tags.BlockTags.NEEDS_DIAMOND_TOOL), "a bidental should need diamond");
+        check(copper.is(net.minecraft.tags.BlockTags.MINEABLE_WITH_PICKAXE), "and all with a pickaxe");
+        helper.succeed();
+    }
+
+    @GameTest(template = TestStructures.FLOOR)
     public static void aBrokenBurnerDropsItsFuel(GameTestHelper helper) {
         helper.setBlock(WHERE, CaldariumRegistry.generators()
                 .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());

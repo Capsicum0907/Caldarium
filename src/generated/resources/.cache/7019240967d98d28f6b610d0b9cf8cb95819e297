@@ -1,3 +1,5 @@
-// 1.21.1	2026-09-18T19:46:08.0926632	Tags for minecraft:block mod id caldarium
+// 1.21.1	2026-09-19T10:27:11.4634465	Tags for minecraft:block mod id caldarium
 9eda0d4aa658fdd9b6c97aeb8fd3590b1d8d5dd5 data/minecraft/tags/block/mineable/pickaxe.json
-a73fb7582907ef0a2aa8cc58a94c35cff7bcb2bb data/minecraft/tags/block/needs_diamond_tool.json
+8cf5e0f71c6464f616d2c472c471e11f562c6852 data/minecraft/tags/block/needs_diamond_tool.json
+e2dd56f8109f8433d0c1d052203c839e7a5d80d1 data/minecraft/tags/block/needs_iron_tool.json
+072a04ecb5f67351ed70f1e86e20f9417db2e5d7 data/minecraft/tags/block/needs_stone_tool.json

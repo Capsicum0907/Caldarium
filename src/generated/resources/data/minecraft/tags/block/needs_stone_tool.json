@@ -1,0 +1,30 @@
+{
+  "values": [
+    "caldarium:copper_burner",
+    "caldarium:iron_burner",
+    "caldarium:copper_crucible",
+    "caldarium:iron_crucible",
+    "caldarium:copper_solar_panel",
+    "caldarium:iron_solar_panel",
+    "caldarium:copper_hypocaustum",
+    "caldarium:iron_hypocaustum",
+    "caldarium:copper_experientia",
+    "caldarium:iron_experientia",
+    "caldarium:copper_spoliarium",
+    "caldarium:iron_spoliarium",
+    "caldarium:copper_lucernarium",
+    "caldarium:iron_lucernarium",
+    "caldarium:copper_palus",
+    "caldarium:iron_palus",
+    "caldarium:copper_battery",
+    "caldarium:iron_battery",
+    "caldarium:copper_charger",
+    "caldarium:iron_charger",
+    "caldarium:copper_cable",
+    "caldarium:iron_cable",
+    "caldarium:copper_importer",
+    "caldarium:iron_importer",
+    "caldarium:copper_exporter",
+    "caldarium:iron_exporter"
+  ]
+}
