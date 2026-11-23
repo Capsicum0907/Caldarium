@@ -214,8 +214,10 @@ public class MachineMenu extends AbstractContainerMenu {
                 && provider instanceof Machine machine) {
             //? if neoforge {
             player.openMenu(provider, buffer -> {
-            //?} else
-            /*net.minecraftforge.network.NetworkHooks.openScreen((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {*/
+            //?} else if >=1.19 {
+            /*net.minecraftforge.network.NetworkHooks.openScreen((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {
+            *///?} else
+            /*net.minecraftforge.network.NetworkHooks.openGui((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {*/
                 buffer.writeBoolean(machine.burns());
                 buffer.writeByte(machine.machineSlots().getSlots());
                 buffer.writeBoolean(machine.pours());

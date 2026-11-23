@@ -1,6 +1,7 @@
 package io.github.capsicum0907.caldarium.client;
 
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+//? if neoforge || >=1.19
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.minecraft.world.item.BlockItem;
 import io.github.capsicum0907.caldarium.Tooltips;
@@ -31,9 +32,15 @@ import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 /*import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 *///?}
+//? if neoforge || >=1.19 {
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
+//?} else
+/*import net.minecraftforge.client.event.DrawSelectionEvent;*/
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+//? if neoforge || >=1.19 {
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+//?} else
+/*import net.minecraftforge.client.IItemRenderProperties;*/
 //? if neoforge
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
@@ -50,9 +57,15 @@ public final class CaldariumClient {
     private CaldariumClient() {
     }
 
+    //? if neoforge || >=1.19 {
     public static void registerTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(Tooltips.Readings.class, ReadingsTooltip::new);
     }
+    //?} else {
+    /*public static void registerTooltips(FMLClientSetupEvent event) {
+        net.minecraftforge.client.MinecraftForgeClient.registerTooltipComponentFactory(Tooltips.Readings.class, ReadingsTooltip::new);
+    }
+    *///?}
 
     public static void readings(RenderTooltipEvent.GatherComponents event) {
         if (!(event.getItemStack().getItem() instanceof BlockItem item)) {
@@ -87,12 +100,20 @@ public final class CaldariumClient {
     }
     //?}
 
+    //? if neoforge || >=1.19 {
     public static IClientItemExtensions solItem() {
         return new IClientItemExtensions() {
+    //?} else {
+    /*public static IItemRenderProperties solItem() {
+        return new IItemRenderProperties() {
+    *///?}
             private SolItemRenderer renderer;
 
             @Override
+            //? if neoforge || >=1.19 {
             public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+            //?} else
+            /*public BlockEntityWithoutLevelRenderer getItemStackRenderer() {*/
                 if (renderer == null) {
                     renderer = new SolItemRenderer();
                 }

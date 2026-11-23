@@ -21,7 +21,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 public class SolItem extends BlockItem {
     //? if forge {
     /*@Override
+    //? if >=1.19 {
     public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+    //?} else
+    /^public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {^/
         consumer.accept(io.github.capsicum0907.caldarium.client.CaldariumClient.solItem());
     }
     *///?}

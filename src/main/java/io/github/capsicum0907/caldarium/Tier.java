@@ -31,6 +31,7 @@ public enum Tier implements StringRepresentable {
     COMPRESSED_NETHER_STAR(0xCBBCE8, true, 8),
     SUPER_COMPRESSED_NETHER_STAR(0x9B7BDF, true, 8);
 
+    //? if >=1.20.3
     public static final Codec<Tier> CODEC = StringRepresentable.fromEnum(Tier::values);
 
     private final String id = name().toLowerCase(Locale.ROOT);

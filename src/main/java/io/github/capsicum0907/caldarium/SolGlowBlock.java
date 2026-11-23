@@ -4,7 +4,10 @@ import com.mojang.serialization.MapCodec;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+//? if >=1.19 {
 import net.minecraft.util.RandomSource;
+//?} else
+/*import java.util.Random;*/
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -52,7 +55,10 @@ public class SolGlowBlock extends Block {
     }
 
     @Override
+    //? if >=1.19 {
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    //?} else
+    /*public void randomTick(BlockState state, ServerLevel level, BlockPos pos, Random random) {*/
         if (!Suns.lights(level, pos)) {
             level.setBlock(pos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
         }

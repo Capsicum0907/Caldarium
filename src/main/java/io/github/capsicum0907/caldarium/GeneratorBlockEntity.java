@@ -1,6 +1,7 @@
 package io.github.capsicum0907.caldarium;
 
 import net.minecraft.core.BlockPos;
+//? if >=1.20.5
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -136,6 +137,7 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
                 || living.getMaxHealth() > CaldariumConfig.lethalHealth(row)) {
             return 0;
         }
+        //? if neoforge || >=1.19
         living.skipDropExperience();
         Damage.spoil(level, living);
         if (!living.isDeadOrDying()) {
@@ -297,7 +299,10 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         if (ticks <= 0) {
             return 0;
         }
+        //? if neoforge || >=1.19 {
         ItemStack remainder = stack.getCraftingRemainingItem();
+        //?} else
+        /*ItemStack remainder = stack.getContainerItem();*/
         stack.shrink(1);
         if (stack.isEmpty() && !remainder.isEmpty()) {
             fuel.setStackInSlot(0, remainder);

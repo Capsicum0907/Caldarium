@@ -16,6 +16,19 @@ stonecutter parameters {
         replace("import net.neoforged.neoforge.common.ModConfigSpec;", "import net.minecraftforge.common.ForgeConfigSpec;")
         replace("ModConfigSpec", "ForgeConfigSpec")
     }
+    replacements.string(node.metadata.project.endsWith("-forge") && eval(node.metadata.version, "<1.19")) {
+        replace("import net.minecraftforge.common.capabilities.ForgeCapabilities;", "import net.minecraftforge.energy.CapabilityEnergy;")
+        replace("ForgeCapabilities.ENERGY", "CapabilityEnergy.ENERGY")
+        replace("ForgeCapabilities.ITEM_HANDLER", "net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY")
+        replace("ForgeCapabilities.FLUID_HANDLER", "net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY")
+        replace("RenderHighlightEvent.Block", "DrawSelectionEvent.HighlightBlock")
+        replace("event.getEntity(), event.getHand()", "event.getPlayer(), event.getHand()")
+        replace("Suns.inside(event.getLevel(), pos)", "Suns.inside(event.getWorld(), pos)")
+        replace("event.getLevel() instanceof net.minecraft.world.level.Level level", "event.getWorld() instanceof net.minecraft.world.level.Level level")
+    }
+    replacements.string(eval(node.metadata.version, "<1.19")) {
+        replace("Component.translatable(", "new net.minecraft.network.chat.TranslatableComponent(")
+    }
     replacements.string(eval(node.metadata.version, "<1.19.3")) {
         replace("import net.minecraft.core.registries.Registries;", "import net.minecraft.core.Registry;")
         replace("(Registries.BLOCK,", "(Registry.BLOCK_REGISTRY,")

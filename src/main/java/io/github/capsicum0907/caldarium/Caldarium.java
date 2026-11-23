@@ -29,11 +29,15 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 //?} else {
 /*import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+//? if <1.19 {
+/^import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
+import net.minecraftforge.event.world.BlockEvent;
+^///?} else
+import net.minecraftforge.event.level.BlockEvent;
 //? if >=1.20
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -90,6 +94,8 @@ public class Caldarium {
         /*MinecraftForge.EVENT_BUS.addListener(Caldarium::placing);
         MinecraftForge.EVENT_BUS.addListener(Caldarium::aiming);
         MinecraftForge.EVENT_BUS.addListener(Caldarium::spoils);
+        //? if <1.19
+        /^MinecraftForge.EVENT_BUS.addListener(Caldarium::unschooled);^/
         //? if >=1.20
         modEventBus.addListener(Caldarium::addToCreativeTab);
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -109,6 +115,14 @@ public class Caldarium {
      * a routing decision, and this mod does not make those. The generator also offers
      * its fuel slot as an item handler, which is how a hopper feeds it.
      */
+    //? if forge && <1.19 {
+    /*private static void unschooled(LivingExperienceDropEvent event) {
+        if (Damage.spoiled(event.getEntityLiving().getLastDamageSource())) {
+            event.setCanceled(true);
+        }
+    }
+    *///?}
+
     private static void spoils(LivingDropsEvent event) {
         if (Damage.spoiled(event.getSource())) {
             event.setCanceled(true);

@@ -141,7 +141,10 @@ public final class CaldariumRegistry {
             //?} else
             /*SolGlowBlock::new, BlockBehaviour.Properties.of(GLOW).noCollission()*/
                     .instabreak()
+                    //? if >=1.19 {
                     .noLootTable()
+                    //?} else
+                    /*.noDrops()*/
                     .noOcclusion()
                     .lightLevel(SolBlock::light)
                     .randomTicks()

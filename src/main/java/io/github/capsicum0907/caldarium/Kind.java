@@ -52,6 +52,7 @@ public enum Kind implements StringRepresentable {
     /** The way out: the only block here that offers to another mod's machine. */
     EXPORTER("exporter", Store.Role.BUFFER, Wiring.OUTLET, 0, false, Aim.GIVES, Tier.NETHER_STAR);
 
+    //? if >=1.20.3
     public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
 
     private static final int MOST_SLOTS = 9;

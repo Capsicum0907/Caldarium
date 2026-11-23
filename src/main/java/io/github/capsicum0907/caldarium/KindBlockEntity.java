@@ -2,6 +2,7 @@ package io.github.capsicum0907.caldarium;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+//? if >=1.20.5
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
