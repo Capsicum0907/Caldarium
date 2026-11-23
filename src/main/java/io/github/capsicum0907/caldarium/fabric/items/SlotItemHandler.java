@@ -34,6 +34,13 @@ public class SlotItemHandler extends Slot {
         setChanged();
     }
 
+    //? if >=1.19 && <1.20 {
+    /*@Override
+    public void initialize(ItemStack stack) {
+        set(stack);
+    }
+    *///?}
+
     @Override
     public void setChanged() {
     }
