@@ -8,7 +8,7 @@
   "license": "${mod_license}",
   "environment": "*",
   "entrypoints": ${entrypoints},
-  "mixins": ["${mod_id}.mixins.json"],
+  "mixins": ["${mod_id}.mixins.json"],${access_widener}
   "depends": {
     "fabricloader": "${loader_version_range}",
     "${fabric_api_mod_id}": "${loader_dependency_range}",

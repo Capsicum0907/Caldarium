@@ -262,7 +262,10 @@ public final class CaldariumRegistry {
                     .displayItems((parameters, output) -> ITEM_ORDER
                             .forEach(item -> output.accept(item.get())))
                     .build());
-    //?} else {
+    //?} else if fabric {
+    /*public static final CreativeModeTab TAB = net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder
+            .build(Caldarium.id(Caldarium.MODID), () -> new ItemStack(ITEM_ORDER.get(0).get()));
+    *///?} else {
     /*public static final CreativeModeTab TAB = new CreativeModeTab(Caldarium.MODID) {
         @Override
         public ItemStack makeIcon() {

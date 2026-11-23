@@ -33,6 +33,7 @@ dependencies {
     modImplementation("net.fabricmc.fabric-api:fabric-api:${property("fabric_api_version")}")
     include(modApi("teamreborn:energy:${property("energy_version")}") {
         exclude(group = "net.fabricmc.fabric-api")
+        exclude(group = "net.fabricmc", module = "fabric-loader")
     })
     compileOnly("org.jetbrains:annotations:24.1.0")
     if (Targets.java(minecraft) < 16) {
@@ -60,6 +61,15 @@ sourceSets.main {
 }
 
 val hasGameTests = Targets.atLeast(minecraft, "1.17")
+val widens = !Targets.atLeast(minecraft, "1.20")
+
+if (widens) loom {
+    accessWidenerPath = rootProject.file("src/main/templates/fabric-widener/$modId.accesswidener")
+}
+
+if (widens) tasks.processResources {
+    from(rootProject.file("src/main/templates/fabric-widener"))
+}
 
 if (hasGameTests) loom {
     runs {
@@ -80,6 +90,7 @@ val modMetadata = mapOf(
     "loader_version_range" to property("loader_version_range"),
     "java_version" to Targets.java(minecraft),
     "mixin_refmap" to "",
+    "access_widener" to if (widens) "\n  \"accessWidener\": \"$modId.accesswidener\"," else "",
     "loader_mixins" to buildList {
         add("fabric.BlockItemMixin")
         add("fabric.LivingEntityMixin")

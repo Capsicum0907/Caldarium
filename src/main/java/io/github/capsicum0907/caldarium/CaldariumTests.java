@@ -42,8 +42,7 @@ import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 *///?} else {
-/*import net.fabricmc.fabric.api.entity.FakePlayer;
-import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+/*import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.world.InteractionResult;
 *///?}
 
@@ -911,8 +910,14 @@ public final class CaldariumTests {
         LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(helper.getLevel());
         bolt.moveTo(Vec3.atBottomCenterOf(helper.absolutePos(WHERE.above())));
         helper.getLevel().addFreshEntity(bolt);
-        //? if fabric {
-        /*bolt.setCause(FakePlayer.get(helper.getLevel()));
+        //? if fabric && >=1.20 {
+        /*bolt.setCause(net.fabricmc.fabric.api.entity.FakePlayer.get(helper.getLevel()));
+        *///?} else if fabric {
+        /*bolt.setCause(new net.minecraft.server.level.ServerPlayer(helper.getLevel().getServer(), helper.getLevel(),
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "test-mock-player")
+                //? if >=1.19
+                , null
+        ));
         *///?} else
         bolt.setCause(FakePlayerFactory.getMinecraft(helper.getLevel()));
         helper.runAfterDelay(1, () -> {
