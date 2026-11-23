@@ -25,3 +25,6 @@ run-data
 
 repo
 branding/
+
+logs
+*.log
