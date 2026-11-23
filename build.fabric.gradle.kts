@@ -61,6 +61,36 @@ sourceSets.main {
 }
 
 val hasGameTests = Targets.atLeast(minecraft, "1.17")
+
+val autopilot = sourceSets.create("autopilot") {
+    resources.setSrcDirs(listOf(rootProject.file("src/autopilot/resources/$loader")))
+    compileClasspath += sourceSets.main.get().compileClasspath + sourceSets.main.get().output
+    runtimeClasspath += sourceSets.main.get().runtimeClasspath + sourceSets.main.get().output
+}
+
+dependencies {
+    if (Targets.java(minecraft) < 16) {
+        "autopilotAnnotationProcessor"("com.pkware.jabel:jabel-javac-plugin:1.0.1-2")
+    }
+}
+
+loom {
+    mods {
+        create("${modId}_autopilot") {
+            sourceSet(autopilot)
+        }
+    }
+
+    runs {
+        register("autopilot") {
+            client()
+            source(autopilot)
+            runDir("autopilot-run")
+            programArgs("--width", "1280", "--height", "720")
+            findProperty("autopilotWorld")?.let { vmArg("-Dautopilot.world=$it") }
+        }
+    }
+}
 val widens = !Targets.atLeast(minecraft, "1.20")
 
 if (widens) loom {

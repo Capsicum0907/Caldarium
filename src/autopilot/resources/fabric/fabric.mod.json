@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "id": "caldarium_autopilot",
+  "version": "0",
+  "name": "Caldarium autopilot",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["io.github.capsicum0907.caldarium.autopilot.AutopilotMod"]
+  }
+}

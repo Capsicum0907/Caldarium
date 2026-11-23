@@ -1,0 +1,51 @@
+package io.github.capsicum0907.caldarium.autopilot;
+
+//? if neoforge {
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.common.Mod;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.common.NeoForge;
+//?} else if forge {
+/*import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.fml.common.Mod;
+*///?} else if fabric {
+/*import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+*///?}
+
+//? if fabric {
+/*public final class AutopilotMod implements ClientModInitializer {
+    @Override
+    public void onInitializeClient() {
+        if (System.getProperty("autopilot.world") == null) {
+            return;
+        }
+        CaldariumScenario.Sink.register();
+        Pilot pilot = CaldariumScenario.create();
+        ClientTickEvents.END_CLIENT_TICK.register(client -> pilot.tick());
+    }
+}
+*///?} else {
+//? if neoforge {
+@Mod(value = "caldarium_autopilot", dist = Dist.CLIENT)
+//?} else if forge
+/*@Mod("caldarium_autopilot")*/
+public final class AutopilotMod {
+    public AutopilotMod() {
+        if (System.getProperty("autopilot.world") == null) {
+            return;
+        }
+        Pilot pilot = CaldariumScenario.create();
+        //? if neoforge {
+        NeoForge.EVENT_BUS.addListener((ClientTickEvent.Post event) -> pilot.tick());
+        //?} else if forge {
+        /*MinecraftForge.EVENT_BUS.addListener((TickEvent.ClientTickEvent event) -> {
+            if (event.phase == TickEvent.Phase.END) {
+                pilot.tick();
+            }
+        });
+        *///?}
+    }
+}
+//?}

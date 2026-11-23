@@ -28,3 +28,9 @@ branding/
 
 logs
 *.log
+
+# python
+__pycache__
+*.pyc
+
+autopilot-run
