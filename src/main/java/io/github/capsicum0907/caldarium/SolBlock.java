@@ -177,7 +177,10 @@ public class SolBlock extends BaseEntityBlock {
             double across = Math.sqrt(1.0 - y * y);
             double turn = i * GOLDEN_ANGLE;
             Vec3 at = centre.add(Math.cos(turn) * across * shell, y * shell, Math.sin(turn) * across * shell);
+            //? if >=1.20 {
             cells.add(BlockPos.containing(at));
+            //?} else
+            /*cells.add(new BlockPos(at));*/
         }
         return new ArrayList<>(cells);
     }
@@ -340,7 +343,7 @@ public class SolBlock extends BaseEntityBlock {
         AABB around = new AABB(pos).inflate(Math.ceil(reach));
         for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, around,
                 living -> living.getBoundingBox().getCenter().distanceTo(centre) <= reach)) {
-            living.hurt(level.damageSources().explosion(breaker, breaker), CaldariumConfig.solBlastDamage());
+            living.hurt(Damage.blast(level, breaker), CaldariumConfig.solBlastDamage());
         }
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, centre.x, centre.y, centre.z, 1, 0.0, 0.0, 0.0, 0.0);
         //? if >=1.20.5 {

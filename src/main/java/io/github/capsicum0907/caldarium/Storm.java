@@ -29,7 +29,10 @@ public final class Storm {
     private static final Set<LightningBolt> COUNTED = Collections.newSetFromMap(new WeakHashMap<>());
 
     public static void struck(LightningBolt bolt) {
+        //? if >=1.20 {
         Level level = bolt.level();
+        //?} else
+        /*Level level = bolt.level;*/
         if (level.isClientSide() || !COUNTED.add(bolt)) {
             return;
         }

@@ -9,7 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+//? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
+//?} else
+/*import com.mojang.blaze3d.vertex.PoseStack;*/
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,8 +27,7 @@ import net.minecraft.world.entity.player.Inventory;
  * picture underneath. Nothing here is measured against the image by eye.
  */
 public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
-    private static final ResourceLocation SHEET = ResourceLocation
-            .fromNamespaceAndPath(Caldarium.MODID, "textures/gui/" + Skins.GUI + ".png");
+    private static final ResourceLocation SHEET = Caldarium.id("textures/gui/" + Skins.GUI + ".png");
 
     /**
      * The furnace's own flame, borrowed rather than copied.
@@ -62,6 +64,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     }
 
     private void pour(int x, int y, int width, int id, Component label) {
+        //? if >=1.19.3 {
         addRenderableWidget(net.minecraft.client.gui.components.Button
                 .builder(label, pressed -> {
                     if (minecraft != null && minecraft.gameMode != null) {
@@ -70,6 +73,14 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                 })
                 .bounds(x, y, width, Skins.POUR_H)
                 .build());
+        //?} else {
+        /*addRenderableWidget(new net.minecraft.client.gui.components.Button(x, y, width, Skins.POUR_H, label,
+                pressed -> {
+                    if (minecraft != null && minecraft.gameMode != null) {
+                        minecraft.gameMode.handleInventoryButtonClick(menu.containerId, id);
+                    }
+                }));
+        *///?}
     }
 
     public MachineScreen(MachineMenu menu, Inventory inventory, Component title) {
@@ -79,15 +90,22 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         this.inventoryLabelY = Skins.INVENTORY_Y - 12;
     }
 
+    //? if >=1.20 {
     @Override
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
-        graphics.blit(SHEET, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+        Canvas canvas = new Canvas(graphics);
+    //?} else {
+    /*@Override
+    protected void renderBg(PoseStack pose, float partialTick, int mouseX, int mouseY) {
+        Canvas canvas = new Canvas(pose, this);
+    *///?}
+        canvas.blit(SHEET, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
         // Both overlays grow from the bottom, so the part shown is the bottom of the
         // strip rather than the whole of it squashed.
         int charged = Math.round(Skins.BAR_H * menu.charged());
         if (charged > 0) {
-            graphics.blit(SHEET, leftPos + Skins.BAR_X, topPos + Skins.BAR_Y + Skins.BAR_H - charged,
+            canvas.blit(SHEET, leftPos + Skins.BAR_X, topPos + Skins.BAR_Y + Skins.BAR_H - charged,
                     Skins.BAR_U, Skins.BAR_V + Skins.BAR_H - charged, Skins.BAR_W, charged);
         }
         // How many slots there are is the machine's business, so the panel does not
@@ -95,17 +113,17 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         // showing a hollow that took nothing.
         int count = menu.machineSlots();
         for (int slot = 0; slot < count; slot++) {
-            graphics.blit(SHEET, leftPos + Skins.slotX(slot, count) - 1,
+            canvas.blit(SHEET, leftPos + Skins.slotX(slot, count) - 1,
                     topPos + Skins.slotY(slot, count) - 1,
                     Skins.FUEL_WELL_U, Skins.FUEL_WELL_V, Skins.SLOT, Skins.SLOT);
         }
         // Only a machine with a tank has one drawn; the rest of the panel is shared.
         if (menu.fluidCapacity() > 0) {
-            graphics.blit(SHEET, leftPos + Skins.TANK_X - 1, topPos + Skins.TANK_Y - 1,
+            canvas.blit(SHEET, leftPos + Skins.TANK_X - 1, topPos + Skins.TANK_Y - 1,
                     Skins.TANK_WELL_U, Skins.TANK_WELL_V, Skins.TANK_WELL_W, Skins.TANK_WELL_H);
             int filled = Math.round(Skins.BAR_H * menu.filled());
             if (filled > 0) {
-                graphics.blit(SHEET, leftPos + Skins.TANK_X,
+                canvas.blit(SHEET, leftPos + Skins.TANK_X,
                         topPos + Skins.TANK_Y + Skins.BAR_H - filled,
                         Skins.TANK_U, Skins.TANK_V + Skins.BAR_H - filled, Skins.BAR_W, filled);
             }
@@ -131,30 +149,41 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                         leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
                         Skins.FLAME_W, flame);
                 //?} else {
-                /*graphics.blit(FURNACE, leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
+                /*canvas.blit(FURNACE, leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
                         FLAME_U, Skins.FLAME_H - flame, Skins.FLAME_W, flame);
                 *///?}
             }
         }
     }
 
+    //? if >=1.20 {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        //? if <1.20.2
+        /*renderBackground(graphics);*/
         super.render(graphics, mouseX, mouseY, partialTick);
+        Canvas canvas = new Canvas(graphics);
+    //?} else {
+    /*@Override
+    public void render(PoseStack pose, int mouseX, int mouseY, float partialTick) {
+        renderBackground(pose);
+        super.render(pose, mouseX, mouseY, partialTick);
+        Canvas canvas = new Canvas(pose, this);
+    *///?}
         if (menu.pours() && minecraft != null && minecraft.player != null) {
             Component held = Component.translatable("gui.caldarium.experience",
                     count(Experience.points(minecraft.player)));
-            graphics.drawString(font, held, leftPos + Skins.POUR_X, topPos + Skins.EXPERIENCE_Y, 0x404040, false);
+            canvas.text(font, held, leftPos + Skins.POUR_X, topPos + Skins.EXPERIENCE_Y, 0x404040);
         }
         if (over(mouseX, mouseY, Skins.BAR_X, Skins.BAR_Y, Skins.BAR_W, Skins.BAR_H)) {
             // The exact numbers, because the bar only ever says roughly.
-            graphics.renderTooltip(font, Component.translatable("gui.caldarium.stored",
+            canvas.tooltip(font, Component.translatable("gui.caldarium.stored",
                     count(menu.energy()), count(menu.capacity())), mouseX, mouseY);
             return;
         }
         if (menu.fluidCapacity() > 0
                 && over(mouseX, mouseY, Skins.TANK_X, Skins.TANK_Y, Skins.BAR_W, Skins.BAR_H)) {
-            graphics.renderTooltip(font, Component.translatable("gui.caldarium.held",
+            canvas.tooltip(font, Component.translatable("gui.caldarium.held",
                     count(menu.fluid()), count(menu.fluidCapacity())), mouseX, mouseY);
             return;
         }
@@ -163,7 +192,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             Component line = Component.translatable("gui.caldarium.burning",
                     left(menu.burningTicks()));
             if (over(mouseX, mouseY, Skins.FLAME_X, Skins.FLAME_Y, Skins.FLAME_W, Skins.FLAME_H)) {
-                graphics.renderTooltip(font, line, mouseX, mouseY);
+                canvas.tooltip(font, line, mouseX, mouseY);
                 return;
             }
             // ⚠ On the slot it is added to what the game was going to say rather than
@@ -172,14 +201,20 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             // one moment the line is worth reading was the one it was hidden in.
             if (onMachineSlot()) {
                 List<Component> lines =
+                        //? if >=1.20 {
                         new ArrayList<>(getTooltipFromContainerItem(hoveredSlot.getItem()));
+                        //?} else
+                        /*new ArrayList<>(getTooltipFromItem(hoveredSlot.getItem()));*/
                 lines.add(line);
-                graphics.renderTooltip(font, lines,
+                canvas.tooltip(font, lines,
                         hoveredSlot.getItem().getTooltipImage(), mouseX, mouseY);
                 return;
             }
         }
+        //? if >=1.20 {
         renderTooltip(graphics, mouseX, mouseY);
+        //?} else
+        /*renderTooltip(pose, mouseX, mouseY);*/
     }
 
     /** Whether the cursor is on one of the machine's own slots. */

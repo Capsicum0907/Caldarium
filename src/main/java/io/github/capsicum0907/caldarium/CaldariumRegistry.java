@@ -12,6 +12,7 @@ import java.util.function.Supplier;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+//? if >=1.19.4
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
@@ -23,6 +24,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+//? if >=1.20
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 //? if neoforge {
@@ -54,8 +56,10 @@ public final class CaldariumRegistry {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Caldarium.MODID);
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(Registries.MENU, Caldarium.MODID);
+    //? if >=1.19.3 {
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Caldarium.MODID);
+    //?}
 
     /** One menu for every machine; what it shows is decided by what opened it. */
     //? if neoforge {
@@ -120,25 +124,41 @@ public final class CaldariumRegistry {
                     .dynamicShape()
                     .hasPostProcess((a, b, c) -> true));
 
+    //? if <1.20 {
+    /*private static final net.minecraft.world.level.material.Material GLOW =
+            new net.minecraft.world.level.material.Material.Builder(net.minecraft.world.level.material.MaterialColor.NONE) {
+                {
+                    destroyOnPush();
+                }
+            }.noCollider().nonSolid().replaceable().build();
+    *///?}
+
     public static final Supplier<SolGlowBlock> SOL_GLOW = block("sol_glow",
+            //? if >=1.20 {
             SolGlowBlock::new, BlockBehaviour.Properties.of()
                     .noCollission()
                     .replaceable()
+            //?} else
+            /*SolGlowBlock::new, BlockBehaviour.Properties.of(GLOW).noCollission()*/
                     .instabreak()
                     .noLootTable()
                     .noOcclusion()
                     .lightLevel(SolBlock::light)
                     .randomTicks()
-                    .pushReaction(PushReaction.DESTROY));
+                    //? if >=1.20
+                    .pushReaction(PushReaction.DESTROY)
+                    );
 
+    //? if >=1.19.4 {
     public static final ResourceKey<DamageType> SOL_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
             Caldarium.id("sol"));
 
     public static final ResourceKey<DamageType> SPOLIARIUM_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
             Caldarium.id("spoliarium"));
+    //?}
 
     public static final Supplier<BlockItem> SOL_ITEM = ITEMS.register("sol",
-            () -> new SolItem(SOL.get(), new Item.Properties()));
+            () -> new SolItem(SOL.get(), itemProperties()));
 
     static {
         ITEM_ORDER.add(SOL_ITEM);
@@ -167,8 +187,11 @@ public final class CaldariumRegistry {
      * time rather than what the block was holding.
      */
     private static BlockBehaviour.Properties metal() {
+        //? if >=1.20 {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
+        //?} else
+        /*return BlockBehaviour.Properties.of(net.minecraft.world.level.material.Material.METAL)*/
                 .strength(3.0F, 6.0F)
                 .requiresCorrectToolForDrops()
                 .sound(SoundType.METAL);
@@ -180,7 +203,14 @@ public final class CaldariumRegistry {
     }
 
     private static Supplier<BlockItem> item(String id, Supplier<? extends Block> block) {
-        return ITEMS.register(id, () -> new BlockItem(block.get(), new Item.Properties()));
+        return ITEMS.register(id, () -> new BlockItem(block.get(), itemProperties()));
+    }
+
+    private static Item.Properties itemProperties() {
+        //? if >=1.19.3 {
+        return new Item.Properties();
+        //?} else
+        /*return new Item.Properties().tab(TAB);*/
     }
 
     private static Block[] blocks(Collection<? extends Supplier<? extends Block>> registered) {
@@ -211,6 +241,7 @@ public final class CaldariumRegistry {
      * blocks nobody can find; the order is the order of the tables, so the ladder
      * reads as a ladder.
      */
+    //? if >=1.19.3 {
     public static final Supplier<CreativeModeTab> TAB =
             TABS.register(Caldarium.MODID, () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + Caldarium.MODID))
@@ -218,6 +249,14 @@ public final class CaldariumRegistry {
                     .displayItems((parameters, output) -> ITEM_ORDER
                             .forEach(item -> output.accept(item.get())))
                     .build());
+    //?} else {
+    /*public static final CreativeModeTab TAB = new CreativeModeTab(Caldarium.MODID) {
+        @Override
+        public ItemStack makeIcon() {
+            return new ItemStack(ITEM_ORDER.get(0).get());
+        }
+    };
+    *///?}
 
     private CaldariumRegistry() {
     }

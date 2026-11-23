@@ -48,7 +48,10 @@ public class SolItem extends BlockItem {
                 far = middle;
             }
         }
+        //? if >=1.20 {
         return BlockPos.containing(eye.add(look.scale(far)));
+        //?} else
+        /*return new BlockPos(eye.add(look.scale(far)));*/
     }
 
     public static double gap(AABB body, Vec3 point) {
@@ -60,7 +63,10 @@ public class SolItem extends BlockItem {
 
     public static boolean fits(Level level, Player player, BlockPos core, BlockState state) {
         return level.isInWorldBounds(core)
+                //? if >=1.20 {
                 && level.getBlockState(core).canBeReplaced()
+                //?} else
+                /*&& level.getBlockState(core).getMaterial().isReplaceable()*/
                 && !Suns.inside(level, core)
                 && level.isUnobstructed(state, core, CollisionContext.of(player));
     }

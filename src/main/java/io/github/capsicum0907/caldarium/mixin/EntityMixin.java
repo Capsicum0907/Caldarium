@@ -55,7 +55,10 @@ public abstract class EntityMixin {
         Entity self = (Entity) (Object) this;
         Vec3 from = self.getEyePosition(partial);
         Vec3 to = from.add(self.getViewVector(partial).scale(distance));
+        //? if >=1.20 {
         BlockHitResult sun = Suns.clip(self.level(), from, to);
+        //?} else
+        /*BlockHitResult sun = Suns.clip(self.level, from, to);*/
         if (sun == null) {
             return;
         }

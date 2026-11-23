@@ -2,7 +2,6 @@ package io.github.capsicum0907.caldarium;
 
 import java.util.List;
 
-import io.github.capsicum0907.caldarium.data.TestStructures;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -83,10 +82,10 @@ public final class CaldariumTests {
      * way hitting something alive does, so without resetting it here the same click held
      * down would land at full strength every time and the cooldown would be decoration.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void aRushedBlowIsWorthLess(GameTestHelper helper) {
         GeneratorBlockEntity post = palus(helper);
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = survivor(helper);
 
         // ⚠ A mock player starts with the swing timer at nought, which is a player who
         // has just swung rather than one standing ready. Let it come back first, or both
@@ -106,13 +105,13 @@ public final class CaldariumTests {
     }
 
     /** ⚠ Nothing else here is paid for being hit. */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void onlyThePalusTakesABlow(GameTestHelper helper) {
         helper.setBlock(WHERE, CaldariumRegistry.generators()
                 .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
         GeneratorBlockEntity burner = (GeneratorBlockEntity) helper.getBlockEntity(WHERE);
 
-        check(burner.hit(helper.makeMockPlayer(GameType.SURVIVAL)) == 0,
+        check(burner.hit(survivor(helper)) == 0,
                 "a burner should take nothing from being hit");
         helper.succeed();
     }
@@ -124,7 +123,7 @@ public final class CaldariumTests {
      * game: the enchantment that calls lightning down. Weather sets none. So this checks
      * the thing that is actually being relied on rather than the outcome of a storm.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void aStormIsWorthMoreThanATrident(GameTestHelper helper) {
         GeneratorBlockEntity struck = bidental(helper);
         int natural = struck.strike(false);
@@ -140,7 +139,7 @@ public final class CaldariumTests {
     /**
      * ⚠ Nothing else here takes a strike, however close it lands.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void onlyTheBidentalTakesAStrike(GameTestHelper helper) {
         helper.setBlock(WHERE, CaldariumRegistry.generators()
                 .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
@@ -153,7 +152,7 @@ public final class CaldariumTests {
     /**
      * What steps on it dies, and what it was holding is what is paid.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void standingOnItIsFatal(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
         check(made.store().getEnergyStored() == 0, "it should start empty");
@@ -167,7 +166,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void aTooltipReadsTheSettings(GameTestHelper helper) {
         List<Tooltips.Row> rows = Tooltips.generator(new Generator.Made(Generator.BURNER, Tier.COPPER));
         check(rows.size() == 3, "makes, holds and sends: " + rows);
@@ -186,7 +185,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 100)
+    @GameTest(template = Structures.FLOOR, timeoutTicks = 100)
     public static void aBurnerFillsABatteryThroughADoorChain(GameTestHelper helper) {
         BlockPos burnerAt = new BlockPos(0, 1, 2);
         BlockPos importerAt = new BlockPos(1, 1, 2);
@@ -209,7 +208,7 @@ public final class CaldariumTests {
                         + " burner holds " + burner.store().getEnergyStored()));
     }
 
-    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 120)
+    @GameTest(template = Structures.FLOOR, timeoutTicks = 120)
     public static void aDoorPlacedLaterStillJoinsTheLine(GameTestHelper helper) {
         BlockPos burnerAt = new BlockPos(0, 1, 2);
         BlockPos importerAt = new BlockPos(1, 1, 2);
@@ -242,13 +241,13 @@ public final class CaldariumTests {
 
     private static void longLine(GameTestHelper helper, boolean eastward) {
         int from = 1;
-        int to = TestStructures.HALL_SIZE - 2;
+        int to = Structures.HALL_SIZE - 2;
         int burnerX = eastward ? from : to;
         int batteryX = eastward ? to : from;
         int step = eastward ? 1 : -1;
         Direction back = eastward ? Direction.WEST : Direction.EAST;
         Direction ahead = back.getOpposite();
-        int z = TestStructures.HALL_SIZE / 2;
+        int z = Structures.HALL_SIZE / 2;
         helper.setBlock(new BlockPos(burnerX, 2, z), CaldariumRegistry.generators()
                 .get(new Generator.Made(Generator.BURNER, Tier.NETHERITE)).get());
         helper.setBlock(new BlockPos(batteryX, 2, z), CaldariumRegistry.block(Kind.BATTERY, Tier.GOLD).get());
@@ -275,7 +274,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 60)
+    @GameTest(template = Structures.FLOOR, timeoutTicks = 60)
     public static void aCableTakesNothingStraightFromAMachine(GameTestHelper helper) {
         BlockPos burnerAt = new BlockPos(1, 1, 2);
         BlockPos cableAt = new BlockPos(2, 1, 2);
@@ -298,17 +297,17 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, timeoutTicks = 200)
+    @GameTest(template = Structures.HALL, timeoutTicks = 200)
     public static void aLongLineCarriesEastward(GameTestHelper helper) {
         longLine(helper, true);
     }
 
-    @GameTest(template = TestStructures.HALL, timeoutTicks = 200)
+    @GameTest(template = Structures.HALL, timeoutTicks = 200)
     public static void aLongLineCarriesWestward(GameTestHelper helper) {
         longLine(helper, false);
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void eachTierAsksForAVanillaPickaxe(GameTestHelper helper) {
         var copper = CaldariumRegistry.generators().get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get()
                 .defaultBlockState();
@@ -325,7 +324,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void aBrokenBurnerDropsItsFuel(GameTestHelper helper) {
         helper.setBlock(WHERE, CaldariumRegistry.generators()
                 .get(new Generator.Made(Generator.BURNER, Tier.COPPER)).get());
@@ -342,7 +341,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void whatDiesThereDropsNothing(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
         LivingEntity pig = helper.spawn(EntityType.PIG, WHERE.above());
@@ -356,7 +355,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.FLOOR, timeoutTicks = 60)
+    @GameTest(template = Structures.FLOOR, timeoutTicks = 60)
     public static void aPaymentLightsItForAMoment(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
         made.reap(helper.getLevel(), helper.spawn(EntityType.PIG, WHERE.above()));
@@ -368,7 +367,7 @@ public final class CaldariumTests {
                 .thenSucceed();
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void aRungKillsNothingLargerThanItsLimit(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
 
@@ -390,7 +389,7 @@ public final class CaldariumTests {
      * generator that never stops paying for a kill that never happens. The dummy is not
      * a dependency; what is checked is the shape it has, which is one that cannot die.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void whatCannotDiePaysNothing(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
 
@@ -407,7 +406,7 @@ public final class CaldariumTests {
     /**
      * ⚠ And it stays nothing however long it stands there.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void whatCannotDieNeverPays(GameTestHelper helper) {
         GeneratorBlockEntity made = spoliarium(helper);
 
@@ -426,7 +425,7 @@ public final class CaldariumTests {
     /**
      * What was already hurt pays only for what was left.
      */
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void itPaysForWhatWasThereRatherThanWhatWasWhole(GameTestHelper helper) {
         GeneratorBlockEntity whole = spoliarium(helper);
         LivingEntity full = helper.spawn(EntityType.PIG, WHERE.above());
@@ -468,8 +467,8 @@ public final class CaldariumTests {
         CaldariumConfig.SOL_REACH.set(reachWas);
     }
 
-    private static final BlockPos SUN = new BlockPos(TestStructures.HALL_SIZE / 2, TestStructures.HALL_SIZE / 2,
-            TestStructures.HALL_SIZE / 2);
+    private static final BlockPos SUN = new BlockPos(Structures.HALL_SIZE / 2, Structures.HALL_SIZE / 2,
+            Structures.HALL_SIZE / 2);
     private static final double TOLERANCE = 0.25;
 
     private static BlockPos sun(GameTestHelper helper) {
@@ -482,7 +481,7 @@ public final class CaldariumTests {
     }
 
     private static Player standing(GameTestHelper helper, Vec3 eye, float yaw) {
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = survivor(helper);
         player.setPos(eye.x, eye.y - player.getEyeHeight(), eye.z);
         player.xo = player.getX();
         player.yo = player.getY();
@@ -501,7 +500,7 @@ public final class CaldariumTests {
         return Entity.collideBoundingBox(null, new Vec3(-by, 0.0, 0.0), box, helper.getLevel(), List.of());
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunStopsWhatMovesIntoIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -514,7 +513,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunReachesPanelsWellOutsideItsBall(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -536,7 +535,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunLightsTheGroundWithinItsReach(GameTestHelper helper) {
         BlockPos core = sun(helper);
         BlockPos floor = helper.absolutePos(new BlockPos(SUN.getX(), 2, SUN.getZ()));
@@ -553,7 +552,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunHurtsCreaturesWithinItsReach(GameTestHelper helper) {
         BlockPos core = sun(helper);
         BlockState state = helper.getLevel().getBlockState(core);
@@ -572,7 +571,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunThatIsGoneStopsNothing(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -584,7 +583,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunIsReachedAtItsSurface(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -597,7 +596,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void lookingAtASunLandsOnIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -612,7 +611,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void nothingIsPlacedInsideASun(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -624,7 +623,7 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void breakingASunKillsWhatIsNearButLeavesTheBlocks(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
@@ -633,7 +632,7 @@ public final class CaldariumTests {
             helper.setBlock(beside, Blocks.STONE);
             LivingEntity pig = helper.spawn(EntityType.PIG, beside.above());
             BlockState state = helper.getLevel().getBlockState(core);
-            Player breaker = helper.makeMockPlayer(GameType.SURVIVAL);
+            Player breaker = survivor(helper);
             state.getBlock().playerWillDestroy(helper.getLevel(), core, state, breaker);
             check(!pig.isAlive(), "a pig beside a sun that is broken should die");
             check(helper.getBlockState(beside).is(Blocks.STONE), "and the blocks around it should stay");
@@ -641,11 +640,11 @@ public final class CaldariumTests {
         });
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void placingIntoASunIsRefusedBeforeItHappens(GameTestHelper helper) {
         BlockPos core = sun(helper);
         helper.runAfterDelay(1, () -> {
-            Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+            Player player = survivor(helper);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE));
             BlockHitResult aim = new BlockHitResult(SolBlock.centre(core), Direction.UP, core, false);
             //? if neoforge {
@@ -662,11 +661,37 @@ public final class CaldariumTests {
         });
     }
 
+    private static Player survivor(GameTestHelper helper) {
+        //? if >=1.20.5 {
+        return helper.makeMockPlayer(GameType.SURVIVAL);
+        //?} else if >=1.20 {
+        /*return helper.makeMockSurvivalPlayer();
+        *///?} else {
+        /*return new Player(helper.getLevel(), BlockPos.ZERO, 0.0F,
+                new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "test-mock-player")
+                //? if >=1.19
+                /^, null^/
+        ) {
+            @Override
+            public boolean isSpectator() {
+                return false;
+            }
+
+            @Override
+            public boolean isCreative() {
+                return false;
+            }
+        };
+        *///?}
+    }
+
     private static boolean reaches(Player player, BlockPos pos) {
         //? if >=1.20.5 {
         return player.canInteractWithBlock(pos, 1.0);
-        //?} else if forge
-        /*return player.canReach(pos, 1.0);*/
+        //?} else if forge && >=1.20 {
+        /*return player.canReach(pos, 1.0);
+        *///?} else if forge
+        /*return player.canInteractWith(pos, 1.0);*/
     }
 
     private static Player holdingASun(GameTestHelper helper) {
@@ -676,7 +701,7 @@ public final class CaldariumTests {
         return player;
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunIsHeldByItsNearSide(GameTestHelper helper) {
         Player player = holdingASun(helper);
         BlockState placed = CaldariumRegistry.SOL.get().defaultBlockState();
@@ -689,9 +714,9 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunHeldBelowStaysClearOfTheBody(GameTestHelper helper) {
-        Vec3 eye = Vec3.atCenterOf(helper.absolutePos(new BlockPos(SUN.getX(), TestStructures.HALL_SIZE - 2, SUN.getZ())));
+        Vec3 eye = Vec3.atCenterOf(helper.absolutePos(new BlockPos(SUN.getX(), Structures.HALL_SIZE - 2, SUN.getZ())));
         Player player = standing(helper, eye, 0.0F);
         player.setXRot(90.0F);
         player.xRotO = 90.0F;
@@ -702,7 +727,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunIsNotSetDownOnSomethingAlive(GameTestHelper helper) {
         Player player = holdingASun(helper);
         BlockPos core = SolItem.core(player, CaldariumRegistry.SOL.get().defaultBlockState());
@@ -715,7 +740,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aLargeSunIsSmoothToTheTouch(GameTestHelper helper) {
         double radius = 32.0;
         Vec3 centre = Vec3.ZERO;
@@ -731,7 +756,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void anArrowBurnsUpPassingThroughASun(GameTestHelper helper) {
         BlockPos core = sun(helper);
         BlockState state = helper.getLevel().getBlockState(core);
@@ -767,7 +792,7 @@ public final class CaldariumTests {
         return living.getMaxHealth() - living.getHealth();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void whatTouchesASunIsHurtFarWorseThanWhatStandsNearIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
         BlockState state = helper.getLevel().getBlockState(core);
@@ -801,7 +826,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunIsSolidNoFurtherOutThanItsSkin(GameTestHelper helper) {
         double radius = 8.0;
         Vec3 centre = Vec3.ZERO;
@@ -822,7 +847,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void aSunLightsWhatIsAroundIt(GameTestHelper helper) {
         BlockPos core = sun(helper);
         BlockState state = helper.getLevel().getBlockState(core);
@@ -833,7 +858,10 @@ public final class CaldariumTests {
             if (there.getBlock() instanceof SolGlowBlock) {
                 lit++;
                 check(there.getLightEmission() == SolBlock.light(state), "a glow should shine as the sun does");
+                //? if >=1.20 {
                 check(there.canBeReplaced(), "a glow should give way to anything built there");
+                //?} else
+                /*check(there.getMaterial().isReplaceable(), "a glow should give way to anything built there");*/
                 check(there.getCollisionShape(helper.getLevel(), cell).isEmpty(), "a glow should not be in the way");
             }
         }
@@ -841,7 +869,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.HALL, batch = SOL_BATCH)
+    @GameTest(template = Structures.HALL, batch = SOL_BATCH)
     public static void nothingGlowsWhenTheSunGoes(GameTestHelper helper) {
         BlockPos core = sun(helper);
         List<BlockPos> cells = SolBlock.glowCells(core, SolBlock.radius(helper.getLevel().getBlockState(core)));
@@ -853,7 +881,7 @@ public final class CaldariumTests {
         helper.succeed();
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void aBoltCalledDownIsCountedAsCalled(GameTestHelper helper) {
         GeneratorBlockEntity struck = bidental(helper);
         LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(helper.getLevel());
@@ -879,9 +907,9 @@ public final class CaldariumTests {
         player.totalExperience = points;
     }
 
-    @GameTest(template = TestStructures.FLOOR)
+    @GameTest(template = Structures.FLOOR)
     public static void experienceIsTakenToThePoint(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = survivor(helper);
         int[] starts = { 0, 7, 16, 17, 100, 352, 353, 1395, 1396, 5000, 30970, 1_000_000 };
         int[] amounts = { 1, 10, 100, 1000, 10_000 };
         for (int start : starts) {

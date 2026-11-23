@@ -16,12 +16,20 @@ stonecutter parameters {
         replace("import net.neoforged.neoforge.common.ModConfigSpec;", "import net.minecraftforge.common.ForgeConfigSpec;")
         replace("ModConfigSpec", "ForgeConfigSpec")
     }
+    replacements.string(eval(node.metadata.version, "<1.19.3")) {
+        replace("import net.minecraft.core.registries.Registries;", "import net.minecraft.core.Registry;")
+        replace("(Registries.BLOCK,", "(Registry.BLOCK_REGISTRY,")
+        replace("(Registries.ITEM,", "(Registry.ITEM_REGISTRY,")
+        replace("(Registries.BLOCK_ENTITY_TYPE,", "(Registry.BLOCK_ENTITY_TYPE_REGISTRY,")
+        replace("(Registries.MENU,", "(Registry.MENU_REGISTRY,")
+        replace("BuiltInRegistries.BLOCK", "net.minecraft.core.Registry.BLOCK")
+        replace("import org.joml.Matrix4f;", "import com.mojang.math.Matrix4f;")
+    }
     replacements.string(eval(node.metadata.version, "<1.20.5")) {
         replace(".serializeNBT(registries)", ".serializeNBT()")
         replace(".deserializeNBT(registries, ", ".deserializeNBT(")
         replace(".writeToNBT(registries, ", ".writeToNBT(")
         replace(".readFromNBT(registries, ", ".readFromNBT(")
-        replace("helper.makeMockPlayer(GameType.SURVIVAL)", "helper.makeMockSurvivalPlayer()")
     }
 }
 

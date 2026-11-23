@@ -7,7 +7,10 @@ import io.github.capsicum0907.caldarium.SolPalette;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+//? if >=1.19.4 {
 import net.minecraft.world.item.ItemDisplayContext;
+//?} else
+/*import net.minecraft.client.renderer.block.model.ItemTransforms;*/
 import net.minecraft.world.item.ItemStack;
 
 public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -22,7 +25,10 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     }
 
     @Override
+    //? if >=1.19.4 {
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buffers,
+    //?} else
+    /*public void renderByItem(ItemStack stack, ItemTransforms.TransformType context, PoseStack pose, MultiBufferSource buffers,*/
             int light, int overlay) {
         if (surface == null) {
             surface = new SolSurface(ICON_TEXELS, ICON_SCALE);

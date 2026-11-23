@@ -6,6 +6,7 @@ import io.github.capsicum0907.caldarium.client.CaldariumClient;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.BlockItem;
+//? if >=1.19.3
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
@@ -28,6 +29,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 //?} else {
 /*import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
+//? if >=1.20
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -73,6 +75,7 @@ public class Caldarium {
         CaldariumRegistry.ITEMS.register(modEventBus);
         CaldariumRegistry.BLOCK_ENTITIES.register(modEventBus);
         CaldariumRegistry.MENUS.register(modEventBus);
+        //? if >=1.19.3
         CaldariumRegistry.TABS.register(modEventBus);
 
         //? if neoforge {
@@ -87,6 +90,7 @@ public class Caldarium {
         /*MinecraftForge.EVENT_BUS.addListener(Caldarium::placing);
         MinecraftForge.EVENT_BUS.addListener(Caldarium::aiming);
         MinecraftForge.EVENT_BUS.addListener(Caldarium::spoils);
+        //? if >=1.20
         modEventBus.addListener(Caldarium::addToCreativeTab);
         if (FMLEnvironment.dist == Dist.CLIENT) {
             Client.register(modEventBus);
@@ -106,7 +110,7 @@ public class Caldarium {
      * its fuel slot as an item handler, which is how a hopper feeds it.
      */
     private static void spoils(LivingDropsEvent event) {
-        if (event.getSource().is(CaldariumRegistry.SPOLIARIUM_DAMAGE)) {
+        if (Damage.spoiled(event.getSource())) {
             event.setCanceled(true);
         }
     }
@@ -178,6 +182,7 @@ public class Caldarium {
     }
     *///?}
 
+    //? if >=1.20 {
     private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             for (Supplier<? extends BlockItem> item : CaldariumRegistry.items()) {
@@ -185,4 +190,5 @@ public class Caldarium {
             }
         }
     }
+    //?}
 }

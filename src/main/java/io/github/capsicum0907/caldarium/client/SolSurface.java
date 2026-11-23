@@ -14,7 +14,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 
 public final class SolSurface {
     private static final float REFERENCE_RADIUS = 4.0F;
@@ -26,7 +25,7 @@ public final class SolSurface {
     private static final int COLUMNS = 3;
     private static final int SHADES = 256;
     private static final float QUARTER = Mth.PI / 4.0F;
-    private static final Vector3f LIT = new Vector3f(0.0F, 1.0F, 0.0F);
+    private static final Point LIT = new Point(0.0F, 1.0F, 0.0F);
 
     private static final float[][] NORMAL = {
             { 1, 0, 0 }, { -1, 0, 0 }, { 0, 1, 0 }, { 0, -1, 0 }, { 0, 0, 1 }, { 0, 0, -1 } };
@@ -130,7 +129,7 @@ public final class SolSurface {
 
     private void sample(int face, int fromRow, int toRow, float boil) {
         float[] values = heat[face];
-        Vector3f point = new Vector3f();
+        Point point = new Point();
         for (int j = fromRow; j < toRow; j++) {
             float t = ((j - 1) + 0.5F) / texels * 2.0F - 1.0F;
             for (int i = 0; i < cell; i++) {
@@ -141,7 +140,7 @@ public final class SolSurface {
         }
     }
 
-    private static void onBall(int face, float s, float t, Vector3f into) {
+    private static void onBall(int face, float s, float t, Point into) {
         float a = (float) Math.tan(s * QUARTER);
         float b = (float) Math.tan(t * QUARTER);
         float[] n = NORMAL[face];
@@ -152,7 +151,7 @@ public final class SolSurface {
 
     public void draw(PoseStack pose, VertexConsumer into, int overlay, boolean inside, boolean flat) {
         Matrix4f matrix = pose.last().pose();
-        Vector3f point = new Vector3f();
+        Point point = new Point();
         float width = cell * COLUMNS;
         float height = cell * (FACES / COLUMNS);
         for (int face = 0; face < FACES; face++) {
@@ -176,7 +175,7 @@ public final class SolSurface {
     }
 
     private void corner(Matrix4f matrix, PoseStack pose, VertexConsumer into, int overlay, int face,
-            float s, float t, float left, float top, float width, float height, Vector3f point, boolean flat) {
+            float s, float t, float left, float top, float width, float height, Point point, boolean flat) {
         onBall(face, s, t, point);
         float u = (left + (s + 1.0F) / 2.0F * texels) / width;
         float v = (top + (t + 1.0F) / 2.0F * texels) / height;

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+//? if >=1.19.3
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;

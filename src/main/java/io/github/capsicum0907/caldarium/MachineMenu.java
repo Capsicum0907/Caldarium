@@ -183,7 +183,10 @@ public class MachineMenu extends AbstractContainerMenu {
         }
 
         if (inSlot.isEmpty()) {
+            //? if >=1.20 {
             slot.setByPlayer(ItemStack.EMPTY);
+            //?} else
+            /*slot.set(ItemStack.EMPTY);*/
         } else {
             slot.setChanged();
         }

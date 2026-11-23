@@ -5,8 +5,6 @@ import java.util.function.Consumer;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -122,9 +120,9 @@ public class SolBlockEntity extends BlockEntity {
             /*living.setSecondsOnFire(CaldariumConfig.solBurnSeconds());*/
             boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= touch * touch;
             if (touching) {
-                living.hurt(sunlight(level), CaldariumConfig.solTouchDamage());
+                Damage.sunburn(level, living, CaldariumConfig.solTouchDamage());
             } else {
-                living.hurt(level.damageSources().inFire(), CaldariumConfig.solBurnDamage());
+                living.hurt(Damage.fire(level), CaldariumConfig.solBurnDamage());
             }
         }
     }
@@ -136,14 +134,10 @@ public class SolBlockEntity extends BlockEntity {
         List<LivingEntity> within = level.getEntitiesOfClass(LivingEntity.class, around,
                 living -> nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
         for (LivingEntity living : within) {
-            living.hurt(sunlight(level), CaldariumConfig.solReachDamage());
+            Damage.sunburn(level, living, CaldariumConfig.solReachDamage());
         }
     }
 
-    private static DamageSource sunlight(ServerLevel level) {
-        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(CaldariumRegistry.SOL_DAMAGE));
-    }
 
     private static Vec3 nearest(AABB box, Vec3 to) {
         return new Vec3(Mth.clamp(to.x, box.minX, box.maxX), Mth.clamp(to.y, box.minY, box.maxY),

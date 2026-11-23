@@ -24,6 +24,15 @@ class ResourceConversion(
     val testStructuresAsSnbt = loader == "fabric" && !Targets.atLeast(minecraft, "1.20")
     val renderTypesInCode = !(loader == "neoforge" || (loader == "forge" && Targets.atLeast(minecraft, "1.19")))
 
+    private val dataDrivenDamage = Targets.atLeast(minecraft, "1.19.4")
+
+    fun keeps(path: String): Boolean {
+        val parts = path.split('/')
+        if (parts.size < 3 || parts[0] != "data") return true
+        val folder = if (parts[2] == "tags") parts.getOrNull(3) else parts[2]
+        return dataDrivenDamage || folder != "damage_type"
+    }
+
     fun path(path: String): String {
         if (!pluralFolders) return path
         val parts = path.split('/').toMutableList()

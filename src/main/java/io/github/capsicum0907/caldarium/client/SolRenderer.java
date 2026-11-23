@@ -5,6 +5,7 @@ import java.util.WeakHashMap;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+//? if >=1.19.3
 import com.mojang.math.Axis;
 
 import io.github.capsicum0907.caldarium.Caldarium;
@@ -24,11 +25,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import org.joml.Vector3f;
 
 public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
-    private static final ResourceLocation SKIN = ResourceLocation
-            .fromNamespaceAndPath(Caldarium.MODID, "textures/block/" + Skins.SOL_LIT + ".png");
+    private static final ResourceLocation SKIN = Caldarium.id("textures/block/" + Skins.SOL_LIT + ".png");
 
     /** How fast the surface churns, in noise units a second. */
     private static final float BOIL = 0.35F;
@@ -37,7 +36,7 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     private static final float TURN = 6.0F;
 
     // Straight up faces both world diffuse lights, so the shader's shading comes out at full.
-    private static final Vector3f LIT = new Vector3f(0.0F, 1.0F, 0.0F);
+    private static final Point LIT = new Point(0.0F, 1.0F, 0.0F);
 
     private static final Map<SolBlockEntity, SolSurface> SURFACES = new WeakHashMap<>();
 
@@ -109,8 +108,13 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         if (toCamera != null && !inside) {
             halo(pose, buffers, overlay, radius, toCamera);
         }
+        //? if >=1.19.3 {
         pose.mulPose(Axis.YP.rotationDegrees(spin));
         pose.mulPose(Axis.XP.rotationDegrees(spin * 0.37F));
+        //?} else {
+        /*pose.mulPose(com.mojang.math.Vector3f.YP.rotationDegrees(spin));
+        pose.mulPose(com.mojang.math.Vector3f.XP.rotationDegrees(spin * 0.37F));
+        *///?}
         pose.scale(radius, radius, radius);
 
         // ⚠ Solid rather than translucent emissive: that one skips back-face culling and

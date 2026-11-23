@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import com.google.common.hash.Hashing;
 
 import io.github.capsicum0907.caldarium.Caldarium;
+import io.github.capsicum0907.caldarium.Structures;
 
 import net.minecraft.Util;
 import net.minecraft.data.CachedOutput;
@@ -23,9 +24,9 @@ import net.minecraft.resources.ResourceLocation;
 
 /** A flat floor for the game tests to stand on. */
 public class TestStructures implements DataProvider {
-    public static final String FLOOR = "floor";
-    public static final String HALL = "hall";
-    public static final int HALL_SIZE = 19;
+    public static final String FLOOR = Structures.FLOOR;
+    public static final String HALL = Structures.HALL;
+    public static final int HALL_SIZE = Structures.HALL_SIZE;
 
     private static final int SIZE = 5;
     private static final String FLOOR_BLOCK = "minecraft:polished_andesite";

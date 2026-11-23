@@ -74,6 +74,7 @@ val convertResources = tasks.register<ConvertResources>("convertResources") {
 sourceSets.main {
     java {
         exclude("**/caldarium/data/CaldariumDataGen.java")
+        exclude("**/caldarium/data/TestStructures.java")
     }
     resources.srcDir(convertResources)
 }

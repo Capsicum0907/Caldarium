@@ -118,7 +118,10 @@ public final class CaldariumClient {
     public static void preview(RenderLevelStageEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
+        //? if >=1.20 {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES
+        //?} else
+        /*if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRIPWIRE_BLOCKS*/
                 || player == null || minecraft.level == null || minecraft.options.hideGui) {
             return;
         }

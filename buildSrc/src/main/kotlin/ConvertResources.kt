@@ -42,6 +42,7 @@ abstract class ConvertResources : DefaultTask() {
         }
         val conversion = ResourceConversion(minecraftVersion.get(), loaderName.get(), models)
         for ((file, relative) in files) {
+            if (!conversion.keeps(relative)) continue
             val target = to.resolve(conversion.path(relative))
             target.parentFile.mkdirs()
             if (file.extension == "json") {

@@ -23,7 +23,7 @@ public abstract class PlayerMixin {
             result.setReturnValue(SolBlock.gap(state, pos, self.getEyePosition()) < reach);
         }
     }
-    //?} else if forge {
+    //?} else if forge && >=1.20 {
     /*public boolean canReach(BlockPos pos, double padding) {
         Player self = (Player) (Object) this;
         return caldarium$reaches(self, pos, self.getBlockReach() + padding);
@@ -41,6 +41,16 @@ public abstract class PlayerMixin {
             return SolBlock.gap(state, pos, self.getEyePosition()) < reach;
         }
         return self.getEyePosition().distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= reach * reach;
+    }
+    *///?} else if forge {
+    /*public boolean canInteractWith(BlockPos pos, double padding) {
+        Player self = (Player) (Object) this;
+        double reach = self.getReachDistance() + padding;
+        BlockState state = self.level.getBlockState(pos);
+        if (state.getBlock() instanceof SolBlock) {
+            return SolBlock.gap(state, pos, self.getEyePosition()) < reach;
+        }
+        return self.getEyePosition().distanceToSqr(pos.getX() + 0.5D, pos.getY() + 0.5D, pos.getZ() + 0.5D) < reach * reach;
     }
     *///?}
 }
