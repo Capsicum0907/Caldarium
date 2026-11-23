@@ -9,6 +9,9 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import java.util.function.Supplier;
+
+//? if neoforge {
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -19,11 +22,24 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-import net.neoforged.neoforge.registries.DeferredItem;
+//?} else {
+/*import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.fml.loading.FMLEnvironment;
+*///?}
 
 import org.slf4j.Logger;
 
@@ -35,10 +51,23 @@ import org.slf4j.Logger;
 public class Caldarium {
     public static final String MODID = "caldarium";
 
+    public static net.minecraft.resources.ResourceLocation id(String path) {
+        //? if >=1.21 {
+        return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, path);
+        //?} else
+        /*return new net.minecraft.resources.ResourceLocation(MODID, path);*/
+    }
+
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    //? if neoforge {
     public Caldarium(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.SERVER, CaldariumConfig.SPEC);
+    //?} else {
+    /*public Caldarium() {
+        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, CaldariumConfig.SPEC);
+    *///?}
 
         CaldariumRegistry.BLOCKS.register(modEventBus);
         CaldariumRegistry.ITEMS.register(modEventBus);
@@ -46,14 +75,25 @@ public class Caldarium {
         CaldariumRegistry.MENUS.register(modEventBus);
         CaldariumRegistry.TABS.register(modEventBus);
 
+        //? if neoforge {
         modEventBus.addListener(Caldarium::registerCapabilities);
-        NeoForge.EVENT_BUS.addListener(Caldarium::lightning);
         NeoForge.EVENT_BUS.addListener(Caldarium::placing);
         NeoForge.EVENT_BUS.addListener(Caldarium::aiming);
         NeoForge.EVENT_BUS.addListener(Caldarium::spoils);
         modEventBus.addListener(Caldarium::addToCreativeTab);
 
         LOGGER.info("Caldarium {} loaded.", modContainer.getModInfo().getVersion());
+        //?} else {
+        /*MinecraftForge.EVENT_BUS.addListener(Caldarium::placing);
+        MinecraftForge.EVENT_BUS.addListener(Caldarium::aiming);
+        MinecraftForge.EVENT_BUS.addListener(Caldarium::spoils);
+        modEventBus.addListener(Caldarium::addToCreativeTab);
+        if (FMLEnvironment.dist == Dist.CLIENT) {
+            Client.register(modEventBus);
+        }
+
+        LOGGER.info("Caldarium {} loaded.", ModLoadingContext.get().getActiveContainer().getModInfo().getVersion());
+        *///?}
     }
 
     /**
@@ -71,12 +111,6 @@ public class Caldarium {
         }
     }
 
-    private static void lightning(EntityTickEvent.Pre event) {
-        if (event.getEntity() instanceof net.minecraft.world.entity.LightningBolt bolt) {
-            Storm.struck(bolt);
-        }
-    }
-
     public static void aiming(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getItemStack().getItem() instanceof BlockItem)) {
             return;
@@ -84,7 +118,10 @@ public class Caldarium {
         BlockPos pos = new BlockPlaceContext(new UseOnContext(event.getEntity(), event.getHand(),
                 event.getHitVec())).getClickedPos();
         if (Suns.inside(event.getLevel(), pos)) {
+            //? if neoforge {
             event.setUseItem(TriState.FALSE);
+            //?} else
+            /*event.setUseItem(Event.Result.DENY);*/
         }
     }
 
@@ -95,6 +132,7 @@ public class Caldarium {
         }
     }
 
+    //? if neoforge {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK,
                 CaldariumRegistry.GENERATOR_ENTITY.get(), (generator, side) -> generator.store());
@@ -109,7 +147,10 @@ public class Caldarium {
                 CaldariumRegistry.KIND_ENTITY.get(), (machine, side) -> machine.items());
     }
 
+    //?}
+
     /** Drawing is a client concern, and this is the only place that knows it exists. */
+    //? if neoforge {
     @Mod(value = MODID, dist = Dist.CLIENT)
     public static class Client {
         public Client(IEventBus modEventBus, ModContainer modContainer) {
@@ -123,11 +164,24 @@ public class Caldarium {
             NeoForge.EVENT_BUS.addListener(io.github.capsicum0907.caldarium.client.SolCorona::draw);
         }
     }
+    //?} else {
+    /*private static final class Client {
+        private static void register(IEventBus modEventBus) {
+            modEventBus.addListener(CaldariumClient::registerScreens);
+            modEventBus.addListener(CaldariumClient::registerRenderers);
+            modEventBus.addListener(CaldariumClient::registerTooltips);
+            MinecraftForge.EVENT_BUS.addListener(CaldariumClient::readings);
+            MinecraftForge.EVENT_BUS.addListener(CaldariumClient::outline);
+            MinecraftForge.EVENT_BUS.addListener(CaldariumClient::preview);
+            MinecraftForge.EVENT_BUS.addListener(io.github.capsicum0907.caldarium.client.SolCorona::draw);
+        }
+    }
+    *///?}
 
     private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
-            for (DeferredItem<?> item : CaldariumRegistry.items()) {
-                event.accept(item);
+            for (Supplier<? extends BlockItem> item : CaldariumRegistry.items()) {
+                event.accept(item.get());
             }
         }
     }

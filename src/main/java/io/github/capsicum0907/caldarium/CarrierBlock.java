@@ -23,7 +23,6 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
@@ -45,12 +44,14 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * asked "am I a cable?" there would be asking a field that is still null.
  */
 public class CarrierBlock extends KindBlock {
+    //? if >=1.20.3 {
     public static final MapCodec<CarrierBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     Kind.CODEC.fieldOf("kind").forGetter(KindBlock::kind),
                     Tier.CODEC.fieldOf("tier").forGetter(KindBlock::tier),
                     propertiesCodec())
                     .apply(instance, CarrierBlock::new));
+    //?}
 
     /** What each face is joined to. The names are the vanilla ones for the six sides. */
     public static final Map<Direction, EnumProperty<Joint>> JOINTS = joints();
@@ -76,10 +77,12 @@ public class CarrierBlock extends KindBlock {
                 build -> shapes(kind.core(), kind.door(), kind.mouth()));
     }
 
+    //? if >=1.20.3 {
     @Override
     protected MapCodec<? extends KindBlock> codec() {
         return CODEC;
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -88,7 +91,7 @@ public class CarrierBlock extends KindBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
             CollisionContext context) {
         return shapes[joined(state)];
     }
@@ -134,7 +137,7 @@ public class CarrierBlock extends KindBlock {
      * block that asked anyway would bake in an answer of "nothing is there".
      */
     @Override
-    protected BlockState updateShape(BlockState state, Direction side, BlockState neighbour,
+    public BlockState updateShape(BlockState state, Direction side, BlockState neighbour,
             LevelAccessor level, BlockPos pos, BlockPos neighbourPos) {
         // ⚠ The aimed face is never recomputed. It is where the block was pointed when
         // it was put down, and a block that re-aimed itself every time something was
@@ -157,8 +160,7 @@ public class CarrierBlock extends KindBlock {
     }
 
     private static IEnergyStorage energy(Level level, BlockPos pos, Direction side) {
-        return level.getCapability(Capabilities.EnergyStorage.BLOCK,
-                pos.relative(side), side.getOpposite());
+        return Neighbours.energy(level, pos.relative(side), side.getOpposite());
     }
 
     /** Which way this one points, or nothing where it does not point anywhere. */

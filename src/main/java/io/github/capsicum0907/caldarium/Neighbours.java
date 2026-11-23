@@ -3,8 +3,14 @@ package io.github.capsicum0907.caldarium;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
+//? if neoforge {
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
+//?} else {
+/*import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+*///?}
 import net.neoforged.neoforge.energy.IEnergyStorage;
 
 /**
@@ -18,12 +24,15 @@ import net.neoforged.neoforge.energy.IEnergyStorage;
  * each would be two sets of invalidation listeners watching the same six positions.
  */
 public final class Neighbours {
+    //? if neoforge {
     @SuppressWarnings("unchecked")
     private final BlockCapabilityCache<IEnergyStorage, Direction>[] sides =
             new BlockCapabilityCache[Direction.values().length];
+    //?}
 
     /** What is on that side and speaks Forge Energy, or null when nothing does. */
     public IEnergyStorage at(ServerLevel level, BlockPos pos, Direction side) {
+        //? if neoforge {
         BlockCapabilityCache<IEnergyStorage, Direction> cache = sides[side.ordinal()];
         if (cache == null) {
             cache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, level,
@@ -31,6 +40,17 @@ public final class Neighbours {
             sides[side.ordinal()] = cache;
         }
         return cache.getCapability();
+        //?} else
+        /*return energy(level, pos.relative(side), side.getOpposite());*/
+    }
+
+    public static IEnergyStorage energy(Level level, BlockPos pos, Direction side) {
+        //? if neoforge {
+        return level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
+        //?} else {
+        /*BlockEntity entity = level.getBlockEntity(pos);
+        return entity == null ? null : entity.getCapability(ForgeCapabilities.ENERGY, side).orElse(null);
+        *///?}
     }
 
     /**

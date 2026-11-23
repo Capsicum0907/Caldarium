@@ -25,10 +25,16 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+//? if neoforge {
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
+//?} else {
+/*import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+*///?}
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+//? if neoforge
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 
 /** Drawing is a client concern, and this is the only place that knows it exists. */
@@ -60,17 +66,29 @@ public final class CaldariumClient {
         elements.add(Math.min(1, elements.size()), Either.right(new Tooltips.Readings(rows)));
     }
 
+    //? if neoforge {
     public static void registerScreens(RegisterMenuScreensEvent event) {
         event.register(CaldariumRegistry.MACHINE_MENU.get(), MachineScreen::new);
     }
+    //?} else {
+    /*public static void registerScreens(FMLClientSetupEvent event) {
+        event.enqueueWork(() -> MenuScreens.register(CaldariumRegistry.MACHINE_MENU.get(), MachineScreen::new));
+    }
+    *///?}
 
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(CaldariumRegistry.SOL_ENTITY.get(), SolRenderer::new);
         SolBlockEntity.onLeavingClient(SolRenderer::forget);
     }
 
+    //? if neoforge {
     public static void registerExtensions(RegisterClientExtensionsEvent event) {
-        event.registerItem(new IClientItemExtensions() {
+        event.registerItem(solItem(), CaldariumRegistry.SOL_ITEM.get());
+    }
+    //?}
+
+    public static IClientItemExtensions solItem() {
+        return new IClientItemExtensions() {
             private SolItemRenderer renderer;
 
             @Override
@@ -80,7 +98,7 @@ public final class CaldariumClient {
                 }
                 return renderer;
             }
-        }, CaldariumRegistry.SOL_ITEM.get());
+        };
     }
 
     public static void outline(RenderHighlightEvent.Block event) {
@@ -142,11 +160,10 @@ public final class CaldariumClient {
             int axis, float at, float away, int colour, float alpha) {
         Vec3 here = circle(axis, at);
         Vec3 along = circle(axis, away).subtract(here).normalize();
-        lines.addVertex(pose.last(), (float) (centre.x + here.x * radius),
-                        (float) (centre.y + here.y * radius), (float) (centre.z + here.z * radius))
-                .setColor(((colour >> 16) & 0xFF) / 255.0F, ((colour >> 8) & 0xFF) / 255.0F,
-                        (colour & 0xFF) / 255.0F, alpha)
-                .setNormal(pose.last(), (float) along.x, (float) along.y, (float) along.z);
+        Vertices.line(lines, pose.last(), (float) (centre.x + here.x * radius),
+                (float) (centre.y + here.y * radius), (float) (centre.z + here.z * radius),
+                ((colour >> 16) & 0xFF) / 255.0F, ((colour >> 8) & 0xFF) / 255.0F,
+                (colour & 0xFF) / 255.0F, alpha, (float) along.x, (float) along.y, (float) along.z);
     }
 
     private static Vec3 circle(int axis, float angle) {

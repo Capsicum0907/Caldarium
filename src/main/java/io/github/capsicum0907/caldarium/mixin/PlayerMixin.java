@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin {
+    //? if >=1.20.5 {
     @Inject(method = "canInteractWithBlock", at = @At("HEAD"), cancellable = true)
     private void caldarium$reachSun(BlockPos pos, double distance, CallbackInfoReturnable<Boolean> result) {
         Player self = (Player) (Object) this;
@@ -22,4 +23,24 @@ public abstract class PlayerMixin {
             result.setReturnValue(SolBlock.gap(state, pos, self.getEyePosition()) < reach);
         }
     }
+    //?} else if forge {
+    /*public boolean canReach(BlockPos pos, double padding) {
+        Player self = (Player) (Object) this;
+        return caldarium$reaches(self, pos, self.getBlockReach() + padding);
+    }
+
+    public boolean canReachRaw(BlockPos pos, double padding) {
+        Player self = (Player) (Object) this;
+        return caldarium$reaches(self, pos,
+                self.getAttributeValue(net.minecraftforge.common.ForgeMod.BLOCK_REACH.get()) + padding);
+    }
+
+    private static boolean caldarium$reaches(Player self, BlockPos pos, double reach) {
+        BlockState state = self.level().getBlockState(pos);
+        if (state.getBlock() instanceof SolBlock) {
+            return SolBlock.gap(state, pos, self.getEyePosition()) < reach;
+        }
+        return self.getEyePosition().distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= reach * reach;
+    }
+    *///?}
 }

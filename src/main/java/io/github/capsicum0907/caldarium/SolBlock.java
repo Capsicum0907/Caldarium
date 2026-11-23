@@ -39,6 +39,7 @@ public class SolBlock extends BaseEntityBlock {
     /** How far through its durability it is, in quarters. Only the light reads it. */
     public static final IntegerProperty SPENT = IntegerProperty.create("spent", 0, 3);
 
+    //? if >=1.20.3
     public static final MapCodec<SolBlock> CODEC = simpleCodec(SolBlock::new);
 
     private static final int BRIGHTEST = 15;
@@ -304,7 +305,7 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moved) {
+    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState old, boolean moved) {
         super.onPlace(state, level, pos, old, moved);
         if (!level.isClientSide() && !old.is(this)) {
             glow(level, pos, state);
@@ -312,7 +313,7 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
         if (!level.isClientSide()) {
             unglow(level, pos, state);
             if (now.is(this)) {
@@ -324,7 +325,10 @@ public class SolBlock extends BaseEntityBlock {
 
     public static float progress(BlockState state, Player player, BlockGetter level, BlockPos pos,
             float otherwise) {
+        //? if neoforge {
         if (!(level instanceof Level world) || !player.hasCorrectToolForDrops(state, world, pos)) {
+        //?} else
+        /*if (!(level instanceof Level) || !player.hasCorrectToolForDrops(state)) {*/
             return 0.0F;
         }
         return otherwise;
@@ -339,9 +343,13 @@ public class SolBlock extends BaseEntityBlock {
             living.hurt(level.damageSources().explosion(breaker, breaker), CaldariumConfig.solBlastDamage());
         }
         level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, centre.x, centre.y, centre.z, 1, 0.0, 0.0, 0.0, 0.0);
+        //? if >=1.20.5 {
         level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, BLAST_VOLUME, 1.0F);
+        //?} else
+        /*level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, BLAST_VOLUME, 1.0F);*/
     }
 
+    //? if >=1.20.5 {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (level instanceof ServerLevel server) {
@@ -349,11 +357,22 @@ public class SolBlock extends BaseEntityBlock {
         }
         return super.playerWillDestroy(level, pos, state, player);
     }
+    //?} else {
+    /*@Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level instanceof ServerLevel server) {
+            blast(server, pos, state, player);
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+    *///?}
 
+    //? if >=1.20.3 {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<net.minecraft.world.level.block.Block, BlockState> builder) {
@@ -361,12 +380,12 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shape(state);
     }
 
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return shape(state);
     }
 
@@ -379,13 +398,13 @@ public class SolBlock extends BaseEntityBlock {
      * progress in the first place.
      */
     @Override
-    protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
+    public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
         return progress(state, player, level, pos, super.getDestroyProgress(state, player, level, pos));
     }
 
     /** ⚠ The sphere is drawn by {@code SolRenderer}; a cube inside it would show. */
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.INVISIBLE;
     }
 
@@ -403,12 +422,15 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected boolean isPathfindable(BlockState state, net.minecraft.world.level.pathfinder.PathComputationType path) {
+    //? if >=1.20.5 {
+    public boolean isPathfindable(BlockState state, net.minecraft.world.level.pathfinder.PathComputationType path) {
+    //?} else
+    /*public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.level.pathfinder.PathComputationType path) {*/
         return false;
     }
 
     @Override
-    protected float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
+    public float getShadeBrightness(BlockState state, BlockGetter level, BlockPos pos) {
         return 1.0F;
     }
 }

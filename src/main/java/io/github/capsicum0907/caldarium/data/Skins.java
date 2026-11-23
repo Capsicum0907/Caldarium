@@ -871,7 +871,7 @@ public final class Skins {
                 // ⚠ cells() is the distance to a cell's middle, so the middle comes
                 // back as nought. A sun is brightest in the middle of each blob and
                 // dark where they meet, which is this the other way up.
-                heat = Math.clamp(1.0F - (heat - 0.15F) * 1.5F, 0.0F, 1.0F);
+                heat = Mth.clamp(1.0F - (heat - 0.15F) * 1.5F, 0.0F, 1.0F);
                 pixels[y][x] = 0xFF000000 | SolPalette.colour(heat, 0.0F);
             }
         }
@@ -898,7 +898,7 @@ public final class Skins {
                 best = Math.min(best, ox * ox + oy * oy);
             }
         }
-        return Math.clamp((float) Math.sqrt(best) / step, 0.0F, 1.0F);
+        return Mth.clamp((float) Math.sqrt(best) / step, 0.0F, 1.0F);
     }
 
     private static float wrapped(float d) {
@@ -936,7 +936,7 @@ public final class Skins {
     }
 
     private static int channel(int colour, int at, int shift) {
-        int value = Math.clamp(((colour >> at) & 0xFF) + shift, 0, 0xFF);
+        int value = Mth.clamp(((colour >> at) & 0xFF) + shift, 0, 0xFF);
         return value << at;
     }
 

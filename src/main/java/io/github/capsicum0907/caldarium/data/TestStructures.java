@@ -44,8 +44,8 @@ public class TestStructures implements DataProvider {
 
     @Override
     public CompletableFuture<?> run(CachedOutput output) {
-        Path floor = path.file(ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, FLOOR), "nbt");
-        Path hall = path.file(ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, HALL), "nbt");
+        Path floor = path.file(Caldarium.id(FLOOR), "nbt");
+        Path hall = path.file(Caldarium.id(HALL), "nbt");
         return CompletableFuture.allOf(
                 CompletableFuture.runAsync(() -> write(output, floor(SIZE), floor), Util.backgroundExecutor()),
                 CompletableFuture.runAsync(() -> write(output, floor(HALL_SIZE), hall), Util.backgroundExecutor()));

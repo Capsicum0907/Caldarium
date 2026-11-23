@@ -99,12 +99,15 @@ val modMetadata = mapOf(
     "mod_version" to property("mod_version"),
     "mod_authors" to property("mod_authors"),
     "mod_description" to property("mod_description"),
+    "java_version" to Targets.java(minecraft),
+    "mixin_refmap" to "",
 )
 
 val generateModMetadata = tasks.register<ProcessResources>("generateModMetadata") {
     inputs.properties(modMetadata)
     expand(modMetadata)
     from(rootProject.file("src/main/templates/$loader"))
+    from(rootProject.file("src/main/templates/common"))
     into("build/generated/sources/modMetadata")
 }
 sourceSets.main {

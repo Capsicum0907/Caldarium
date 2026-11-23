@@ -29,7 +29,10 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
         }
         Minecraft minecraft = Minecraft.getInstance();
         float time = (minecraft.level == null ? 0L : minecraft.level.getGameTime())
+                //? if >=1.21 {
                 + minecraft.getTimer().getGameTimeDeltaPartialTick(false);
+                //?} else
+                /*+ minecraft.getFrameTime();*/
         SolRenderer.draw(pose, buffers, overlay, ICON_RADIUS, time, SolPalette.blaze(time, 0L), null, surface);
     }
 }

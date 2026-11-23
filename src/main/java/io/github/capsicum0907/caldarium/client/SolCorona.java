@@ -38,7 +38,15 @@ public final class SolCorona {
     private static final int BUFFER = SEGMENTS * RINGS * 2 * 4
             * DefaultVertexFormat.POSITION_COLOR.getVertexSize();
 
-    private static final RenderType GLOW = RenderType.create("caldarium_corona",
+    private static final RenderType GLOW = Shards.glow();
+
+    private static final class Shards extends RenderType {
+        private Shards() {
+            super("", DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, 0, false, false, () -> { }, () -> { });
+        }
+
+        private static RenderType glow() {
+            return create("caldarium_corona",
             DefaultVertexFormat.POSITION_COLOR, VertexFormat.Mode.QUADS, BUFFER, false, true,
             RenderType.CompositeState.builder()
                     // ⚠ position_color has no fog at all. Lightning takes the same vertices
@@ -50,6 +58,8 @@ public final class SolCorona {
                     .setWriteMaskState(RenderStateShard.COLOR_WRITE)
                     .setOutputState(RenderStateShard.TRANSLUCENT_TARGET)
                     .createCompositeState(false));
+        }
+    }
 
     private static final List<Pending> PENDING = new ArrayList<>();
 
@@ -151,8 +161,8 @@ public final class SolCorona {
     }
 
     private static void shine(PoseStack.Pose pose, VertexConsumer into, Vec3 point, int colour, float alpha) {
-        into.addVertex(pose, (float) point.x, (float) point.y, (float) point.z)
-                .setColor(SolPalette.channel(colour, 16), SolPalette.channel(colour, 8),
-                        SolPalette.channel(colour, 0), alpha);
+        Vertices.coloured(into, pose, (float) point.x, (float) point.y, (float) point.z,
+                SolPalette.channel(colour, 16), SolPalette.channel(colour, 8),
+                SolPalette.channel(colour, 0), alpha);
     }
 }

@@ -5,7 +5,10 @@ import java.util.List;
 import io.github.capsicum0907.caldarium.data.Skins;
 
 import net.minecraft.core.BlockPos;
+//? if >=1.20.5 {
 import net.minecraft.network.RegistryFriendlyByteBuf;
+//?} else
+/*import net.minecraft.network.FriendlyByteBuf;*/
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -37,7 +40,10 @@ public class MachineMenu extends AbstractContainerMenu {
     private final int machineSlots;
 
     /** The client's side: what the screen has to know arrives in the buffer. */
+    //? if >=1.20.5 {
     public MachineMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
+    //?} else
+    /*public MachineMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {*/
         this(id, inventory, ContainerLevelAccess.NULL, buffer.readBoolean(),
                 new ItemStackHandler(buffer.readByte()), buffer.readBoolean(),
                 new SimpleContainerData(MachineData.SIZE));
@@ -203,7 +209,10 @@ public class MachineMenu extends AbstractContainerMenu {
         }
         if (level.getBlockEntity(pos) instanceof MenuProvider provider
                 && provider instanceof Machine machine) {
+            //? if neoforge {
             player.openMenu(provider, buffer -> {
+            //?} else
+            /*net.minecraftforge.network.NetworkHooks.openScreen((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {*/
                 buffer.writeBoolean(machine.burns());
                 buffer.writeByte(machine.machineSlots().getSlots());
                 buffer.writeBoolean(machine.pours());

@@ -1,10 +1,11 @@
 {
   "required": true,
   "minVersion": "0.8.5",
-  "package": "io.github.capsicum0907.caldarium.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "package": "io.github.capsicum0907.caldarium.mixin",${mixin_refmap}
+  "compatibilityLevel": "JAVA_${java_version}",
   "mixins": [
     "EntityMixin",
+    "LightningBoltMixin",
     "PlayerMixin"
   ],
   "injectors": {

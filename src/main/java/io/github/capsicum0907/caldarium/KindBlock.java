@@ -17,12 +17,14 @@ import net.minecraft.world.phys.BlockHitResult;
 
 /** One {@link Kind} at one {@link Tier}, as a block. */
 public class KindBlock extends BaseEntityBlock {
+    //? if >=1.20.3 {
     public static final MapCodec<KindBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     Kind.CODEC.fieldOf("kind").forGetter(KindBlock::kind),
                     Tier.CODEC.fieldOf("tier").forGetter(KindBlock::tier),
                     propertiesCodec())
                     .apply(instance, KindBlock::new));
+    //?}
 
     private final Kind kind;
     private final Tier tier;
@@ -41,21 +43,29 @@ public class KindBlock extends BaseEntityBlock {
         return tier;
     }
 
+    //? if >=1.20.3 {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
+    //?}
 
+    //? if >=1.20.5 {
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
+    //?} else {
+    /*@Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            net.minecraft.world.InteractionHand hand, BlockHitResult hit) {
+    *///?}
         // Nothing that carries has a screen, and a click that passes through is what
         // lets a block be built against a cable rather than opening one.
         return kind.opens() ? MachineMenu.open(level, pos, player) : InteractionResult.PASS;
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
         if (!state.is(now.getBlock())) {
             Machine.spill(level, pos);
         }
@@ -68,7 +78,7 @@ public class KindBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 

@@ -26,7 +26,10 @@ public enum Fuel {
     FURNACE {
         @Override
         public int burnTicks(ItemStack stack) {
+            //? if neoforge {
             return stack.getBurnTime(RecipeType.SMELTING);
+            //?} else
+            /*return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);*/
         }
     };
 

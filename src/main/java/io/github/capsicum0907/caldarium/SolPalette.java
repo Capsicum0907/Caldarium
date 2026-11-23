@@ -43,7 +43,7 @@ public final class SolPalette {
     }
 
     private static int along(int[] stops, double contrast, float heat) {
-        float scaled = (float) Math.pow(Math.clamp(heat, 0.0F, 1.0F), contrast) * (stops.length - 1);
+        float scaled = (float) Math.pow(net.minecraft.util.Mth.clamp(heat, 0.0F, 1.0F), contrast) * (stops.length - 1);
         int stop = Math.min((int) scaled, stops.length - 2);
         return mix(stops[stop], stops[stop + 1], scaled - stop);
     }

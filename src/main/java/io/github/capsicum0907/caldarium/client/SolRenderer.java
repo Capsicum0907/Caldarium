@@ -56,8 +56,14 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
         return true;
     }
 
+    //? if neoforge {
     @Override
     public AABB getRenderBoundingBox(SolBlockEntity sol) {
+        return bounds(sol);
+    }
+    //?}
+
+    public static AABB bounds(SolBlockEntity sol) {
         double reach = SolBlock.radius(sol.getBlockState()) * SolCorona.reach();
         return AABB.ofSize(SolBlock.centre(sol.getBlockPos()), 0.0, 0.0, 0.0).inflate(reach);
     }
@@ -130,11 +136,8 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
     }
 
     private static void rim(PoseStack.Pose at, VertexConsumer into, int overlay, Vec3 point) {
-        into.addVertex(at, (float) point.x, (float) point.y, (float) point.z)
-                .setColor(SolPalette.RIM | 0xFF000000)
-                .setUv(0.5F, 0.5F)
-                .setOverlay(overlay)
-                .setLight(LightTexture.FULL_BRIGHT)
-                .setNormal(LIT.x, LIT.y, LIT.z);
+        Vertices.lit(into, at.pose(), (float) point.x, (float) point.y, (float) point.z,
+                SolPalette.RIM | 0xFF000000, 0.5F, 0.5F, overlay, LightTexture.FULL_BRIGHT,
+                LIT.x, LIT.y, LIT.z);
     }
 }

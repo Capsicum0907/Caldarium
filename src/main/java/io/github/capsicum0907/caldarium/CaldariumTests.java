@@ -28,12 +28,21 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+//? if neoforge {
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.FakePlayerFactory;
 import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+//?} else if forge {
+/*import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.gametest.GameTestHolder;
+import net.minecraftforge.gametest.PrefixGameTestTemplate;
+*///?}
 
 /**
  * Run with {@code gradlew runGameTestServer}.
@@ -581,9 +590,9 @@ public final class CaldariumTests {
         helper.runAfterDelay(1, () -> {
             float radius = radius(helper, core);
             Player near = standing(helper, SolBlock.centre(core).add(radius + 4.0, 0.0, 0.0), 90.0F);
-            check(near.canInteractWithBlock(core, 1.0), "four blocks from its surface should be in reach");
+            check(reaches(near, core), "four blocks from its surface should be in reach");
             Player far = standing(helper, SolBlock.centre(core).add(radius + 6.0, 0.0, 0.0), 90.0F);
-            check(!far.canInteractWithBlock(core, 1.0), "six blocks from its surface should not");
+            check(!reaches(far, core), "six blocks from its surface should not");
             helper.succeed();
         });
     }
@@ -639,11 +648,25 @@ public final class CaldariumTests {
             Player player = helper.makeMockPlayer(GameType.SURVIVAL);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.STONE));
             BlockHitResult aim = new BlockHitResult(SolBlock.centre(core), Direction.UP, core, false);
+            //? if neoforge {
             PlayerInteractEvent.RightClickBlock event = NeoForge.EVENT_BUS.post(
                     new PlayerInteractEvent.RightClickBlock(player, InteractionHand.MAIN_HAND, core, aim));
             check(event.getUseItem() == TriState.FALSE, "a block aimed into a sun should not be used at all");
+            //?} else if forge {
+            /*PlayerInteractEvent.RightClickBlock event =
+                    new PlayerInteractEvent.RightClickBlock(player, InteractionHand.MAIN_HAND, core, aim);
+            MinecraftForge.EVENT_BUS.post(event);
+            check(event.getUseItem() == Event.Result.DENY, "a block aimed into a sun should not be used at all");
+            *///?}
             helper.succeed();
         });
+    }
+
+    private static boolean reaches(Player player, BlockPos pos) {
+        //? if >=1.20.5 {
+        return player.canInteractWithBlock(pos, 1.0);
+        //?} else if forge
+        /*return player.canReach(pos, 1.0);*/
     }
 
     private static Player holdingASun(GameTestHelper helper) {

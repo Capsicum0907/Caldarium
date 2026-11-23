@@ -1,7 +1,10 @@
 package io.github.capsicum0907.caldarium;
 
 import net.minecraft.world.item.ItemStack;
+//? if neoforge {
 import net.neoforged.neoforge.capabilities.Capabilities;
+//?} else
+/*import net.minecraftforge.common.capabilities.ForgeCapabilities;*/
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -34,7 +37,10 @@ public final class Charging {
 
     /** What an item can hold, or null when it holds nothing at all. */
     public static IEnergyStorage held(ItemStack stack) {
+        //? if neoforge {
         return stack.isEmpty() ? null : stack.getCapability(Capabilities.EnergyStorage.ITEM);
+        //?} else
+        /*return stack.isEmpty() ? null : stack.getCapability(ForgeCapabilities.ENERGY).orElse(null);*/
     }
 
     /**

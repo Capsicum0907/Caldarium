@@ -66,7 +66,7 @@ public final class SolSurface {
                 super.setFilter(true, false);
             }
         };
-        this.location = ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "dynamic/sol_" + made++);
+        this.location = Caldarium.id("dynamic/sol_" + made++);
         Minecraft.getInstance().getTextureManager().register(location, texture);
     }
 
@@ -180,15 +180,12 @@ public final class SolSurface {
         onBall(face, s, t, point);
         float u = (left + (s + 1.0F) / 2.0F * texels) / width;
         float v = (top + (t + 1.0F) / 2.0F * texels) / height;
-        VertexConsumer vertex = into.addVertex(matrix, point.x, point.y, point.z)
-                .setColor(0xFFFFFFFF)
-                .setUv(u, v)
-                .setOverlay(overlay)
-                .setLight(LightTexture.FULL_BRIGHT);
         if (flat) {
-            vertex.setNormal(LIT.x, LIT.y, LIT.z);
+            Vertices.lit(into, matrix, point.x, point.y, point.z, 0xFFFFFFFF, u, v, overlay,
+                    LightTexture.FULL_BRIGHT, LIT.x, LIT.y, LIT.z);
         } else {
-            vertex.setNormal(pose.last(), point.x, point.y, point.z);
+            Vertices.lit(into, matrix, pose.last(), point.x, point.y, point.z, 0xFFFFFFFF, u, v, overlay,
+                    LightTexture.FULL_BRIGHT, point.x, point.y, point.z);
         }
     }
 }

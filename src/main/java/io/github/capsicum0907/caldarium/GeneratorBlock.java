@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+//? if >=1.20.5
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerLevel;
@@ -36,11 +37,13 @@ public class GeneratorBlock extends BaseEntityBlock {
     /** Vanilla's own property, so the lit texture and the light level come free. */
     public static final BooleanProperty LIT = BlockStateProperties.LIT;
 
+    //? if >=1.20.3 {
     public static final MapCodec<GeneratorBlock> CODEC = RecordCodecBuilder.mapCodec(instance ->
             instance.group(
                     Generator.CODEC.fieldOf("generator").forGetter(GeneratorBlock::row),
                     propertiesCodec())
                     .apply(instance, GeneratorBlock::new));
+    //?}
 
     /** A panel is only as tall as it needs to be to hold a face at the sky. */
     private static final VoxelShape PANEL = box(0.0, 0.0, 0.0, 16.0, Skins.PANEL_HEIGHT, 16.0);
@@ -57,29 +60,45 @@ public class GeneratorBlock extends BaseEntityBlock {
         return row;
     }
 
+    //? if >=1.20.3 {
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(LIT);
     }
 
+    //? if >=1.20.5 {
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+    public InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
             Player player, BlockHitResult hit) {
         return MachineMenu.open(level, pos, player);
     }
+    //?} else {
+    /*@Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+            InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (FluidUtil.getFluidHandler(stack).isPresent()
+                && FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
+            return InteractionResult.sidedSuccess(level.isClientSide());
+        }
+        return MachineMenu.open(level, pos, player);
+    }
+    *///?}
 
     /**
      * A bucket in the hand fills or empties the tank; anything else falls through to
      * opening the screen. The game already knows how to do this for any fluid
      * container from any mod, so the whole of it is asking.
      */
+    //? if >=1.20.5 {
     @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
+    public ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level,
             BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (FluidUtil.getFluidHandler(stack).isPresent()
                 && FluidUtil.interactWithFluidHandler(player, hand, level, pos, hit.getDirection())) {
@@ -87,9 +106,10 @@ public class GeneratorBlock extends BaseEntityBlock {
         }
         return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
     }
+    //?}
 
     @Override
-    protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
+    public void attack(BlockState state, Level level, BlockPos pos, Player player) {
         if (row.source() != Source.BLOW || level.isClientSide()) {
             return;
         }
@@ -113,7 +133,7 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState now, boolean moved) {
         if (!state.is(now.getBlock())) {
             Machine.spill(level, pos);
         }
@@ -126,12 +146,12 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected RenderShape getRenderShape(BlockState state) {
+    public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
     @Override
-    protected boolean skipRendering(BlockState state, BlockState adjacent, Direction side) {
+    public boolean skipRendering(BlockState state, BlockState adjacent, Direction side) {
         if (row.source().flat() && side.getAxis().isHorizontal()
                 && adjacent.getBlock() instanceof GeneratorBlock other && other.row().source().flat()) {
             return true;
@@ -140,7 +160,7 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos,
             CollisionContext context) {
         return row.source().flat() ? PANEL : super.getShape(state, level, pos, context);
     }
@@ -154,7 +174,7 @@ public class GeneratorBlock extends BaseEntityBlock {
      * and a panel under a panel makes nothing.
      */
     @Override
-    protected boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter level, BlockPos pos) {
         return false;
     }
 

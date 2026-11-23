@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
@@ -115,7 +116,10 @@ public class SolBlockEntity extends BlockEntity {
         List<LivingEntity> caught = level.getEntitiesOfClass(LivingEntity.class, around,
                 living -> nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= reach * reach);
         for (LivingEntity living : caught) {
+            //? if >=1.20.5 {
             living.igniteForSeconds(CaldariumConfig.solBurnSeconds());
+            //?} else
+            /*living.setSecondsOnFire(CaldariumConfig.solBurnSeconds());*/
             boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= touch * touch;
             if (touching) {
                 living.hurt(sunlight(level), CaldariumConfig.solTouchDamage());
@@ -142,8 +146,8 @@ public class SolBlockEntity extends BlockEntity {
     }
 
     private static Vec3 nearest(AABB box, Vec3 to) {
-        return new Vec3(Math.clamp(to.x, box.minX, box.maxX), Math.clamp(to.y, box.minY, box.maxY),
-                Math.clamp(to.z, box.minZ, box.maxZ));
+        return new Vec3(Mth.clamp(to.x, box.minX, box.maxX), Mth.clamp(to.y, box.minY, box.maxY),
+                Mth.clamp(to.z, box.minZ, box.maxZ));
     }
 
     /** Weather spends it faster: a sun in the rain is a sun being put out. */
@@ -168,22 +172,41 @@ public class SolBlockEntity extends BlockEntity {
     /** Quarters gone, so the block can show it without knowing the numbers. */
     private int worn() {
         int whole = Math.max(1, CaldariumConfig.solDurability());
-        return Math.clamp((long) ((whole - left) * 4 / whole), 0, 3);
+        return (int) Math.max(0, Math.min(3, (long) ((whole - left) * 4 / whole)));
     }
 
     public int left() {
         return left;
     }
 
+    //? if forge {
+    /*@Override
+    public AABB getRenderBoundingBox() {
+        return io.github.capsicum0907.caldarium.client.SolRenderer.bounds(this);
+    }
+    *///?}
+
+    //? if >=1.20.5 {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+    *///?}
         tag.putInt("Left", left);
     }
 
+    //? if >=1.20.5 {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+    //?} else {
+    /*@Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+    *///?}
         left = tag.contains("Left") ? tag.getInt("Left") : -1;
     }
 }

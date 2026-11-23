@@ -6,6 +6,8 @@ import java.util.EnumMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -15,6 +17,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -22,11 +25,13 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+//? if neoforge {
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
-import net.neoforged.neoforge.registries.DeferredBlock;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+//?} else {
+/*import net.minecraftforge.common.extensions.IForgeMenuType;
+import net.minecraftforge.registries.DeferredRegister;
+*///?}
 
 /**
  * Registration, one block and one item per row of {@link Generator} and per
@@ -41,8 +46,10 @@ import net.neoforged.neoforge.registries.DeferredRegister;
  * type per block would be the same class registered once for each set of numbers.
  */
 public final class CaldariumRegistry {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(Caldarium.MODID);
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Caldarium.MODID);
+    public static final DeferredRegister<Block> BLOCKS =
+            DeferredRegister.create(Registries.BLOCK, Caldarium.MODID);
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(Registries.ITEM, Caldarium.MODID);
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Caldarium.MODID);
     public static final DeferredRegister<MenuType<?>> MENUS =
@@ -51,14 +58,19 @@ public final class CaldariumRegistry {
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Caldarium.MODID);
 
     /** One menu for every machine; what it shows is decided by what opened it. */
-    public static final DeferredHolder<MenuType<?>, MenuType<MachineMenu>> MACHINE_MENU =
+    //? if neoforge {
+    public static final Supplier<MenuType<MachineMenu>> MACHINE_MENU =
             MENUS.register("machine", () -> IMenuTypeExtension.create(MachineMenu::new));
+    //?} else {
+    /*public static final Supplier<MenuType<MachineMenu>> MACHINE_MENU =
+            MENUS.register("machine", () -> IForgeMenuType.create(MachineMenu::new));
+    *///?}
 
-    private static final Map<Generator.Made, DeferredBlock<GeneratorBlock>> GENERATORS =
+    private static final Map<Generator.Made, Supplier<GeneratorBlock>> GENERATORS =
             new LinkedHashMap<>();
-    private static final Map<Kind, Map<Tier, DeferredBlock<KindBlock>>> KINDS =
+    private static final Map<Kind, Map<Tier, Supplier<KindBlock>>> KINDS =
             new EnumMap<>(Kind.class);
-    private static final List<DeferredItem<BlockItem>> ITEM_ORDER = new ArrayList<>();
+    private static final List<Supplier<BlockItem>> ITEM_ORDER = new ArrayList<>();
 
     static {
         for (Generator.Made made : Generator.made()) {
@@ -73,32 +85,32 @@ public final class CaldariumRegistry {
             if (made.source().flat()) {
                 properties = properties.noOcclusion();
             }
-            DeferredBlock<GeneratorBlock> block = BLOCKS.registerBlock(made.id(),
+            Supplier<GeneratorBlock> block = block(made.id(),
                     built -> new GeneratorBlock(made, built), properties);
             GENERATORS.put(made, block);
-            ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
+            ITEM_ORDER.add(item(made.id(), block));
         }
         for (Kind kind : Kind.values()) {
-            Map<Tier, DeferredBlock<KindBlock>> tiers = new LinkedHashMap<>();
+            Map<Tier, Supplier<KindBlock>> tiers = new LinkedHashMap<>();
             for (Tier tier : Tier.upTo(kind.top())) {
                 // ⚠ noOcclusion for anything laid in lines: a block that declares
                 // itself solid has its neighbours' faces culled against it, and a
                 // six-pixel post that did that would leave holes around itself.
                 BlockBehaviour.Properties properties =
                         kind.carries() ? metal().noOcclusion() : metal();
-                DeferredBlock<KindBlock> block = BLOCKS.registerBlock(kind.id(tier),
+                Supplier<KindBlock> block = block(kind.id(tier),
                         built -> kind.carries()
                                 ? new CarrierBlock(kind, tier, built)
                                 : new KindBlock(kind, tier, built),
                         properties);
                 tiers.put(tier, block);
-                ITEM_ORDER.add(ITEMS.registerSimpleBlockItem(block));
+                ITEM_ORDER.add(item(kind.id(tier), block));
             }
             KINDS.put(kind, tiers);
         }
     }
 
-    public static final DeferredBlock<SolBlock> SOL = BLOCKS.registerBlock("sol",
+    public static final Supplier<SolBlock> SOL = block("sol",
             SolBlock::new, metal()
                     .strength(50.0F, 1200.0F)
                     .requiresCorrectToolForDrops()
@@ -108,7 +120,7 @@ public final class CaldariumRegistry {
                     .dynamicShape()
                     .hasPostProcess((a, b, c) -> true));
 
-    public static final DeferredBlock<SolGlowBlock> SOL_GLOW = BLOCKS.registerBlock("sol_glow",
+    public static final Supplier<SolGlowBlock> SOL_GLOW = block("sol_glow",
             SolGlowBlock::new, BlockBehaviour.Properties.of()
                     .noCollission()
                     .replaceable()
@@ -120,28 +132,28 @@ public final class CaldariumRegistry {
                     .pushReaction(PushReaction.DESTROY));
 
     public static final ResourceKey<DamageType> SOL_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "sol"));
+            Caldarium.id("sol"));
 
     public static final ResourceKey<DamageType> SPOLIARIUM_DAMAGE = ResourceKey.create(Registries.DAMAGE_TYPE,
-            ResourceLocation.fromNamespaceAndPath(Caldarium.MODID, "spoliarium"));
+            Caldarium.id("spoliarium"));
 
-    public static final DeferredItem<BlockItem> SOL_ITEM = ITEMS.registerItem("sol",
-            properties -> new SolItem(SOL.get(), properties));
+    public static final Supplier<BlockItem> SOL_ITEM = ITEMS.register("sol",
+            () -> new SolItem(SOL.get(), new Item.Properties()));
 
     static {
         ITEM_ORDER.add(SOL_ITEM);
     }
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<SolBlockEntity>>
+    public static final Supplier<BlockEntityType<SolBlockEntity>>
             SOL_ENTITY = BLOCK_ENTITIES.register("sol",
                     () -> BlockEntityType.Builder.of(SolBlockEntity::new, SOL.get()).build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<GeneratorBlockEntity>>
+    public static final Supplier<BlockEntityType<GeneratorBlockEntity>>
             GENERATOR_ENTITY = BLOCK_ENTITIES.register("generator",
                     () -> BlockEntityType.Builder.of(GeneratorBlockEntity::new,
                             blocks(GENERATORS.values())).build(null));
 
-    public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<KindBlockEntity>>
+    public static final Supplier<BlockEntityType<KindBlockEntity>>
             KIND_ENTITY = BLOCK_ENTITIES.register("kind",
                     () -> BlockEntityType.Builder.of(KindBlockEntity::new, kindBlocks()).build(null));
 
@@ -162,26 +174,35 @@ public final class CaldariumRegistry {
                 .sound(SoundType.METAL);
     }
 
-    private static Block[] blocks(Collection<? extends DeferredBlock<? extends Block>> registered) {
-        return registered.stream().map(DeferredBlock::get).toArray(Block[]::new);
+    private static <B extends Block> Supplier<B> block(String id,
+            Function<BlockBehaviour.Properties, B> factory, BlockBehaviour.Properties properties) {
+        return BLOCKS.register(id, () -> factory.apply(properties));
+    }
+
+    private static Supplier<BlockItem> item(String id, Supplier<? extends Block> block) {
+        return ITEMS.register(id, () -> new BlockItem(block.get(), new Item.Properties()));
+    }
+
+    private static Block[] blocks(Collection<? extends Supplier<? extends Block>> registered) {
+        return registered.stream().map(Supplier::get).toArray(Block[]::new);
     }
 
     private static Block[] kindBlocks() {
-        List<DeferredBlock<KindBlock>> all = new ArrayList<>();
+        List<Supplier<KindBlock>> all = new ArrayList<>();
         KINDS.values().forEach(tiers -> all.addAll(tiers.values()));
         return blocks(all);
     }
 
-    public static Map<Generator.Made, DeferredBlock<GeneratorBlock>> generators() {
+    public static Map<Generator.Made, Supplier<GeneratorBlock>> generators() {
         return GENERATORS;
     }
 
-    public static DeferredBlock<KindBlock> block(Kind kind, Tier tier) {
+    public static Supplier<KindBlock> block(Kind kind, Tier tier) {
         return KINDS.get(kind).get(tier);
     }
 
     /** Everything with an item, in the order it was registered. */
-    public static List<DeferredItem<BlockItem>> items() {
+    public static List<Supplier<BlockItem>> items() {
         return ITEM_ORDER;
     }
 
@@ -190,10 +211,10 @@ public final class CaldariumRegistry {
      * blocks nobody can find; the order is the order of the tables, so the ladder
      * reads as a ladder.
      */
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB =
+    public static final Supplier<CreativeModeTab> TAB =
             TABS.register(Caldarium.MODID, () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + Caldarium.MODID))
-                    .icon(() -> new ItemStack(ITEM_ORDER.getFirst().get()))
+                    .icon(() -> new ItemStack(ITEM_ORDER.get(0).get()))
                     .displayItems((parameters, output) -> ITEM_ORDER
                             .forEach(item -> output.accept(item.get())))
                     .build());

@@ -21,6 +21,12 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.items.ItemStackHandler;
+//? if forge {
+/*import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+*///?}
 
 /**
  * Every generator. What differs between them is what they draw on, and that is a
@@ -355,6 +361,34 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         }
     }
 
+    //? if forge {
+    /*private final LazyOptional<Store> energyCapability = LazyOptional.of(this::store);
+    private final LazyOptional<ItemStackHandler> itemCapability = LazyOptional.of(this::machineSlots);
+    private final LazyOptional<FuelTank> fluidCapability = LazyOptional.of(this::tank);
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction side) {
+        if (capability == ForgeCapabilities.ENERGY) {
+            return energyCapability.cast();
+        }
+        if (capability == ForgeCapabilities.ITEM_HANDLER && fuel() != null) {
+            return itemCapability.cast();
+        }
+        if (capability == ForgeCapabilities.FLUID_HANDLER && tank != null) {
+            return fluidCapability.cast();
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        energyCapability.invalidate();
+        itemCapability.invalidate();
+        fluidCapability.invalidate();
+    }
+    *///?}
+
     @Override
     public Component getDisplayName() {
         return Component.translatable(getBlockState().getBlock().getDescriptionId());
@@ -366,9 +400,15 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
                 ContainerLevelAccess.create(level, worldPosition), burns(), fuel, pours(), data);
     }
 
+    //? if >=1.20.5 {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+    *///?}
         tag.putInt("Energy", store.raw());
         tag.putInt("Burning", burning);
         tag.putInt("BurnLength", burnLength);
@@ -380,9 +420,15 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         }
     }
 
+    //? if >=1.20.5 {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+    //?} else {
+    /*@Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+    *///?}
         store.restore(tag.getInt("Energy"));
         burning = tag.getInt("Burning");
         burnLength = tag.getInt("BurnLength");

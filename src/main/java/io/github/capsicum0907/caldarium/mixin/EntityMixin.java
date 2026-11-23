@@ -18,10 +18,13 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+//? if <1.21
+/*import org.spongepowered.asm.mixin.injection.ModifyVariable;*/
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
+    //? if >=1.21 {
     @Inject(method = "collectColliders", at = @At("RETURN"), cancellable = true)
     private static void caldarium$suns(@Nullable Entity entity, Level level, List<VoxelShape> collisions,
             AABB box, CallbackInfoReturnable<List<VoxelShape>> result) {
@@ -32,6 +35,19 @@ public abstract class EntityMixin {
             result.setReturnValue(all);
         }
     }
+    //?} else {
+    /*@ModifyVariable(method = "collideBoundingBox", at = @At("HEAD"), argsOnly = true)
+    private static List<VoxelShape> caldarium$suns(List<VoxelShape> hits, @Nullable Entity entity, Vec3 movement,
+            AABB box, Level level, List<VoxelShape> potentialHits) {
+        List<VoxelShape> suns = Suns.touching(level, box.expandTowards(movement));
+        if (suns.isEmpty()) {
+            return hits;
+        }
+        List<VoxelShape> all = new ArrayList<>(hits);
+        all.addAll(suns);
+        return all;
+    }
+    *///?}
 
     @Inject(method = "pick", at = @At("RETURN"), cancellable = true)
     private void caldarium$pick(double distance, float partial, boolean fluids,

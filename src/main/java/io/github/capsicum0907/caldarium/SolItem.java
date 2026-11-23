@@ -19,6 +19,13 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
 public class SolItem extends BlockItem {
+    //? if forge {
+    /*@Override
+    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
+        consumer.accept(io.github.capsicum0907.caldarium.client.CaldariumClient.solItem());
+    }
+    *///?}
+
     public SolItem(Block block, Properties properties) {
         super(block, properties);
     }

@@ -34,8 +34,13 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
      * follows a resource pack: somebody who has restyled the furnace has restyled
      * this too, without knowing this mod exists.
      */
+    //? if >=1.20.2 {
     private static final ResourceLocation FLAME =
             ResourceLocation.withDefaultNamespace("container/furnace/lit_progress");
+    //?} else {
+    /*private static final ResourceLocation FURNACE = new ResourceLocation("textures/gui/container/furnace.png");
+    private static final int FLAME_U = 176;
+    *///?}
 
 
 
@@ -120,10 +125,15 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
             // painted in; this one simply shows nothing until something is burning.
             int flame = Math.round(Skins.FLAME_H * menu.burned());
             if (flame > 0) {
+                //? if >=1.20.2 {
                 graphics.blitSprite(FLAME, Skins.FLAME_W, Skins.FLAME_H,
                         0, Skins.FLAME_H - flame,
                         leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
                         Skins.FLAME_W, flame);
+                //?} else {
+                /*graphics.blit(FURNACE, leftPos + Skins.FLAME_X, topPos + Skins.FLAME_Y + Skins.FLAME_H - flame,
+                        FLAME_U, Skins.FLAME_H - flame, Skins.FLAME_W, flame);
+                *///?}
             }
         }
     }

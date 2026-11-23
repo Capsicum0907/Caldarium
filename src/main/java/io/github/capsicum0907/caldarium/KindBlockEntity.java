@@ -16,6 +16,11 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.ItemStackHandler;
+//? if forge {
+/*import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+*///?}
 
 /**
  * Everything sized by {@link Tier}: a battery, which holds energy and hands it on,
@@ -143,6 +148,29 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         }
     }
 
+    //? if forge {
+    /*private final LazyOptional<Store> energyCapability = LazyOptional.of(this::store);
+    private final LazyOptional<ItemStackHandler> itemCapability = LazyOptional.of(this::machineSlots);
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, Direction side) {
+        if (capability == ForgeCapabilities.ENERGY) {
+            return reachable(side) ? energyCapability.cast() : LazyOptional.empty();
+        }
+        if (capability == ForgeCapabilities.ITEM_HANDLER && items() != null) {
+            return itemCapability.cast();
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        energyCapability.invalidate();
+        itemCapability.invalidate();
+    }
+    *///?}
+
     @Override
     public Component getDisplayName() {
         return Component.translatable(getBlockState().getBlock().getDescriptionId());
@@ -154,16 +182,28 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
                 false, items, false, data);
     }
 
+    //? if >=1.20.5 {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
+    //?} else {
+    /*@Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+    *///?}
         tag.putInt("Energy", store.raw());
         tag.put("Items", items.serializeNBT(registries));
     }
 
+    //? if >=1.20.5 {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+    //?} else {
+    /*@Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+    *///?}
         store.restore(tag.getInt("Energy"));
         if (tag.contains("Items")) {
             items.deserializeNBT(registries, tag.getCompound("Items"));
