@@ -106,6 +106,17 @@ public final class Suns {
         return false;
     }
 
+    public static Vec3 nearestSurface(Level level, BlockPos pos, Vec3 from) {
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof SolBlock)) {
+            return Vec3.atCenterOf(pos);
+        }
+        Vec3 centre = SolBlock.centre(pos);
+        Vec3 out = from.subtract(centre);
+        double distance = out.length();
+        return distance <= SolBlock.radius(state) ? from : centre.add(out.scale(SolBlock.radius(state) / distance));
+    }
+
     public static boolean inside(Level level, BlockPos cell) {
         Vec3 point = Vec3.atCenterOf(cell);
         for (BlockPos pos : in(level)) {

@@ -80,7 +80,11 @@ val modMetadata = mapOf(
     "loader_version_range" to property("loader_version_range"),
     "java_version" to Targets.java(minecraft),
     "mixin_refmap" to "",
-    "loader_mixins" to listOf("fabric.BlockItemMixin", "fabric.LivingEntityMixin").joinToString("") { ",\n    \"$it\"" },
+    "loader_mixins" to buildList {
+        add("fabric.BlockItemMixin")
+        add("fabric.LivingEntityMixin")
+        if (!Targets.atLeast(minecraft, "1.20.5")) add("fabric.ServerPlayerGameModeMixin")
+    }.joinToString("") { ",\n    \"$it\"" },
     "mod_id" to modId,
     "mod_name" to property("mod_name"),
     "mod_license" to property("mod_license"),

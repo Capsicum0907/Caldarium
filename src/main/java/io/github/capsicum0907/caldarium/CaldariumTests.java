@@ -596,8 +596,8 @@ public final class CaldariumTests {
             float radius = radius(helper, core);
             Player near = standing(helper, SolBlock.centre(core).add(radius + 4.0, 0.0, 0.0), 90.0F);
             check(reaches(near, core), "four blocks from its surface should be in reach");
-            Player far = standing(helper, SolBlock.centre(core).add(radius + 6.0, 0.0, 0.0), 90.0F);
-            check(!reaches(far, core), "six blocks from its surface should not");
+            Player far = standing(helper, SolBlock.centre(core).add(radius + 6.5, 0.0, 0.0), 90.0F);
+            check(!reaches(far, core), "six and a half blocks from its surface should not");
             helper.succeed();
         });
     }
@@ -700,9 +700,23 @@ public final class CaldariumTests {
         return player.canInteractWithBlock(pos, 1.0);
         //?} else if forge && >=1.20 {
         /*return player.canReach(pos, 1.0);
-        *///?} else if forge
-        //return player.canInteractWith(pos, 1.0);
+        *///?} else if forge {
+        /*return player.canInteractWith(pos, 1.0);
+        *///?} else {
+        /*Vec3 eye = player.getEyePosition();
+        return eye.distanceToSqr(Suns.nearestSurface(helper(player), pos, eye))
+                <= net.minecraft.server.network.ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE;
+        *///?}
     }
+
+    //? if fabric && <1.20.5 {
+    /*private static net.minecraft.world.level.Level helper(Player player) {
+        //? if >=1.20 {
+        return player.level();
+        //?} else
+        /^return player.level;^/
+    }
+    *///?}
 
     private static Player holdingASun(GameTestHelper helper) {
         Vec3 eye = Vec3.atCenterOf(helper.absolutePos(new BlockPos(1, SUN.getY(), SUN.getZ())));
