@@ -21,6 +21,7 @@ stonecutter {
         }
 
         node("1.18.2", "forge")
+        node("1.18.2", "fabric")
         node("1.19.2", "forge")
         node("1.19.2", "fabric")
         node("1.20.1", "forge")

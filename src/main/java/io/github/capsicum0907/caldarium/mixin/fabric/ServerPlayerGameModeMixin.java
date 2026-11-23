@@ -13,13 +13,19 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
+//? if <1.19
+/*import org.spongepowered.asm.mixin.injection.ModifyVariable;*/
 
 @Mixin(ServerPlayerGameMode.class)
 public abstract class ServerPlayerGameModeMixin {
+    //? if <1.19
+    /*private static final double EYE = 1.5;*/
+
     @Shadow
     @Final
     protected ServerPlayer player;
 
+    //? if >=1.19 {
     @Redirect(method = "handleBlockBreakAction", at = @At(value = "INVOKE",
             target = "Lnet/minecraft/world/phys/Vec3;atCenterOf(Lnet/minecraft/core/Vec3i;)Lnet/minecraft/world/phys/Vec3;"))
     private Vec3 caldarium$sunSurface(Vec3i pos) {
@@ -28,4 +34,11 @@ public abstract class ServerPlayerGameModeMixin {
         //?} else
         /*return Suns.nearestSurface(player.level, new BlockPos(pos.getX(), pos.getY(), pos.getZ()), player.getEyePosition());*/
     }
+    //?} else {
+    /*@ModifyVariable(method = "handleBlockBreakAction", at = @At("STORE"), ordinal = 3)
+    private double caldarium$sunSurface(double distance, BlockPos pos) {
+        Vec3 from = new Vec3(player.getX(), player.getY() + EYE, player.getZ());
+        return from.distanceToSqr(Suns.nearestSurface(player.level, pos, from));
+    }
+    *///?}
 }

@@ -43,6 +43,9 @@ stonecutter parameters {
         replace("import net.neoforged.neoforge.fluids.", "import io.github.capsicum0907.caldarium.fabric.fluids.")
         replace("import net.neoforged.neoforge.common.ModConfigSpec;", "import io.github.capsicum0907.caldarium.fabric.config.ModConfigSpec;")
     }
+    replacements.string(node.metadata.project.endsWith("-fabric") && eval(node.metadata.version, "<1.19")) {
+        replace("ContainerItemContext.withConstant(", "ContainerItemContext.withInitial(")
+    }
     replacements.string(eval(node.metadata.version, "<1.20.5")) {
         replace(".serializeNBT(registries)", ".serializeNBT()")
         replace(".deserializeNBT(registries, ", ".deserializeNBT(")

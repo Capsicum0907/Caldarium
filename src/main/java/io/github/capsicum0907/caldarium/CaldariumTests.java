@@ -703,10 +703,16 @@ public final class CaldariumTests {
         /*return player.canInteractWith(pos, 1.0);
         *///?} else {
         /*Vec3 eye = player.getEyePosition();
+        //? if >=1.19 {
         return eye.distanceToSqr(Suns.nearestSurface(helper(player), pos, eye))
                 <= net.minecraft.server.network.ServerGamePacketListenerImpl.MAX_INTERACTION_DISTANCE;
+        //?} else
+        /^return eye.distanceToSqr(Suns.nearestSurface(helper(player), pos, eye)) <= OLD_REACH * OLD_REACH;^/
         *///?}
     }
+
+    //? if fabric && <1.19
+    /*private static final double OLD_REACH = 6.0;*/
 
     //? if fabric && <1.20.5 {
     /*private static net.minecraft.world.level.Level helper(Player player) {
