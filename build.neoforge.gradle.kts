@@ -75,6 +75,10 @@ neoForge {
 }
 
 sourceSets.main {
+    java {
+        exclude("**/caldarium/fabric/**")
+        exclude("**/caldarium/mixin/fabric/**")
+    }
     resources {
         srcDir(rootProject.file("src/generated/resources"))
         // The data run's per-provider hashes; without this they are packed into the jar.
@@ -100,6 +104,7 @@ val modMetadata = mapOf(
     "mod_authors" to property("mod_authors"),
     "mod_description" to property("mod_description"),
     "java_version" to Targets.java(minecraft),
+    "loader_mixins" to "",
     "mixin_refmap" to "",
 )
 

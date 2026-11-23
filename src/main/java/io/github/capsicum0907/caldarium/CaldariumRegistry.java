@@ -30,10 +30,11 @@ import net.minecraft.world.level.material.PushReaction;
 //? if neoforge {
 import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredRegister;
-//?} else {
+//?} else if forge {
 /*import net.minecraftforge.common.extensions.IForgeMenuType;
 import net.minecraftforge.registries.DeferredRegister;
-*///?}
+*///?} else
+//import io.github.capsicum0907.caldarium.fabric.DeferredRegister;
 
 /**
  * Registration, one block and one item per row of {@link Generator} and per
@@ -65,9 +66,12 @@ public final class CaldariumRegistry {
     //? if neoforge {
     public static final Supplier<MenuType<MachineMenu>> MACHINE_MENU =
             MENUS.register("machine", () -> IMenuTypeExtension.create(MachineMenu::new));
-    //?} else {
+    //?} else if forge {
     /*public static final Supplier<MenuType<MachineMenu>> MACHINE_MENU =
             MENUS.register("machine", () -> IForgeMenuType.create(MachineMenu::new));
+    *///?} else {
+    /*public static final Supplier<MenuType<MachineMenu>> MACHINE_MENU =
+            MENUS.register("machine", io.github.capsicum0907.caldarium.fabric.Menus::type);
     *///?}
 
     private static final Map<Generator.Made, Supplier<GeneratorBlock>> GENERATORS =
@@ -139,12 +143,12 @@ public final class CaldariumRegistry {
                     .noCollission()
                     .replaceable()
             //?} else
-            /*SolGlowBlock::new, BlockBehaviour.Properties.of(GLOW).noCollission()*/
+            //SolGlowBlock::new, BlockBehaviour.Properties.of(GLOW).noCollission()
                     .instabreak()
                     //? if >=1.19 {
                     .noLootTable()
                     //?} else
-                    /*.noDrops()*/
+                    //.noDrops()
                     .noOcclusion()
                     .lightLevel(SolBlock::light)
                     .randomTicks()
@@ -194,7 +198,7 @@ public final class CaldariumRegistry {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.METAL)
         //?} else
-        /*return BlockBehaviour.Properties.of(net.minecraft.world.level.material.Material.METAL)*/
+        //return BlockBehaviour.Properties.of(net.minecraft.world.level.material.Material.METAL)
                 .strength(3.0F, 6.0F)
                 .requiresCorrectToolForDrops()
                 .sound(SoundType.METAL);
@@ -206,6 +210,9 @@ public final class CaldariumRegistry {
     }
 
     private static Supplier<BlockItem> item(String id, Supplier<? extends Block> block) {
+        //? if fabric {
+        /*return ITEMS.register(id, () -> new io.github.capsicum0907.caldarium.fabric.ReadingItem(block.get(), itemProperties()));
+        *///?} else
         return ITEMS.register(id, () -> new BlockItem(block.get(), itemProperties()));
     }
 
@@ -213,7 +220,7 @@ public final class CaldariumRegistry {
         //? if >=1.19.3 {
         return new Item.Properties();
         //?} else
-        /*return new Item.Properties().tab(TAB);*/
+        //return new Item.Properties().tab(TAB);
     }
 
     private static Block[] blocks(Collection<? extends Supplier<? extends Block>> registered) {
@@ -246,6 +253,9 @@ public final class CaldariumRegistry {
      */
     //? if >=1.19.3 {
     public static final Supplier<CreativeModeTab> TAB =
+            //? if fabric {
+            /*TABS.register(Caldarium.MODID, () -> net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup.builder()
+            *///?} else
             TABS.register(Caldarium.MODID, () -> CreativeModeTab.builder()
                     .title(Component.translatable("itemGroup." + Caldarium.MODID))
                     .icon(() -> new ItemStack(ITEM_ORDER.get(0).get()))

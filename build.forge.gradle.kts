@@ -75,6 +75,8 @@ sourceSets.main {
     java {
         exclude("**/caldarium/data/CaldariumDataGen.java")
         exclude("**/caldarium/data/TestStructures.java")
+        exclude("**/caldarium/fabric/**")
+        exclude("**/caldarium/mixin/fabric/**")
     }
     resources.srcDir(convertResources)
 }
@@ -93,6 +95,7 @@ val modMetadata = mapOf(
     "resource_pack_format" to Targets.resourcePackFormat(minecraft),
     "data_pack_format" to Targets.dataPackFormat(minecraft),
     "java_version" to Targets.java(minecraft),
+    "loader_mixins" to "",
     "mixin_refmap" to "\n  \"refmap\": \"$modId.refmap.json\",",
 )
 

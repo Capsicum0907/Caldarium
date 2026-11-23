@@ -24,7 +24,7 @@ public class SolItem extends BlockItem {
     //? if >=1.19 {
     public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {
     //?} else
-    /^public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {^/
+    //public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.IItemRenderProperties> consumer) {
         consumer.accept(io.github.capsicum0907.caldarium.client.CaldariumClient.solItem());
     }
     *///?}
@@ -54,7 +54,7 @@ public class SolItem extends BlockItem {
         //? if >=1.20 {
         return BlockPos.containing(eye.add(look.scale(far)));
         //?} else
-        /*return new BlockPos(eye.add(look.scale(far)));*/
+        //return new BlockPos(eye.add(look.scale(far)));
     }
 
     public static double gap(AABB body, Vec3 point) {
@@ -69,7 +69,7 @@ public class SolItem extends BlockItem {
                 //? if >=1.20 {
                 && level.getBlockState(core).canBeReplaced()
                 //?} else
-                /*&& level.getBlockState(core).getMaterial().isReplaceable()*/
+                //&& level.getBlockState(core).getMaterial().isReplaceable()
                 && !Suns.inside(level, core)
                 && level.isUnobstructed(state, core, CollisionContext.of(player));
     }

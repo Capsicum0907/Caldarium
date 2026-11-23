@@ -3,8 +3,8 @@ package io.github.capsicum0907.caldarium;
 import net.minecraft.world.item.ItemStack;
 //? if neoforge {
 import net.neoforged.neoforge.capabilities.Capabilities;
-//?} else
-/*import net.minecraftforge.common.capabilities.ForgeCapabilities;*/
+//?} else if forge
+//import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -23,7 +23,7 @@ public final class Charging {
     public static void tick(IItemHandler slots, Store store, int rate) {
         int left = Math.min(rate, store.getEnergyStored());
         for (int slot = 0; slot < slots.getSlots() && left > 0; slot++) {
-            IEnergyStorage container = held(slots.getStackInSlot(slot));
+            IEnergyStorage container = held(slots, slot);
             if (container == null || !container.canReceive()) {
                 continue;
             }
@@ -35,12 +35,21 @@ public final class Charging {
         }
     }
 
+    private static IEnergyStorage held(IItemHandler slots, int slot) {
+        //? if fabric {
+        /*return io.github.capsicum0907.caldarium.fabric.Energies.held(slots, slot);
+        *///?} else
+        return held(slots.getStackInSlot(slot));
+    }
+
     /** What an item can hold, or null when it holds nothing at all. */
     public static IEnergyStorage held(ItemStack stack) {
         //? if neoforge {
         return stack.isEmpty() ? null : stack.getCapability(Capabilities.EnergyStorage.ITEM);
-        //?} else
-        /*return stack.isEmpty() ? null : stack.getCapability(ForgeCapabilities.ENERGY).orElse(null);*/
+        //?} else if forge {
+        /*return stack.isEmpty() ? null : stack.getCapability(ForgeCapabilities.ENERGY).orElse(null);
+        *///?} else
+        //return stack.isEmpty() ? null : io.github.capsicum0907.caldarium.fabric.Energies.held(stack);
     }
 
     /**

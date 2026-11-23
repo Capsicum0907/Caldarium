@@ -180,7 +180,7 @@ public class SolBlock extends BaseEntityBlock {
             //? if >=1.20 {
             cells.add(BlockPos.containing(at));
             //?} else
-            /*cells.add(new BlockPos(at));*/
+            //cells.add(new BlockPos(at));
         }
         return new ArrayList<>(cells);
     }
@@ -331,7 +331,7 @@ public class SolBlock extends BaseEntityBlock {
         //? if neoforge {
         if (!(level instanceof Level world) || !player.hasCorrectToolForDrops(state, world, pos)) {
         //?} else
-        /*if (!(level instanceof Level) || !player.hasCorrectToolForDrops(state)) {*/
+        //if (!(level instanceof Level) || !player.hasCorrectToolForDrops(state)) {
             return 0.0F;
         }
         return otherwise;
@@ -349,7 +349,7 @@ public class SolBlock extends BaseEntityBlock {
         //? if >=1.20.5 {
         level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, BLAST_VOLUME, 1.0F);
         //?} else
-        /*level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, BLAST_VOLUME, 1.0F);*/
+        //level.playSound(null, pos, SoundEvents.GENERIC_EXPLODE, SoundSource.BLOCKS, BLAST_VOLUME, 1.0F);
     }
 
     //? if >=1.20.5 {
@@ -428,7 +428,7 @@ public class SolBlock extends BaseEntityBlock {
     //? if >=1.20.5 {
     public boolean isPathfindable(BlockState state, net.minecraft.world.level.pathfinder.PathComputationType path) {
     //?} else
-    /*public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.level.pathfinder.PathComputationType path) {*/
+    //public boolean isPathfindable(BlockState state, BlockGetter level, BlockPos pos, net.minecraft.world.level.pathfinder.PathComputationType path) {
         return false;
     }
 

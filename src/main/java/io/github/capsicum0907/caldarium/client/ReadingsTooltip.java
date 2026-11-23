@@ -78,6 +78,6 @@ public record ReadingsTooltip(Tooltips.Readings readings) implements ClientToolt
         font.drawInBatch(text, x, y, COLOUR, true, matrix, buffer, Font.DisplayMode.NORMAL, 0,
                 LightTexture.FULL_BRIGHT);
         //?} else
-        /*font.drawInBatch(text, x, y, COLOUR, true, matrix, buffer, false, 0, LightTexture.FULL_BRIGHT);*/
+        //font.drawInBatch(text, x, y, COLOUR, true, matrix, buffer, false, 0, LightTexture.FULL_BRIGHT);
     }
 }

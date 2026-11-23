@@ -3,7 +3,6 @@ package io.github.capsicum0907.caldarium.mixin;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Nullable;
 
 import io.github.capsicum0907.caldarium.Suns;
 
@@ -19,14 +18,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 //? if <1.21
-/*import org.spongepowered.asm.mixin.injection.ModifyVariable;*/
+//import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
     //? if >=1.21 {
     @Inject(method = "collectColliders", at = @At("RETURN"), cancellable = true)
-    private static void caldarium$suns(@Nullable Entity entity, Level level, List<VoxelShape> collisions,
+    private static void caldarium$suns(Entity entity, Level level, List<VoxelShape> collisions,
             AABB box, CallbackInfoReturnable<List<VoxelShape>> result) {
         List<VoxelShape> suns = Suns.touching(level, box);
         if (!suns.isEmpty()) {
@@ -37,7 +36,7 @@ public abstract class EntityMixin {
     }
     //?} else {
     /*@ModifyVariable(method = "collideBoundingBox", at = @At("HEAD"), argsOnly = true)
-    private static List<VoxelShape> caldarium$suns(List<VoxelShape> hits, @Nullable Entity entity, Vec3 movement,
+    private static List<VoxelShape> caldarium$suns(List<VoxelShape> hits, Entity entity, Vec3 movement,
             AABB box, Level level, List<VoxelShape> potentialHits) {
         List<VoxelShape> suns = Suns.touching(level, box.expandTowards(movement));
         if (suns.isEmpty()) {
@@ -58,7 +57,7 @@ public abstract class EntityMixin {
         //? if >=1.20 {
         BlockHitResult sun = Suns.clip(self.level(), from, to);
         //?} else
-        /*BlockHitResult sun = Suns.clip(self.level, from, to);*/
+        //BlockHitResult sun = Suns.clip(self.level, from, to);
         if (sun == null) {
             return;
         }

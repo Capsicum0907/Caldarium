@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 //? if >=1.19.4 {
 import net.minecraft.world.item.ItemDisplayContext;
 //?} else
-/*import net.minecraft.client.renderer.block.model.ItemTransforms;*/
+//import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.item.ItemStack;
 
 public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
@@ -28,7 +28,7 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     //? if >=1.19.4 {
     public void renderByItem(ItemStack stack, ItemDisplayContext context, PoseStack pose, MultiBufferSource buffers,
     //?} else
-    /*public void renderByItem(ItemStack stack, ItemTransforms.TransformType context, PoseStack pose, MultiBufferSource buffers,*/
+    //public void renderByItem(ItemStack stack, ItemTransforms.TransformType context, PoseStack pose, MultiBufferSource buffers,
             int light, int overlay) {
         if (surface == null) {
             surface = new SolSurface(ICON_TEXELS, ICON_SCALE);
@@ -38,7 +38,7 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
                 //? if >=1.21 {
                 + minecraft.getTimer().getGameTimeDeltaPartialTick(false);
                 //?} else
-                /*+ minecraft.getFrameTime();*/
+                //+ minecraft.getFrameTime();
         SolRenderer.draw(pose, buffers, overlay, ICON_RADIUS, time, SolPalette.blaze(time, 0L), null, surface);
     }
 }

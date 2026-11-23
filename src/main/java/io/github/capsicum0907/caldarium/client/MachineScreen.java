@@ -12,7 +12,7 @@ import java.util.Locale;
 //? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
 //?} else
-/*import com.mojang.blaze3d.vertex.PoseStack;*/
+//import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -160,7 +160,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         //? if <1.20.2
-        /*renderBackground(graphics);*/
+        //renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         Canvas canvas = new Canvas(graphics);
     //?} else {
@@ -204,7 +204,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                         //? if >=1.20 {
                         new ArrayList<>(getTooltipFromContainerItem(hoveredSlot.getItem()));
                         //?} else
-                        /*new ArrayList<>(getTooltipFromItem(hoveredSlot.getItem()));*/
+                        //new ArrayList<>(getTooltipFromItem(hoveredSlot.getItem()));
                 lines.add(line);
                 canvas.tooltip(font, lines,
                         hoveredSlot.getItem().getTooltipImage(), mouseX, mouseY);
@@ -214,7 +214,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
         //? if >=1.20 {
         renderTooltip(graphics, mouseX, mouseY);
         //?} else
-        /*renderTooltip(pose, mouseX, mouseY);*/
+        //renderTooltip(pose, mouseX, mouseY);
     }
 
     /** Whether the cursor is on one of the machine's own slots. */

@@ -14,7 +14,7 @@ public final class Vertices {
         //? if >=1.21 {
         into.addVertex(pose, x, y, z).setColor(red, green, blue, alpha).setNormal(pose, normalX, normalY, normalZ);
         //?} else
-        /*into.vertex(pose.pose(), x, y, z).color(red, green, blue, alpha).normal(pose.normal(), normalX, normalY, normalZ).endVertex();*/
+        //into.vertex(pose.pose(), x, y, z).color(red, green, blue, alpha).normal(pose.normal(), normalX, normalY, normalZ).endVertex();
     }
 
     public static void coloured(VertexConsumer into, PoseStack.Pose pose, float x, float y, float z,
@@ -22,7 +22,7 @@ public final class Vertices {
         //? if >=1.21 {
         into.addVertex(pose, x, y, z).setColor(red, green, blue, alpha);
         //?} else
-        /*into.vertex(pose.pose(), x, y, z).color(red, green, blue, alpha).endVertex();*/
+        //into.vertex(pose.pose(), x, y, z).color(red, green, blue, alpha).endVertex();
     }
 
     public static void lit(VertexConsumer into, Matrix4f matrix, float x, float y, float z, int argb,
@@ -31,7 +31,7 @@ public final class Vertices {
         into.addVertex(matrix, x, y, z).setColor(argb).setUv(u, v).setOverlay(overlay).setLight(light)
                 .setNormal(normalX, normalY, normalZ);
         //?} else
-        /*into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normalX, normalY, normalZ).endVertex();*/
+        //into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normalX, normalY, normalZ).endVertex();
     }
 
     public static void lit(VertexConsumer into, Matrix4f matrix, PoseStack.Pose normals, float x, float y,
@@ -41,6 +41,6 @@ public final class Vertices {
         into.addVertex(matrix, x, y, z).setColor(argb).setUv(u, v).setOverlay(overlay).setLight(light)
                 .setNormal(normals, normalX, normalY, normalZ);
         //?} else
-        /*into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normals.normal(), normalX, normalY, normalZ).endVertex();*/
+        //into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normals.normal(), normalX, normalY, normalZ).endVertex();
     }
 }

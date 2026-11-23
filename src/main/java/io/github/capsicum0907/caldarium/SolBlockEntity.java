@@ -40,8 +40,10 @@ public class SolBlockEntity extends BlockEntity {
         super(CaldariumRegistry.SOL_ENTITY.get(), pos, state);
     }
 
+    //? if !fabric
     @Override
     public void onLoad() {
+        //? if !fabric
         super.onLoad();
         if (level != null) {
             Suns.add(level, worldPosition);
@@ -59,8 +61,10 @@ public class SolBlockEntity extends BlockEntity {
         }
     }
 
+    //? if !fabric
     @Override
     public void onChunkUnloaded() {
+        //? if !fabric
         super.onChunkUnloaded();
         if (level != null) {
             Suns.remove(level, worldPosition);
@@ -118,7 +122,7 @@ public class SolBlockEntity extends BlockEntity {
             //? if >=1.20.5 {
             living.igniteForSeconds(CaldariumConfig.solBurnSeconds());
             //?} else
-            /*living.setSecondsOnFire(CaldariumConfig.solBurnSeconds());*/
+            //living.setSecondsOnFire(CaldariumConfig.solBurnSeconds());
             boolean touching = nearest(living.getBoundingBox(), centre).distanceToSqr(centre) <= touch * touch;
             if (touching) {
                 Damage.sunburn(level, living, CaldariumConfig.solTouchDamage());

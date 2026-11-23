@@ -22,8 +22,7 @@ stonecutter parameters {
         replace("ForgeCapabilities.ITEM_HANDLER", "net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY")
         replace("ForgeCapabilities.FLUID_HANDLER", "net.minecraftforge.fluids.capability.CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY")
         replace("RenderHighlightEvent.Block", "DrawSelectionEvent.HighlightBlock")
-        replace("event.getEntity(), event.getHand()", "event.getPlayer(), event.getHand()")
-        replace("Suns.inside(event.getLevel(), pos)", "Suns.inside(event.getWorld(), pos)")
+        replace("intoSun(event.getLevel(), event.getEntity(),", "intoSun(event.getWorld(), event.getPlayer(),")
         replace("event.getLevel() instanceof net.minecraft.world.level.Level level", "event.getWorld() instanceof net.minecraft.world.level.Level level")
     }
     replacements.string(eval(node.metadata.version, "<1.19")) {
@@ -37,6 +36,12 @@ stonecutter parameters {
         replace("(Registries.MENU,", "(Registry.MENU_REGISTRY,")
         replace("BuiltInRegistries.BLOCK", "net.minecraft.core.Registry.BLOCK")
         replace("import org.joml.Matrix4f;", "import com.mojang.math.Matrix4f;")
+    }
+    replacements.string(node.metadata.project.endsWith("-fabric")) {
+        replace("import net.neoforged.neoforge.energy.", "import io.github.capsicum0907.caldarium.fabric.energy.")
+        replace("import net.neoforged.neoforge.items.", "import io.github.capsicum0907.caldarium.fabric.items.")
+        replace("import net.neoforged.neoforge.fluids.", "import io.github.capsicum0907.caldarium.fabric.fluids.")
+        replace("import net.neoforged.neoforge.common.ModConfigSpec;", "import io.github.capsicum0907.caldarium.fabric.config.ModConfigSpec;")
     }
     replacements.string(eval(node.metadata.version, "<1.20.5")) {
         replace(".serializeNBT(registries)", ".serializeNBT()")

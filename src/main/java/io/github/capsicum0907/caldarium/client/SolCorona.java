@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
+//? if !fabric
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 public final class SolCorona {
@@ -100,16 +101,23 @@ public final class SolCorona {
         PENDING.add(new Pending(centre, radius, blaze, time, seed));
     }
 
+    //? if !fabric {
     public static void draw(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES || PENDING.isEmpty()) {
+        if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+            drawQueued(event.getPoseStack(), event.getCamera().getPosition());
+        }
+    }
+    //?}
+
+    public static void drawQueued(PoseStack stack, Vec3 camera) {
+        if (PENDING.isEmpty()) {
             return;
         }
-        Vec3 camera = event.getCamera().getPosition();
         PENDING.sort(Comparator.comparingDouble((Pending pending) -> pending.centre().distanceToSqr(camera))
                 .reversed());
         MultiBufferSource.BufferSource buffers = Minecraft.getInstance().renderBuffers().bufferSource();
         VertexConsumer into = buffers.getBuffer(GLOW);
-        PoseStack.Pose pose = event.getPoseStack().last();
+        PoseStack.Pose pose = stack.last();
         for (Pending pending : PENDING) {
             Vec3 offset = pending.centre().subtract(camera);
             Limb limb = Limb.of(offset.reverse(), pending.radius());

@@ -48,20 +48,20 @@ final class Canvas {
         //? if >=1.20 {
         graphics.drawString(font, text, x, y, colour, false);
         //?} else
-        /*font.draw(pose, text, x, y, colour);*/
+        //font.draw(pose, text, x, y, colour);
     }
 
     void tooltip(Font font, Component line, int x, int y) {
         //? if >=1.20 {
         graphics.renderTooltip(font, line, x, y);
         //?} else
-        /*screen.renderTooltip(pose, line, x, y);*/
+        //screen.renderTooltip(pose, line, x, y);
     }
 
     void tooltip(Font font, List<Component> lines, Optional<TooltipComponent> image, int x, int y) {
         //? if >=1.20 {
         graphics.renderTooltip(font, lines, image, x, y);
         //?} else
-        /*screen.renderTooltip(pose, lines, image, x, y);*/
+        //screen.renderTooltip(pose, lines, image, x, y);
     }
 }

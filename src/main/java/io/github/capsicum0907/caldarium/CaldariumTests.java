@@ -41,13 +41,19 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
+*///?} else {
+/*import net.fabricmc.fabric.api.entity.FakePlayer;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.minecraft.world.InteractionResult;
 *///?}
 
 /**
  * Run with {@code gradlew runGameTestServer}.
  */
+//? if !fabric {
 @GameTestHolder(Caldarium.MODID)
 @PrefixGameTestTemplate(false)
+//?}
 public final class CaldariumTests {
     private static final BlockPos WHERE = new BlockPos(2, 1, 2);
 
@@ -656,6 +662,10 @@ public final class CaldariumTests {
                     new PlayerInteractEvent.RightClickBlock(player, InteractionHand.MAIN_HAND, core, aim);
             MinecraftForge.EVENT_BUS.post(event);
             check(event.getUseItem() == Event.Result.DENY, "a block aimed into a sun should not be used at all");
+            *///?} else {
+            /*InteractionResult used = UseBlockCallback.EVENT.invoker().interact(player, helper.getLevel(),
+                    InteractionHand.MAIN_HAND, aim);
+            check(used == InteractionResult.FAIL, "a block aimed into a sun should not be used at all");
             *///?}
             helper.succeed();
         });
@@ -670,7 +680,7 @@ public final class CaldariumTests {
         /*return new Player(helper.getLevel(), BlockPos.ZERO, 0.0F,
                 new com.mojang.authlib.GameProfile(java.util.UUID.randomUUID(), "test-mock-player")
                 //? if >=1.19
-                /^, null^/
+                , null
         ) {
             @Override
             public boolean isSpectator() {
@@ -691,7 +701,7 @@ public final class CaldariumTests {
         //?} else if forge && >=1.20 {
         /*return player.canReach(pos, 1.0);
         *///?} else if forge
-        /*return player.canInteractWith(pos, 1.0);*/
+        //return player.canInteractWith(pos, 1.0);
     }
 
     private static Player holdingASun(GameTestHelper helper) {
@@ -861,7 +871,7 @@ public final class CaldariumTests {
                 //? if >=1.20 {
                 check(there.canBeReplaced(), "a glow should give way to anything built there");
                 //?} else
-                /*check(there.getMaterial().isReplaceable(), "a glow should give way to anything built there");*/
+                //check(there.getMaterial().isReplaceable(), "a glow should give way to anything built there");
                 check(there.getCollisionShape(helper.getLevel(), cell).isEmpty(), "a glow should not be in the way");
             }
         }
@@ -887,6 +897,9 @@ public final class CaldariumTests {
         LightningBolt bolt = EntityType.LIGHTNING_BOLT.create(helper.getLevel());
         bolt.moveTo(Vec3.atBottomCenterOf(helper.absolutePos(WHERE.above())));
         helper.getLevel().addFreshEntity(bolt);
+        //? if fabric {
+        /*bolt.setCause(FakePlayer.get(helper.getLevel()));
+        *///?} else
         bolt.setCause(FakePlayerFactory.getMinecraft(helper.getLevel()));
         helper.runAfterDelay(1, () -> {
             int stored = struck.store().getEnergyStored();

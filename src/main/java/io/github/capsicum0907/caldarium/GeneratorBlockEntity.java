@@ -299,10 +299,12 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         if (ticks <= 0) {
             return 0;
         }
-        //? if neoforge || >=1.19 {
+        //? if neoforge || forge && >=1.19 {
         ItemStack remainder = stack.getCraftingRemainingItem();
-        //?} else
-        /*ItemStack remainder = stack.getContainerItem();*/
+        //?} else if forge {
+        /*ItemStack remainder = stack.getContainerItem();
+        *///?} else
+        //ItemStack remainder = stack.getItem().hasCraftingRemainingItem() ? new ItemStack(stack.getItem().getCraftingRemainingItem()) : ItemStack.EMPTY;
         stack.shrink(1);
         if (stack.isEmpty() && !remainder.isEmpty()) {
             fuel.setStackInSlot(0, remainder);

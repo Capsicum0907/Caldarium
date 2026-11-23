@@ -191,7 +191,7 @@ public final class CaldariumConfig {
         builder.pop();
 
         builder.push("experience");
-        //? if neoforge {
+        //? if !forge {
         POUR_STEPS = builder.defineList("pourSteps", List.of(10, 100, 1_000), () -> 10,
                 step -> step instanceof Integer points && points > 0);
         //?} else {
@@ -229,11 +229,11 @@ public final class CaldariumConfig {
 
         builder.push("heat");
         HEAT_SPAN = builder.defineInRange("span", SPAN, 0.01, 1000.0);
-        //? if neoforge {
+        //? if !forge {
         TEMPERATURES = builder.defineList("temperatures", WARMTH,
                 () -> "minecraft:lava=10.0", entry -> entry instanceof String);
         //?} else
-        /*TEMPERATURES = builder.defineList("temperatures", WARMTH, entry -> entry instanceof String);*/
+        //TEMPERATURES = builder.defineList("temperatures", WARMTH, entry -> entry instanceof String);
         builder.pop();
 
         for (Kind kind : Kind.values()) {

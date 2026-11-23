@@ -6,7 +6,7 @@
   "mixins": [
     "EntityMixin",
     "LightningBoltMixin",
-    "PlayerMixin"
+    "PlayerMixin"${loader_mixins}
   ],
   "injectors": {
     "defaultRequire": 1

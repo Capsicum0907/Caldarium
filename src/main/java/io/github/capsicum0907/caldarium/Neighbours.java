@@ -7,7 +7,7 @@ import net.minecraft.world.level.Level;
 //? if neoforge {
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
-//?} else {
+//?} else if forge {
 /*import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 *///?}
@@ -41,16 +41,17 @@ public final class Neighbours {
         }
         return cache.getCapability();
         //?} else
-        /*return energy(level, pos.relative(side), side.getOpposite());*/
+        //return energy(level, pos.relative(side), side.getOpposite());
     }
 
     public static IEnergyStorage energy(Level level, BlockPos pos, Direction side) {
         //? if neoforge {
         return level.getCapability(Capabilities.EnergyStorage.BLOCK, pos, side);
-        //?} else {
+        //?} else if forge {
         /*BlockEntity entity = level.getBlockEntity(pos);
         return entity == null ? null : entity.getCapability(ForgeCapabilities.ENERGY, side).orElse(null);
-        *///?}
+        *///?} else
+        //return io.github.capsicum0907.caldarium.fabric.Energies.find(level, pos, side);
     }
 
     /**

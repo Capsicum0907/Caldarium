@@ -28,8 +28,10 @@ public enum Fuel {
         public int burnTicks(ItemStack stack) {
             //? if neoforge {
             return stack.getBurnTime(RecipeType.SMELTING);
-            //?} else
-            /*return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);*/
+            //?} else if forge {
+            /*return net.minecraftforge.common.ForgeHooks.getBurnTime(stack, RecipeType.SMELTING);
+            *///?} else
+            //return net.minecraft.world.level.block.entity.AbstractFurnaceBlockEntity.getFuel().getOrDefault(stack.getItem(), 0);
         }
     };
 

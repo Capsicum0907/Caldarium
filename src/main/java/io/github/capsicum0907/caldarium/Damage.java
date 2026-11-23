@@ -42,27 +42,27 @@ public final class Damage {
         living.hurt(new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE)
                 .getHolderOrThrow(CaldariumRegistry.SPOLIARIUM_DAMAGE)), Float.MAX_VALUE);
         //?} else
-        /*living.hurt(SPOLIARIUM, Float.MAX_VALUE);*/
+        //living.hurt(SPOLIARIUM, Float.MAX_VALUE);
     }
 
     public static boolean spoiled(DamageSource source) {
         //? if >=1.19.4 {
         return source.is(CaldariumRegistry.SPOLIARIUM_DAMAGE);
         //?} else
-        /*return source == SPOLIARIUM;*/
+        //return source == SPOLIARIUM;
     }
 
     public static DamageSource fire(ServerLevel level) {
         //? if >=1.19.4 {
         return level.damageSources().inFire();
         //?} else
-        /*return DamageSource.IN_FIRE;*/
+        //return DamageSource.IN_FIRE;
     }
 
     public static DamageSource blast(ServerLevel level, Player breaker) {
         //? if >=1.19.4 {
         return level.damageSources().explosion(breaker, breaker);
         //?} else
-        /*return DamageSource.explosion(breaker);*/
+        //return DamageSource.explosion(breaker);
     }
 }

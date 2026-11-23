@@ -8,7 +8,7 @@ import net.minecraft.core.BlockPos;
 //? if >=1.20.5 {
 import net.minecraft.network.RegistryFriendlyByteBuf;
 //?} else
-/*import net.minecraft.network.FriendlyByteBuf;*/
+//import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -43,9 +43,14 @@ public class MachineMenu extends AbstractContainerMenu {
     //? if >=1.20.5 {
     public MachineMenu(int id, Inventory inventory, RegistryFriendlyByteBuf buffer) {
     //?} else
-    /*public MachineMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {*/
+    //public MachineMenu(int id, Inventory inventory, FriendlyByteBuf buffer) {
         this(id, inventory, ContainerLevelAccess.NULL, buffer.readBoolean(),
                 new ItemStackHandler(buffer.readByte()), buffer.readBoolean(),
+                new SimpleContainerData(MachineData.SIZE));
+    }
+
+    public MachineMenu(int id, Inventory inventory, boolean burns, int slots, boolean pours) {
+        this(id, inventory, ContainerLevelAccess.NULL, burns, new ItemStackHandler(slots), pours,
                 new SimpleContainerData(MachineData.SIZE));
     }
 
@@ -186,7 +191,7 @@ public class MachineMenu extends AbstractContainerMenu {
             //? if >=1.20 {
             slot.setByPlayer(ItemStack.EMPTY);
             //?} else
-            /*slot.set(ItemStack.EMPTY);*/
+            //slot.set(ItemStack.EMPTY);
         } else {
             slot.setChanged();
         }
@@ -212,16 +217,20 @@ public class MachineMenu extends AbstractContainerMenu {
         }
         if (level.getBlockEntity(pos) instanceof MenuProvider provider
                 && provider instanceof Machine machine) {
+            //? if fabric {
+            /*io.github.capsicum0907.caldarium.fabric.Menus.open(player, provider, machine.burns(), machine.machineSlots().getSlots(), machine.pours());
+            *///?} else {
             //? if neoforge {
             player.openMenu(provider, buffer -> {
             //?} else if >=1.19 {
             /*net.minecraftforge.network.NetworkHooks.openScreen((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {
             *///?} else
-            /*net.minecraftforge.network.NetworkHooks.openGui((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {*/
+            //net.minecraftforge.network.NetworkHooks.openGui((net.minecraft.server.level.ServerPlayer) player, provider, buffer -> {
                 buffer.writeBoolean(machine.burns());
                 buffer.writeByte(machine.machineSlots().getSlots());
                 buffer.writeBoolean(machine.pours());
             });
+            //?}
         }
         return InteractionResult.CONSUME;
     }

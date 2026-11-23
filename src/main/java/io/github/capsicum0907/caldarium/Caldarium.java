@@ -5,7 +5,12 @@ import com.mojang.logging.LogUtils;
 import io.github.capsicum0907.caldarium.client.CaldariumClient;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.BlockHitResult;
 //? if >=1.19.3
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -26,8 +31,8 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
-//?} else {
-/*import net.minecraftforge.api.distmarker.Dist;
+//?} else if forge {
+/*import net.neoforged.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 //? if <1.19 {
 /^import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
@@ -53,6 +58,7 @@ import org.slf4j.Logger;
  * Entry point. {@link #MODID} must match {@code mod_id} in gradle.properties,
  * which is what the generated neoforge.mods.toml is filled from.
  */
+//? if !fabric
 @Mod(Caldarium.MODID)
 public class Caldarium {
     public static final String MODID = "caldarium";
@@ -61,11 +67,21 @@ public class Caldarium {
         //? if >=1.21 {
         return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, path);
         //?} else
-        /*return new net.minecraft.resources.ResourceLocation(MODID, path);*/
+        //return new net.minecraft.resources.ResourceLocation(MODID, path);
     }
 
     public static final Logger LOGGER = LogUtils.getLogger();
 
+    public static boolean intoSun(Level level, Player player, InteractionHand hand, ItemStack held,
+            BlockHitResult hit) {
+        if (!(held.getItem() instanceof BlockItem)) {
+            return false;
+        }
+        BlockPos pos = new BlockPlaceContext(new UseOnContext(player, hand, hit)).getClickedPos();
+        return Suns.inside(level, pos);
+    }
+
+    //? if !fabric {
     //? if neoforge {
     public Caldarium(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerConfig(ModConfig.Type.SERVER, CaldariumConfig.SPEC);
@@ -95,7 +111,7 @@ public class Caldarium {
         MinecraftForge.EVENT_BUS.addListener(Caldarium::aiming);
         MinecraftForge.EVENT_BUS.addListener(Caldarium::spoils);
         //? if <1.19
-        /^MinecraftForge.EVENT_BUS.addListener(Caldarium::unschooled);^/
+        //MinecraftForge.EVENT_BUS.addListener(Caldarium::unschooled);
         //? if >=1.20
         modEventBus.addListener(Caldarium::addToCreativeTab);
         if (FMLEnvironment.dist == Dist.CLIENT) {
@@ -105,6 +121,7 @@ public class Caldarium {
         LOGGER.info("Caldarium {} loaded.", ModLoadingContext.get().getActiveContainer().getModInfo().getVersion());
         *///?}
     }
+    //?}
 
     /**
      * The whole of the integration. Everything that moves energy — this mod's own
@@ -123,6 +140,7 @@ public class Caldarium {
     }
     *///?}
 
+    //? if !fabric {
     private static void spoils(LivingDropsEvent event) {
         if (Damage.spoiled(event.getSource())) {
             event.setCanceled(true);
@@ -130,16 +148,12 @@ public class Caldarium {
     }
 
     public static void aiming(PlayerInteractEvent.RightClickBlock event) {
-        if (!(event.getItemStack().getItem() instanceof BlockItem)) {
-            return;
-        }
-        BlockPos pos = new BlockPlaceContext(new UseOnContext(event.getEntity(), event.getHand(),
-                event.getHitVec())).getClickedPos();
-        if (Suns.inside(event.getLevel(), pos)) {
+        if (intoSun(event.getLevel(), event.getEntity(), event.getHand(), event.getItemStack(),
+                event.getHitVec())) {
             //? if neoforge {
             event.setUseItem(TriState.FALSE);
             //?} else
-            /*event.setUseItem(Event.Result.DENY);*/
+            //event.setUseItem(Event.Result.DENY);
         }
     }
 
@@ -149,6 +163,7 @@ public class Caldarium {
             event.setCanceled(true);
         }
     }
+    //?}
 
     //? if neoforge {
     private static void registerCapabilities(RegisterCapabilitiesEvent event) {
@@ -182,7 +197,7 @@ public class Caldarium {
             NeoForge.EVENT_BUS.addListener(io.github.capsicum0907.caldarium.client.SolCorona::draw);
         }
     }
-    //?} else {
+    //?} else if forge {
     /*private static final class Client {
         private static void register(IEventBus modEventBus) {
             modEventBus.addListener(CaldariumClient::registerScreens);
@@ -196,7 +211,7 @@ public class Caldarium {
     }
     *///?}
 
-    //? if >=1.20 {
+    //? if !fabric && >=1.20 {
     private static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
         if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             for (Supplier<? extends BlockItem> item : CaldariumRegistry.items()) {
