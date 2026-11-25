@@ -64,8 +64,8 @@ public final class CaldariumScenario {
                     pilot.command("weather clear");
                     pilot.command("gamemode creative");
                     pilot.command("tp @s 0.5 " + Y + " 0.5 0 0");
-                    CaldariumConfig.SOL_SIZE.set(SUN_SIZE);
-                    CaldariumConfig.SOL_HOLD.set(SUN_HOLD);
+                    CaldariumConfig.hold(CaldariumConfig.SOL_SIZE, SUN_SIZE);
+                    CaldariumConfig.hold(CaldariumConfig.SOL_HOLD, SUN_HOLD);
                     pilot.onServer(() -> {
                         //? if >=1.17 {
                         pilot.serverPlayer().getAbilities().flying = true;

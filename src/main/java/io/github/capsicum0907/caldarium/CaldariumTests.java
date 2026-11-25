@@ -451,25 +451,19 @@ public final class CaldariumTests {
     private static final String SOL_BATCH = "sol";
     private static final double SOL_SIZE = 8.0;
     private static final double SOL_HOLD = 2.0;
-    private static double sizeWas;
-    private static double holdWas;
-    private static int reachWas;
 
     @BeforeBatch(batch = SOL_BATCH)
     public static void fixTheSun(ServerLevel level) {
-        sizeWas = CaldariumConfig.SOL_SIZE.get();
-        holdWas = CaldariumConfig.SOL_HOLD.get();
-        CaldariumConfig.SOL_SIZE.set(SOL_SIZE);
-        CaldariumConfig.SOL_HOLD.set(SOL_HOLD);
-        reachWas = CaldariumConfig.SOL_REACH.get();
-        CaldariumConfig.SOL_REACH.set(0);
+        CaldariumConfig.hold(CaldariumConfig.SOL_SIZE, SOL_SIZE);
+        CaldariumConfig.hold(CaldariumConfig.SOL_HOLD, SOL_HOLD);
+        CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 0);
     }
 
     @AfterBatch(batch = SOL_BATCH)
     public static void restoreTheSun(ServerLevel level) {
-        CaldariumConfig.SOL_SIZE.set(sizeWas);
-        CaldariumConfig.SOL_HOLD.set(holdWas);
-        CaldariumConfig.SOL_REACH.set(reachWas);
+        CaldariumConfig.release(CaldariumConfig.SOL_SIZE);
+        CaldariumConfig.release(CaldariumConfig.SOL_HOLD);
+        CaldariumConfig.release(CaldariumConfig.SOL_REACH);
     }
 
     private static final BlockPos SUN = new BlockPos(Structures.HALL_SIZE / 2, Structures.HALL_SIZE / 2,
@@ -524,14 +518,13 @@ public final class CaldariumTests {
         helper.runAfterDelay(1, () -> {
             int out = (int) Math.ceil(radius(helper, core)) + 6;
             BlockPos panel = core.offset(out, 0, 0);
-            int reachWas = CaldariumConfig.SOL_REACH.get();
-            CaldariumConfig.SOL_REACH.set(7);
+            CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 7);
             boolean near = Suns.shining(helper.getLevel(), panel);
             float sun = Sunlight.reaching(helper.getLevel(), panel);
             float lamp = Lamplight.reaching(helper.getLevel(), panel);
-            CaldariumConfig.SOL_REACH.set(2);
+            CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 2);
             boolean beyond = Suns.shining(helper.getLevel(), panel);
-            CaldariumConfig.SOL_REACH.set(reachWas);
+            CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 0);
             check(near, "a place six blocks past the ball should count as sunlit");
             check(sun == 1.0F, "so a solar panel there should read full daylight: " + sun);
             check(lamp == 1.0F, "and a lucernarium full light: " + lamp);
@@ -544,14 +537,13 @@ public final class CaldariumTests {
     public static void aSunLightsTheGroundWithinItsReach(GameTestHelper helper) {
         BlockPos core = sun(helper);
         BlockPos floor = helper.absolutePos(new BlockPos(SUN.getX(), 2, SUN.getZ()));
-        int was = CaldariumConfig.SOL_REACH.get();
-        CaldariumConfig.SOL_REACH.set(7);
+        CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 7);
         BlockState state = helper.getLevel().getBlockState(core);
         SolBlock.glow(helper.getLevel(), core, state);
         boolean lit = helper.getLevel().getBlockState(floor).getBlock() instanceof SolGlowBlock;
         SolBlock.unglow(helper.getLevel(), core, state);
         boolean cleared = !(helper.getLevel().getBlockState(floor).getBlock() instanceof SolGlowBlock);
-        CaldariumConfig.SOL_REACH.set(was);
+        CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 0);
         check(lit, "the floor under a sun within its reach should carry a glow");
         check(cleared, "and lose it when the sun goes");
         helper.succeed();
@@ -563,14 +555,13 @@ public final class CaldariumTests {
         BlockState state = helper.getLevel().getBlockState(core);
         LivingEntity pig = helper.spawn(EntityType.PIG,
                 SUN.offset((int) Math.ceil(SolBlock.radius(state)) + 4, 0, 0));
-        int was = CaldariumConfig.SOL_REACH.get();
-        CaldariumConfig.SOL_REACH.set(2);
+        CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 2);
         SolBlockEntity.harmWhatIsInReach(helper.getLevel(), core, state);
         float beyond = pig.getHealth();
-        CaldariumConfig.SOL_REACH.set(7);
+        CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 7);
         SolBlockEntity.harmWhatIsInReach(helper.getLevel(), core, state);
         float within = pig.getHealth();
-        CaldariumConfig.SOL_REACH.set(was);
+        CaldariumConfig.hold(CaldariumConfig.SOL_REACH, 0);
         check(beyond == pig.getMaxHealth(), "a pig past the reach should be untouched: " + beyond);
         check(within < beyond, "and a pig within it hurt: " + within);
         helper.succeed();
@@ -827,10 +818,9 @@ public final class CaldariumTests {
         BlockState state = helper.getLevel().getBlockState(core);
         double radius = SolBlock.radius(state);
         Vec3 centre = SolBlock.centre(core);
-        double touchWas = CaldariumConfig.SOL_TOUCH_DAMAGE.get();
         double bite = 3.0;
         try {
-            CaldariumConfig.SOL_TOUCH_DAMAGE.set(bite);
+            CaldariumConfig.hold(CaldariumConfig.SOL_TOUCH_DAMAGE, bite);
             LivingEntity inside = livingAt(helper, EntityType.PIG, centre);
             LivingEntity fireproof = livingAt(helper, EntityType.BLAZE, centre);
             double half = inside.getBbWidth() / 2.0;
@@ -850,7 +840,7 @@ public final class CaldariumTests {
             check(Math.abs(lost(beside) - CaldariumConfig.solBurnDamage()) < 0.01F,
                     "one beside it should take the burn damage, once: " + lost(beside));
         } finally {
-            CaldariumConfig.SOL_TOUCH_DAMAGE.set(touchWas);
+            CaldariumConfig.release(CaldariumConfig.SOL_TOUCH_DAMAGE);
         }
         helper.succeed();
     }

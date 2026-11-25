@@ -312,8 +312,24 @@ public final class CaldariumConfig {
         return SOL_WEATHER.get();
     }
 
+    private static final Map<ModConfigSpec.ConfigValue<?>, Object> HELD = new java.util.concurrent.ConcurrentHashMap<>();
+
+    public static <T> void hold(ModConfigSpec.ConfigValue<T> value, T held) {
+        HELD.put(value, held);
+    }
+
+    public static void release(ModConfigSpec.ConfigValue<?> value) {
+        HELD.remove(value);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> T read(ModConfigSpec.ConfigValue<T> value) {
+        Object held = HELD.get(value);
+        return held != null ? (T) held : value.get();
+    }
+
     public static int solReach() {
-        return SOL_REACH.get();
+        return read(SOL_REACH);
     }
 
     public static float solReachDamage() {
@@ -333,7 +349,7 @@ public final class CaldariumConfig {
     }
 
     public static float solSize() {
-        return SOL_SIZE.get().floatValue();
+        return read(SOL_SIZE).floatValue();
     }
 
     public static int solGlowSpacing() {
@@ -353,7 +369,7 @@ public final class CaldariumConfig {
     }
 
     public static double solHold() {
-        return SOL_HOLD.get();
+        return read(SOL_HOLD);
     }
 
     public static int solBlastReach() {
@@ -369,7 +385,7 @@ public final class CaldariumConfig {
     }
 
     public static float solTouchDamage() {
-        return SOL_TOUCH_DAMAGE.get().floatValue();
+        return read(SOL_TOUCH_DAMAGE).floatValue();
     }
 
     @SuppressWarnings("unchecked")
