@@ -49,6 +49,7 @@ import net.minecraftforge.registries.DeferredRegister;
  * type per block would be the same class registered once for each set of numbers.
  */
 public final class CaldariumRegistry {
+    //? if >=1.17 || fabric {
     public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(Registries.BLOCK, Caldarium.MODID);
     public static final DeferredRegister<Item> ITEMS =
@@ -57,6 +58,16 @@ public final class CaldariumRegistry {
             DeferredRegister.create(Registries.BLOCK_ENTITY_TYPE, Caldarium.MODID);
     public static final DeferredRegister<MenuType<?>> MENUS =
             DeferredRegister.create(Registries.MENU, Caldarium.MODID);
+    //?} else {
+    /*public static final DeferredRegister<Block> BLOCKS =
+            DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.BLOCKS, Caldarium.MODID);
+    public static final DeferredRegister<Item> ITEMS =
+            DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.ITEMS, Caldarium.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES =
+            DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.TILE_ENTITIES, Caldarium.MODID);
+    public static final DeferredRegister<MenuType<?>> MENUS =
+            DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.CONTAINERS, Caldarium.MODID);
+    *///?}
     //? if >=1.19.3 {
     public static final DeferredRegister<CreativeModeTab> TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Caldarium.MODID);
@@ -164,8 +175,14 @@ public final class CaldariumRegistry {
             Caldarium.id("spoliarium"));
     //?}
 
+    //? if forge && <1.17 {
+    /*public static final Supplier<BlockItem> SOL_ITEM = ITEMS.register("sol",
+            () -> new SolItem(SOL.get(), itemProperties()
+                    .setISTER(() -> io.github.capsicum0907.caldarium.client.SolItemRenderer::new)));
+    *///?} else {
     public static final Supplier<BlockItem> SOL_ITEM = ITEMS.register("sol",
             () -> new SolItem(SOL.get(), itemProperties()));
+    //?}
 
     static {
         ITEM_ORDER.add(SOL_ITEM);
@@ -210,7 +227,7 @@ public final class CaldariumRegistry {
     }
 
     private static Supplier<BlockItem> item(String id, Supplier<? extends Block> block) {
-        //? if fabric {
+        //? if fabric && >=1.17 {
         /*return ITEMS.register(id, () -> new io.github.capsicum0907.caldarium.fabric.ReadingItem(block.get(), itemProperties()));
         *///?} else
         return ITEMS.register(id, () -> new BlockItem(block.get(), itemProperties()));

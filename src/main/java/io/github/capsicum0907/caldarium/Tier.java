@@ -71,9 +71,9 @@ public enum Tier implements StringRepresentable {
     /** The rungs up to and including that one; none at all for a row with no tiers. */
     public static java.util.List<Tier> upTo(Tier top) {
         if (top == null) {
-            return java.util.List.of();
+            return java.util.Collections.emptyList();
         }
-        return java.util.List.of(values()).subList(0, top.ordinal() + 1);
+        return java.util.Arrays.asList(values()).subList(0, top.ordinal() + 1);
     }
 
     /** The one below, or nothing when this is the first rung. */

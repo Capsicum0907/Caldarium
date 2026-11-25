@@ -8,6 +8,7 @@ import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+//? if >=1.17
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.core.BlockPos;
@@ -119,8 +120,11 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
+    //? if >=1.17 {
     public void stepOn(Level level, BlockPos pos, BlockState state,
             net.minecraft.world.entity.Entity entity) {
+    //?} else
+    /*public void stepOn(Level level, BlockPos pos, net.minecraft.world.entity.Entity entity) {*/
         if (row.source() != Source.LIFE || !(level instanceof ServerLevel server)) {
             return;
         }
@@ -141,9 +145,15 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     @Override
+    //? if >=1.17 {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new GeneratorBlockEntity(pos, state);
     }
+    //?} else {
+    /*public BlockEntity newBlockEntity(net.minecraft.world.level.BlockGetter level) {
+        return new GeneratorBlockEntity(row);
+    }
+    *///?}
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
@@ -179,6 +189,7 @@ public class GeneratorBlock extends BaseEntityBlock {
     }
 
     /** Server side only: burning and pushing are world state, not something drawn. */
+    //? if >=1.17 {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             BlockEntityType<T> type) {
@@ -186,4 +197,5 @@ public class GeneratorBlock extends BaseEntityBlock {
                 : createTickerHelper(type, CaldariumRegistry.GENERATOR_ENTITY.get(),
                         GeneratorBlockEntity::serverTick);
     }
+    //?}
 }

@@ -3,7 +3,6 @@ package io.github.capsicum0907.caldarium.fabric.items;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.ItemStack;
 //? if >=1.20.5
 import net.minecraft.core.HolderLookup;
@@ -123,10 +122,10 @@ public class ItemStackHandler implements IItemHandler {
     public void deserializeNBT(HolderLookup.Provider registries, CompoundTag tag) {
     //?} else
     //public void deserializeNBT(CompoundTag tag) {
-        if (tag.contains("Size", Tag.TAG_INT)) {
+        if (tag.contains("Size")) {
             stacks = NonNullList.withSize(tag.getInt("Size"), ItemStack.EMPTY);
         }
-        ListTag items = tag.getList("Items", Tag.TAG_COMPOUND);
+        ListTag items = tag.getList("Items", new CompoundTag().getId());
         for (int i = 0; i < items.size(); i++) {
             CompoundTag item = items.getCompound(i);
             int slot = item.getInt("Slot");
@@ -142,8 +141,10 @@ public class ItemStackHandler implements IItemHandler {
     private static boolean same(ItemStack a, ItemStack b) {
         //? if >=1.20.5 {
         return ItemStack.isSameItemSameComponents(a, b);
-        //?} else
-        //return ItemStack.isSameItemSameTags(a, b);
+        //?} else if >=1.17 {
+        /*return ItemStack.isSameItemSameTags(a, b);
+        *///?} else
+        /*return ItemStack.isSame(a, b) && ItemStack.tagMatches(a, b);*/
     }
 
     private static ItemStack copyWithCount(ItemStack stack, int count) {

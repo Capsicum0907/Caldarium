@@ -31,18 +31,35 @@ import net.minecraftforge.common.util.LazyOptional;
  * already gives — whether it pushes, and how many slots it has. Two classes would be
  * the same file twice, free to drift apart.
  */
-public class KindBlockEntity extends BlockEntity implements MenuProvider, Machine {
-    private final Kind kind;
-    private final Tier tier;
-    private final CaldariumConfig.Rates rates;
-    private final Store store;
+public class KindBlockEntity extends BlockEntity implements MenuProvider, Machine
+        //? if <1.17
+        /*, net.minecraft.world.level.block.entity.TickableBlockEntity*/
+{
+    private Kind kind;
+    private Tier tier;
+    private CaldariumConfig.Rates rates;
+    private Store store;
     private final Neighbours sides = new Neighbours();
-    private final ItemStackHandler items;
-    private final MachineData data;
+    private ItemStackHandler items;
+    private MachineData data;
 
+    //? if >=1.17 {
     public KindBlockEntity(BlockPos pos, BlockState state) {
         super(CaldariumRegistry.KIND_ENTITY.get(), pos, state);
-        KindBlock block = (KindBlock) state.getBlock();
+        bind((KindBlock) state.getBlock());
+    }
+    //?} else {
+    /*public KindBlockEntity() {
+        super(CaldariumRegistry.KIND_ENTITY.get());
+    }
+
+    public KindBlockEntity(KindBlock block) {
+        this();
+        bind(block);
+    }
+    *///?}
+
+    private void bind(KindBlock block) {
         this.kind = block.kind();
         this.tier = block.tier();
         this.rates = CaldariumConfig.rates(kind, tier);
@@ -126,6 +143,15 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
         return items;
     }
 
+    //? if <1.17 {
+    /*@Override
+    public void tick() {
+        if (level != null && !level.isClientSide()) {
+            serverTick(level, worldPosition, getBlockState(), this);
+        }
+    }
+    *///?}
+
     public static void serverTick(Level level, BlockPos pos, BlockState state,
             KindBlockEntity machine) {
         if (!(level instanceof ServerLevel server)) {
@@ -187,23 +213,36 @@ public class KindBlockEntity extends BlockEntity implements MenuProvider, Machin
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-    //?} else {
+    //?} else if >=1.18 {
     /*@Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+    *///?} else {
+    /*@Override
+    public CompoundTag save(CompoundTag tag) {
+        super.save(tag);
     *///?}
         tag.putInt("Energy", store.raw());
         tag.put("Items", items.serializeNBT(registries));
+        //? if <1.18
+        /*return tag;*/
     }
 
     //? if >=1.20.5 {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-    //?} else {
+    //?} else if >=1.18 {
     /*@Override
     public void load(CompoundTag tag) {
         super.load(tag);
+    *///?} else {
+    /*@Override
+    public void load(BlockState state, CompoundTag tag) {
+        if (kind == null) {
+            bind((KindBlock) state.getBlock());
+        }
+        super.load(state, tag);
     *///?}
         store.restore(tag.getInt("Energy"));
         if (tag.contains("Items")) {

@@ -302,7 +302,7 @@ public final class Skins {
     }
 
     public static List<Face> faces(Generator.Made made) {
-        return made.source().flat() ? List.of(Face.TOP, Face.SIDE) : List.of(Face.values());
+        return made.source().flat() ? List.of(Face.TOP, Face.SIDE) : java.util.Arrays.asList(Face.values());
     }
 
     public static boolean lights(Generator.Made made, Face face) {

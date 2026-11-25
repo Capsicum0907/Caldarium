@@ -1,5 +1,6 @@
 package io.github.capsicum0907.caldarium.fabric;
 
+//? if >=1.17 {
 import java.util.ArrayList;
 import java.util.List;
 
@@ -147,3 +148,4 @@ public final class Transfer {
         }
     }
 }
+//?}

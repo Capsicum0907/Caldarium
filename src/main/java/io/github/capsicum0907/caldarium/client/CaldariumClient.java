@@ -23,7 +23,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-//? if !fabric {
+//? if !fabric && >=1.17 {
 import com.mojang.datafixers.util.Either;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
@@ -40,7 +40,7 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.event.RenderHighlightEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-//?} else if forge {
+//?} else if forge && >=1.17 {
 /*import net.neoforged.neoforge.client.event.DrawSelectionEvent;
 import net.minecraftforge.client.IItemRenderProperties;
 *///?}
@@ -62,7 +62,7 @@ public final class CaldariumClient {
     public static void registerTooltips(RegisterClientTooltipComponentFactoriesEvent event) {
         event.register(Tooltips.Readings.class, ReadingsTooltip::new);
     }
-    //?} else if forge {
+    //?} else if forge && >=1.17 {
     /*public static void registerTooltips(FMLClientSetupEvent event) {
         net.minecraftforge.client.MinecraftForgeClient.registerTooltipComponentFactory(Tooltips.Readings.class, ReadingsTooltip::new);
     }
@@ -72,7 +72,25 @@ public final class CaldariumClient {
         return stack.getItem() instanceof BlockItem item ? Tooltips.of(item.getBlock()) : List.of();
     }
 
-    //? if !fabric {
+    //? if forge && <1.17 {
+    /*public static void readings(net.minecraftforge.event.entity.player.ItemTooltipEvent event) {
+        addRows(event.getItemStack(), event.getToolTip());
+    }
+    *///?}
+
+    //? if <1.17 {
+    /*public static void addRows(ItemStack stack, List<net.minecraft.network.chat.Component> lines) {
+        int at = Math.min(1, lines.size());
+        for (Tooltips.Row row : rows(stack)) {
+            lines.add(at++, new net.minecraft.network.chat.TextComponent(
+                    net.minecraft.client.resources.language.I18n.get(row.label()) + "  " + row.amount() + " "
+                            + net.minecraft.client.resources.language.I18n.get(row.unit()))
+                    .withStyle(net.minecraft.ChatFormatting.GRAY));
+        }
+    }
+    *///?}
+
+    //? if !fabric && >=1.17 {
     public static void readings(RenderTooltipEvent.GatherComponents event) {
         List<Tooltips.Row> rows = rows(event.getItemStack());
         if (rows.isEmpty()) {
@@ -93,12 +111,18 @@ public final class CaldariumClient {
     }
     *///?}
 
-    //? if !fabric {
+    //? if !fabric && >=1.17 {
     public static void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(CaldariumRegistry.SOL_ENTITY.get(), SolRenderer::new);
         SolBlockEntity.onLeavingClient(SolRenderer::forget);
     }
-    //?}
+    //?} else if forge {
+    /*public static void registerRenderers(FMLClientSetupEvent event) {
+        net.minecraftforge.fml.client.registry.ClientRegistry.bindTileEntityRenderer(CaldariumRegistry.SOL_ENTITY.get(),
+                SolRenderer::new);
+        SolBlockEntity.onLeavingClient(SolRenderer::forget);
+    }
+    *///?}
 
     //? if neoforge {
     public static void registerExtensions(RegisterClientExtensionsEvent event) {
@@ -120,7 +144,7 @@ public final class CaldariumClient {
             }
         };
     }
-    //?} else if forge {
+    //?} else if forge && >=1.17 {
     /*public static IItemRenderProperties solItem() {
         return new IItemRenderProperties() {
             private SolItemRenderer renderer;
@@ -136,7 +160,20 @@ public final class CaldariumClient {
     }
     *///?}
 
-    //? if !fabric {
+    //? if forge && <1.17 {
+    /*public static void outline(net.minecraftforge.client.event.DrawHighlightEvent.HighlightBlock event) {
+        if (drawOutline(event.getMatrix(), event.getBuffers(), event.getInfo().getPosition(),
+                event.getTarget().getBlockPos())) {
+            event.setCanceled(true);
+        }
+    }
+
+    public static void preview(net.minecraftforge.client.event.RenderWorldLastEvent event) {
+        drawPreview(event.getMatrixStack(), Minecraft.getInstance().gameRenderer.getMainCamera().getPosition());
+    }
+    *///?}
+
+    //? if !fabric && >=1.17 {
     public static void outline(RenderHighlightEvent.Block event) {
         if (drawOutline(event.getPoseStack(), event.getMultiBufferSource(), event.getCamera().getPosition(),
                 event.getTarget().getBlockPos())) {

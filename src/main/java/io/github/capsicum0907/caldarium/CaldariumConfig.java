@@ -10,6 +10,7 @@ import java.util.Map;
 //? if >=1.19.3
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+//? if >=1.18
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -37,6 +38,8 @@ public final class CaldariumConfig {
     private static final int BATTERY_BURNERS = 4;
 
     /** What the first tier of each kind is worth. Every tier above is derived. */
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     private record First(int capacity, int transfer) {
     }
 
@@ -71,6 +74,8 @@ public final class CaldariumConfig {
     private static final int SUN_PERCENT = 60;
 
     /** What one block's numbers are, whatever kind of block it is. */
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     public record Rates(ModConfigSpec.IntValue capacity, ModConfigSpec.IntValue transfer,
                         ModConfigSpec.IntValue makes, ModConfigSpec.IntValue every) {
     }
@@ -146,7 +151,10 @@ public final class CaldariumConfig {
             "minecraft:snow_block=-0.5");
 
     private static Map<Block, Float> named;
+    //? if >=1.18 {
     private static List<Map.Entry<TagKey<Block>, Float>> tagged;
+    //?} else
+    /*private static List<Map.Entry<ResourceLocation, Float>> tagged;*/
     private static final Map<Kind, Map<Tier, Rates>> KINDS = new EnumMap<>(Kind.class);
 
     /** The numbers for one block that is sized by its tier. */
@@ -381,8 +389,13 @@ public final class CaldariumConfig {
         if (given != null) {
             return given;
         }
+        //? if >=1.18 {
         for (Map.Entry<TagKey<Block>, Float> entry : tagged) {
             if (state.is(entry.getKey())) {
+        //?} else {
+        /*for (Map.Entry<ResourceLocation, Float> entry : tagged) {
+            if (net.minecraft.tags.BlockTags.getAllTags().getTagOrEmpty(entry.getKey()).contains(state.getBlock())) {
+        *///?}
                 return entry.getValue();
             }
         }
@@ -407,7 +420,10 @@ public final class CaldariumConfig {
             if (what.startsWith("#")) {
                 ResourceLocation id = ResourceLocation.tryParse(what.substring(1));
                 if (id != null) {
+                    //? if >=1.18 {
                     tagged.add(Map.entry(TagKey.create(BuiltInRegistries.BLOCK.key(), id), value));
+                    //?} else
+                    /*tagged.add(Map.entry(id, value));*/
                 }
                 continue;
             }

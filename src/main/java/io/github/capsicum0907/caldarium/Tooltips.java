@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 import java.util.List;
 import java.util.Locale;
 
+//? if >=1.17
 import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.level.block.Block;
 
@@ -14,10 +15,17 @@ public final class Tooltips {
     private Tooltips() {
     }
 
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     public record Row(String label, String amount, String unit) {
     }
 
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
+    //? if >=1.17 {
     public record Readings(List<Row> rows) implements TooltipComponent {
+    //?} else
+    /*public record Readings(List<Row> rows) {*/
     }
 
     public static int number(Tier tier) {

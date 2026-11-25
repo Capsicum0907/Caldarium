@@ -22,7 +22,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-public class SolBlockEntity extends BlockEntity {
+public class SolBlockEntity extends BlockEntity
+        //? if <1.17
+        /* implements net.minecraft.world.level.block.entity.TickableBlockEntity*/
+{
     private static final double FLIGHT_MARGIN = 4.0;
     private static final int SMOKE = 8;
     private static final int GLOW_REFRESH = 100;
@@ -36,9 +39,15 @@ public class SolBlockEntity extends BlockEntity {
 
     private int left = -1;
 
+    //? if >=1.17 {
     public SolBlockEntity(BlockPos pos, BlockState state) {
         super(CaldariumRegistry.SOL_ENTITY.get(), pos, state);
     }
+    //?} else {
+    /*public SolBlockEntity() {
+        super(CaldariumRegistry.SOL_ENTITY.get());
+    }
+    *///?}
 
     //? if !fabric
     @Override
@@ -74,6 +83,15 @@ public class SolBlockEntity extends BlockEntity {
         }
     }
 
+    //? if <1.17 {
+    /*@Override
+    public void tick() {
+        if (level != null && !level.isClientSide()) {
+            serverTick(level, worldPosition, getBlockState(), this);
+        }
+    }
+    *///?}
+
     public static void serverTick(Level level, BlockPos pos, BlockState state,
             SolBlockEntity sol) {
         if (!(level instanceof ServerLevel server)) {
@@ -101,7 +119,10 @@ public class SolBlockEntity extends BlockEntity {
                 level.sendParticles(ParticleTypes.LARGE_SMOKE, now.x, now.y, now.z, SMOKE, 0.1, 0.1, 0.1, 0.02);
                 level.playSound(null, flying.blockPosition(), SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
                         1.0F, 1.0F);
+                //? if >=1.17 {
                 flying.discard();
+                //?} else
+                /*flying.remove();*/
             }
         }
     }
@@ -178,6 +199,13 @@ public class SolBlockEntity extends BlockEntity {
         return left;
     }
 
+    //? if forge && <1.17 {
+    /*@Override
+    public double getViewDistance() {
+        return io.github.capsicum0907.caldarium.client.SolRenderer.VIEW * io.github.capsicum0907.caldarium.client.SolRenderer.VIEW;
+    }
+    *///?}
+
     //? if forge {
     /*@Override
     public AABB getRenderBoundingBox() {
@@ -189,22 +217,32 @@ public class SolBlockEntity extends BlockEntity {
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-    //?} else {
+    //?} else if >=1.18 {
     /*@Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+    *///?} else {
+    /*@Override
+    public CompoundTag save(CompoundTag tag) {
+        super.save(tag);
     *///?}
         tag.putInt("Left", left);
+        //? if <1.18
+        /*return tag;*/
     }
 
     //? if >=1.20.5 {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-    //?} else {
+    //?} else if >=1.18 {
     /*@Override
     public void load(CompoundTag tag) {
         super.load(tag);
+    *///?} else {
+    /*@Override
+    public void load(BlockState state, CompoundTag tag) {
+        super.load(state, tag);
     *///?}
         left = tag.contains("Left") ? tag.getInt("Left") : -1;
     }

@@ -35,20 +35,23 @@ import net.minecraftforge.common.util.LazyOptional;
  * piece of fuel comes from: a slot, or a tank. The one that does not burn keeps
  * nothing at all, because there is nothing to keep.
  */
-public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, Machine {
+public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, Machine
+        //? if <1.17
+        /*, net.minecraft.world.level.block.entity.TickableBlockEntity*/
+{
     /** A bucket, which is the unit a fluid fuel is measured in. */
     private static final int DRAUGHT = 1000;
 
     /** How often the sky is looked at. Twenty times a second is twenty times too many. */
     private static final int SUN_EVERY = 20;
 
-    private final Generator.Made row;
-    private final CaldariumConfig.Rates rates;
-    private final Store store;
+    private Generator.Made row;
+    private CaldariumConfig.Rates rates;
+    private Store store;
     private final Neighbours sides = new Neighbours();
-    private final ItemStackHandler fuel;
-    private final FuelTank tank;
-    private final MachineData data;
+    private ItemStackHandler fuel;
+    private FuelTank tank;
+    private MachineData data;
 
     private int burning;
     private int burnLength;
@@ -63,9 +66,24 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
 
     private long spare;
 
+    //? if >=1.17 {
     public GeneratorBlockEntity(BlockPos pos, BlockState state) {
         super(CaldariumRegistry.GENERATOR_ENTITY.get(), pos, state);
-        this.row = ((GeneratorBlock) state.getBlock()).row();
+        bind(((GeneratorBlock) state.getBlock()).row());
+    }
+    //?} else {
+    /*public GeneratorBlockEntity() {
+        super(CaldariumRegistry.GENERATOR_ENTITY.get());
+    }
+
+    public GeneratorBlockEntity(Generator.Made row) {
+        this();
+        bind(row);
+    }
+    *///?}
+
+    private void bind(Generator.Made row) {
+        this.row = row;
         this.rates = CaldariumConfig.GENERATORS.get(row);
         this.store = new Store(Store.Role.SOURCE, Wiring.OPEN,
                 () -> rates.capacity().get(), () -> rates.transfer().get(), this::setChanged);
@@ -227,6 +245,15 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     public ItemStackHandler machineSlots() {
         return fuel;
     }
+
+    //? if <1.17 {
+    /*@Override
+    public void tick() {
+        if (level != null && !level.isClientSide()) {
+            serverTick(level, worldPosition, getBlockState(), this);
+        }
+    }
+    *///?}
 
     public static void serverTick(Level level, BlockPos pos, BlockState state,
             GeneratorBlockEntity generator) {
@@ -408,10 +435,14 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-    //?} else {
+    //?} else if >=1.18 {
     /*@Override
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
+    *///?} else {
+    /*@Override
+    public CompoundTag save(CompoundTag tag) {
+        super.save(tag);
     *///?}
         tag.putInt("Energy", store.raw());
         tag.putInt("Burning", burning);
@@ -422,16 +453,25 @@ public class GeneratorBlockEntity extends BlockEntity implements MenuProvider, M
         if (tank != null) {
             tag.put("Tank", tank.writeToNBT(registries, new CompoundTag()));
         }
+        //? if <1.18
+        /*return tag;*/
     }
 
     //? if >=1.20.5 {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-    //?} else {
+    //?} else if >=1.18 {
     /*@Override
     public void load(CompoundTag tag) {
         super.load(tag);
+    *///?} else {
+    /*@Override
+    public void load(BlockState state, CompoundTag tag) {
+        if (row == null) {
+            bind(((GeneratorBlock) state.getBlock()).row());
+        }
+        super.load(state, tag);
     *///?}
         store.restore(tag.getInt("Energy"));
         burning = tag.getInt("Burning");

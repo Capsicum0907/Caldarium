@@ -96,6 +96,7 @@ sourceSets.main {
         exclude("**/caldarium/data/TestStructures.java")
         exclude("**/caldarium/fabric/**")
         exclude("**/caldarium/mixin/fabric/**")
+        exclude("**/caldarium/mixin/legacy/**")
     }
     resources.srcDir(convertResources)
 }

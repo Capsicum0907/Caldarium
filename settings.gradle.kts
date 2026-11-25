@@ -20,6 +20,8 @@ stonecutter {
             version("$minecraft-$loader", minecraft).buildscript = "build.$toolchain.gradle.kts"
         }
 
+        node("1.16.5", "forge", toolchain = "forge-loom")
+        node("1.16.5", "fabric")
         node("1.18.2", "forge")
         node("1.18.2", "fabric")
         node("1.19.2", "forge")

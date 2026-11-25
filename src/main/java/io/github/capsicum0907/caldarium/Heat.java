@@ -25,6 +25,9 @@ public final class Heat {
     private static float at(ServerLevel level, BlockPos pos) {
         BlockState state = level.getBlockState(pos);
         Float given = CaldariumConfig.temperature(state);
+        //? if >=1.18 {
         return given != null ? given : level.getBiome(pos).value().getBaseTemperature();
+        //?} else
+        /*return given != null ? given : level.getBiome(pos).getBaseTemperature();*/
     }
 }

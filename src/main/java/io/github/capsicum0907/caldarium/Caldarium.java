@@ -1,5 +1,6 @@
 package io.github.capsicum0907.caldarium;
 
+//? if >=1.18
 import com.mojang.logging.LogUtils;
 
 import io.github.capsicum0907.caldarium.client.CaldariumClient;
@@ -52,7 +53,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 *///?}
 
+//? if >=1.18 {
 import org.slf4j.Logger;
+//?} else
+/*import org.apache.logging.log4j.Logger;*/
 
 /**
  * Entry point. {@link #MODID} must match {@code mod_id} in gradle.properties,
@@ -63,6 +67,9 @@ import org.slf4j.Logger;
 public class Caldarium {
     public static final String MODID = "caldarium";
 
+    //? if <1.17
+    /*public static final int UPDATE_ALL = 3;*/
+
     public static net.minecraft.resources.ResourceLocation id(String path) {
         //? if >=1.21 {
         return net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(MODID, path);
@@ -70,7 +77,10 @@ public class Caldarium {
         //return new net.minecraft.resources.ResourceLocation(MODID, path);
     }
 
+    //? if >=1.18 {
     public static final Logger LOGGER = LogUtils.getLogger();
+    //?} else
+    /*public static final Logger LOGGER = org.apache.logging.log4j.LogManager.getLogger();*/
 
     public static boolean intoSun(Level level, Player player, InteractionHand hand, ItemStack held,
             BlockHitResult hit) {
@@ -202,6 +212,7 @@ public class Caldarium {
         private static void register(IEventBus modEventBus) {
             modEventBus.addListener(CaldariumClient::registerScreens);
             modEventBus.addListener(CaldariumClient::registerRenderers);
+            //? if >=1.17
             modEventBus.addListener(CaldariumClient::registerTooltips);
             MinecraftForge.EVENT_BUS.addListener(CaldariumClient::readings);
             MinecraftForge.EVENT_BUS.addListener(CaldariumClient::outline);

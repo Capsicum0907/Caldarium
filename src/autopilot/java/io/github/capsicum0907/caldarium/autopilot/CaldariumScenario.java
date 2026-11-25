@@ -112,7 +112,7 @@ public final class CaldariumScenario {
 
         //? if fabric {
         /*pilot.then("burner beside another mod's store", BURN, () -> {
-                    pilot.command("setblock " + at(SINK) + " minecraft:lodestone");
+                    pilot.command("setblock " + at(SINK) + " " + Sink.BLOCK);
                     pilot.command("setblock " + at(SINK_BURNER) + " caldarium:copper_burner");
                     pilot.onServer(() -> {
                         ((GeneratorBlockEntity) level(pilot.serverPlayer()).getBlockEntity(SINK_BURNER)).fuel()
@@ -121,8 +121,8 @@ public final class CaldariumScenario {
                     });
                 })
                 .then("check the other mod's store", 0, () -> pilot.check(
-                        "a Team Reborn Energy store beside a burner holds " + Sink.STORE.amount,
-                        Sink.STORE.amount > 0, "nothing arrived"));
+                        "a Team Reborn Energy store beside a burner holds " + Sink.amount(),
+                        Sink.amount() > 0, "nothing arrived"));
         *///?}
 
         pilot.then("place the sun", SETTLE, () -> {
@@ -197,14 +197,55 @@ public final class CaldariumScenario {
         /*return player.level;*/
     }
 
-    //? if fabric {
+    //? if fabric && >=1.17 {
     /*public static final class Sink {
-        public static final team.reborn.energy.api.base.SimpleEnergyStorage STORE =
+        static final String BLOCK = "minecraft:lodestone";
+        private static final team.reborn.energy.api.base.SimpleEnergyStorage STORE =
                 new team.reborn.energy.api.base.SimpleEnergyStorage(1_000_000, 10_000, 10_000);
 
         public static void register() {
             team.reborn.energy.api.EnergyStorage.SIDED.registerForBlocks(
                     (level, pos, state, entity, side) -> STORE, net.minecraft.world.level.block.Blocks.LODESTONE);
+        }
+
+        static long amount() {
+            return STORE.amount;
+        }
+    }
+    *///?} else if fabric {
+    /*public static final class Sink implements team.reborn.energy.EnergyStorage {
+        static final String BLOCK = "minecraft:jukebox";
+        private static final Sink STORE = new Sink();
+        private static final double CAPACITY = 1_000_000.0;
+        private double stored;
+
+        public static void register() {
+            team.reborn.energy.Energy.registerHolder(
+                    entity -> entity instanceof net.minecraft.world.level.block.entity.JukeboxBlockEntity, entity -> STORE);
+        }
+
+        static long amount() {
+            return (long) STORE.stored;
+        }
+
+        @Override
+        public double getStored(team.reborn.energy.EnergySide side) {
+            return stored;
+        }
+
+        @Override
+        public void setStored(double amount) {
+            stored = amount;
+        }
+
+        @Override
+        public double getMaxStoredPower() {
+            return CAPACITY;
+        }
+
+        @Override
+        public team.reborn.energy.EnergyTier getTier() {
+            return team.reborn.energy.EnergyTier.INFINITE;
         }
     }
     *///?}

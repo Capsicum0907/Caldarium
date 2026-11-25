@@ -19,7 +19,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
 public class SolItem extends BlockItem {
-    //? if forge {
+    //? if forge && >=1.17 {
     /*@Override
     //? if >=1.19 {
     public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer) {

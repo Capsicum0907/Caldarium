@@ -1,12 +1,11 @@
 package io.github.capsicum0907.caldarium.client;
 
 import java.util.List;
-import java.util.Optional;
 
 import net.minecraft.client.gui.Font;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
+import net.minecraft.world.item.ItemStack;
 //? if >=1.20 {
 import net.minecraft.client.gui.GuiGraphics;
 //?} else {
@@ -39,10 +38,19 @@ final class Canvas {
         //? if >=1.20 {
         graphics.blit(sheet, x, y, u, v, width, height);
         //?} else {
-        /*RenderSystem.setShaderTexture(0, sheet);
+        /*bind(sheet);
         GuiComponent.blit(pose, x, y, u, v, width, height, SHEET_SIZE, SHEET_SIZE);
         *///?}
     }
+
+    //? if <1.20 {
+    /*private static void bind(ResourceLocation sheet) {
+        //? if >=1.17 {
+        RenderSystem.setShaderTexture(0, sheet);
+        //?} else
+        /^net.minecraft.client.Minecraft.getInstance().getTextureManager().bind(sheet);^/
+    }
+    *///?}
 
     void text(Font font, Component text, int x, int y, int colour) {
         //? if >=1.20 {
@@ -58,10 +66,12 @@ final class Canvas {
         //screen.renderTooltip(pose, line, x, y);
     }
 
-    void tooltip(Font font, List<Component> lines, Optional<TooltipComponent> image, int x, int y) {
+    void tooltip(Font font, List<Component> lines, ItemStack stack, int x, int y) {
         //? if >=1.20 {
-        graphics.renderTooltip(font, lines, image, x, y);
-        //?} else
-        //screen.renderTooltip(pose, lines, image, x, y);
+        graphics.renderTooltip(font, lines, stack.getTooltipImage(), x, y);
+        //?} else if >=1.17 {
+        /*screen.renderTooltip(pose, lines, stack.getTooltipImage(), x, y);
+        *///?} else
+        /*screen.renderComponentTooltip(pose, lines, x, y);*/
     }
 }

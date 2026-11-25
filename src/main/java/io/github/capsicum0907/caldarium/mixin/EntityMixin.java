@@ -34,7 +34,7 @@ public abstract class EntityMixin {
             result.setReturnValue(all);
         }
     }
-    //?} else {
+    //?} else if >=1.17 {
     /*@ModifyVariable(method = "collideBoundingBox", at = @At("HEAD"), argsOnly = true)
     private static List<VoxelShape> caldarium$suns(List<VoxelShape> hits, Entity entity, Vec3 movement,
             AABB box, Level level, List<VoxelShape> potentialHits) {
@@ -45,6 +45,19 @@ public abstract class EntityMixin {
         List<VoxelShape> all = new ArrayList<>(hits);
         all.addAll(suns);
         return all;
+    }
+    *///?} else {
+    /*@ModifyVariable(method = "collideBoundingBoxHeuristically", at = @At("HEAD"), argsOnly = true)
+    private static net.minecraft.util.RewindableStream<VoxelShape> caldarium$suns(
+            net.minecraft.util.RewindableStream<VoxelShape> hits, Entity entity, Vec3 movement, AABB box, Level level,
+            net.minecraft.world.phys.shapes.CollisionContext context,
+            net.minecraft.util.RewindableStream<VoxelShape> potentialHits) {
+        List<VoxelShape> suns = Suns.touching(level, box.expandTowards(movement));
+        if (suns.isEmpty()) {
+            return hits;
+        }
+        return new net.minecraft.util.RewindableStream<>(
+                java.util.stream.Stream.concat(hits.getStream(), suns.stream()));
     }
     *///?}
 

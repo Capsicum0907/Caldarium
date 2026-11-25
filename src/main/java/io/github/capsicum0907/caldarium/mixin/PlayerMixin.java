@@ -42,7 +42,7 @@ public abstract class PlayerMixin {
         }
         return self.getEyePosition().distanceToSqr(net.minecraft.world.phys.Vec3.atCenterOf(pos)) <= reach * reach;
     }
-    *///?} else if forge {
+    *///?} else if forge && >=1.17 {
     /*public boolean canInteractWith(BlockPos pos, double padding) {
         Player self = (Player) (Object) this;
         double reach = self.getReachDistance() + padding;

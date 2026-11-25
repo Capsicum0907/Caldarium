@@ -36,7 +36,10 @@ public final class Storm {
         if (level.isClientSide() || !COUNTED.add(bolt)) {
             return;
         }
+        //? if >=1.17 {
         boolean summoned = bolt.getCause() != null;
+        //?} else
+        /*boolean summoned = ((io.github.capsicum0907.caldarium.mixin.legacy.LightningBoltAccessor) bolt).caldarium$cause() != null;*/
         int reach = CaldariumConfig.stormReach();
         BlockPos at = bolt.blockPosition();
         for (BlockPos near : BlockPos.betweenClosed(at.offset(-reach, -reach, -reach),

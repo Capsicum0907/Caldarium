@@ -3,6 +3,7 @@ package io.github.capsicum0907.caldarium.fabric;
 import io.github.capsicum0907.caldarium.MachineMenu;
 
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+//? if >=1.17
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,6 +23,8 @@ public final class Menus {
     private Menus() {
     }
 
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     public record Opening(boolean burns, int slots, boolean pours) {
         //? if >=1.20.5 {
         static final StreamCodec<RegistryFriendlyByteBuf, Opening> CODEC = StreamCodec.composite(
@@ -38,8 +41,10 @@ public final class Menus {
                 (id, inventory, opening) -> new MachineMenu(id, inventory, opening.burns(), opening.slots(),
                         opening.pours()),
                 Opening.CODEC);
-        //?} else
-        //return new ExtendedScreenHandlerType<>(MachineMenu::new);
+        //?} else if >=1.17 {
+        /*return new ExtendedScreenHandlerType<>(MachineMenu::new);
+        *///?} else
+        /*return new net.fabricmc.fabric.impl.screenhandler.ExtendedScreenHandlerType<>(MachineMenu::new);*/
     }
 
     public static void open(Player player, MenuProvider provider, boolean burns, int slots, boolean pours) {

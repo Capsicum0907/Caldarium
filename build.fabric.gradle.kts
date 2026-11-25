@@ -55,6 +55,10 @@ sourceSets.main {
         exclude("**/caldarium/data/TestStructures.java")
         if (!Targets.atLeast(minecraft, "1.17")) {
             exclude("**/caldarium/CaldariumTests.java")
+            exclude("**/caldarium/client/ReadingsTooltip.java")
+            exclude("**/caldarium/fabric/ReadingItem.java")
+        } else {
+            exclude("**/caldarium/mixin/legacy/**")
         }
     }
     resources.srcDir(convertResources)
@@ -94,11 +98,11 @@ loom {
 val widens = !Targets.atLeast(minecraft, "1.20")
 
 if (widens) loom {
-    accessWidenerPath = rootProject.file("src/main/templates/fabric-widener/$modId.accesswidener")
+    accessWidenerPath = rootProject.file("src/main/templates/fabric-widener/$minecraft/$modId.accesswidener")
 }
 
 if (widens) tasks.processResources {
-    from(rootProject.file("src/main/templates/fabric-widener"))
+    from(rootProject.file("src/main/templates/fabric-widener/$minecraft"))
 }
 
 if (hasGameTests) loom {
@@ -125,6 +129,7 @@ val modMetadata = mapOf(
         add("fabric.BlockItemMixin")
         add("fabric.LivingEntityMixin")
         if (!Targets.atLeast(minecraft, "1.20.5")) add("fabric.ServerPlayerGameModeMixin")
+        if (!Targets.atLeast(minecraft, "1.17")) add("legacy.LightningBoltAccessor")
     }.joinToString("") { ",\n    \"$it\"" },
     "mod_id" to modId,
     "mod_name" to property("mod_name"),

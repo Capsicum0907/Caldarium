@@ -11,12 +11,16 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.resources.language.I18n;
 
+//? if <1.17
+/*@com.github.bsideup.jabel.Desugar*/
 public record ReadingsTooltip(Tooltips.Readings readings) implements ClientTooltipComponent {
     private static final int LINE = 10;
     private static final int GAP = 6;
     private static final char POINT = '.';
     private static final int COLOUR = ChatFormatting.GRAY.getColor();
 
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     private record Columns(int label, int whole, int fraction, int space, int unit) {
         int width() {
             return label + GAP + whole + fraction + space + unit;

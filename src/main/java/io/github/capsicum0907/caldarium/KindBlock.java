@@ -10,6 +10,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+//? if >=1.17
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -73,15 +74,22 @@ public class KindBlock extends BaseEntityBlock {
     }
 
     @Override
+    //? if >=1.17 {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new KindBlockEntity(pos, state);
     }
+    //?} else {
+    /*public BlockEntity newBlockEntity(net.minecraft.world.level.BlockGetter level) {
+        return new KindBlockEntity(this);
+    }
+    *///?}
 
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
+    //? if >=1.17 {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             BlockEntityType<T> type) {
@@ -89,4 +97,5 @@ public class KindBlock extends BaseEntityBlock {
                 : createTickerHelper(type, CaldariumRegistry.KIND_ENTITY.get(),
                         KindBlockEntity::serverTick);
     }
+    //?}
 }

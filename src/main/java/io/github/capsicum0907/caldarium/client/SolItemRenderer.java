@@ -21,7 +21,10 @@ public class SolItemRenderer extends BlockEntityWithoutLevelRenderer {
     private SolSurface surface;
 
     public SolItemRenderer() {
+        //? if >=1.17 {
         super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+        //?} else
+        /*super();*/
     }
 
     @Override

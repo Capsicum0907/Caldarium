@@ -20,6 +20,8 @@ import com.mojang.serialization.Codec;
  * <p>Numbers are not here — see {@link CaldariumConfig}. A row says what a generator
  * <em>is</em>; how much it makes is a setting.
  */
+//? if <1.17
+/*@com.github.bsideup.jabel.Desugar*/
 public record Generator(String id, Source source, Tier top, int makes, int every,
         int capacity, int transfer) {
 
@@ -87,6 +89,8 @@ public record Generator(String id, Source source, Tier top, int makes, int every
      * <p>This is what the registry, the pictures, the models, the recipes and the
      * settings all walk. A row that is not tiered appears once with no rung.
      */
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     public record Made(Generator generator, Tier tier) {
         /** The name in the registry, the model, the recipe and the language file. */
         public String id() {

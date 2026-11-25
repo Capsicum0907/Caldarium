@@ -11,8 +11,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerBlockEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+//? if >=1.17 {
 import net.fabricmc.fabric.api.transfer.v1.fluid.FluidStorage;
 import net.fabricmc.fabric.api.transfer.v1.item.ItemStorage;
+//?}
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.storage.LevelResource;
@@ -21,6 +23,7 @@ import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.minecraft.world.item.CreativeModeTabs;
 //?}
 
+//? if >=1.17
 import team.reborn.energy.api.EnergyStorage;
 
 public final class CaldariumFabric implements ModInitializer {
@@ -40,6 +43,7 @@ public final class CaldariumFabric implements ModInitializer {
         //? if >=1.19.3
         CaldariumRegistry.TABS.register();
 
+        //? if >=1.17 {
         EnergyStorage.SIDED.registerForBlockEntity(
                 (generator, side) -> Energies.of(generator.store()), CaldariumRegistry.GENERATOR_ENTITY.get());
         EnergyStorage.SIDED.registerForBlockEntity(
@@ -51,6 +55,8 @@ public final class CaldariumFabric implements ModInitializer {
                 (machine, side) -> Transfer.items(machine.items()), CaldariumRegistry.KIND_ENTITY.get());
         FluidStorage.SIDED.registerForBlockEntity(
                 (generator, side) -> Transfer.fluids(generator.tank()), CaldariumRegistry.GENERATOR_ENTITY.get());
+        //?} else
+        /*Energies.register();*/
 
         ServerBlockEntityEvents.BLOCK_ENTITY_LOAD.register((entity, level) -> {
             if (entity instanceof SolBlockEntity sol) {

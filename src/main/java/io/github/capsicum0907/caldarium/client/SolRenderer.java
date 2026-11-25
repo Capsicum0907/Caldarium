@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
+//? if >=1.17
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -26,7 +27,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 
+//? if >=1.17 {
 public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
+//?} else
+/*public class SolRenderer extends BlockEntityRenderer<SolBlockEntity> {*/
     private static final ResourceLocation SKIN = Caldarium.id("textures/block/" + Skins.SOL_LIT + ".png");
 
     /** How fast the surface churns, in noise units a second. */
@@ -40,8 +44,16 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
 
     private static final Map<SolBlockEntity, SolSurface> SURFACES = new WeakHashMap<>();
 
+    public static final int VIEW = 256;
+
+    //? if >=1.17 {
     public SolRenderer(BlockEntityRendererProvider.Context context) {
     }
+    //?} else {
+    /*public SolRenderer(net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher dispatcher) {
+        super(dispatcher);
+    }
+    *///?}
 
     public static void forget(SolBlockEntity sol) {
         SolSurface surface = SURFACES.remove(sol);
@@ -64,13 +76,15 @@ public class SolRenderer implements BlockEntityRenderer<SolBlockEntity> {
 
     public static AABB bounds(SolBlockEntity sol) {
         double reach = SolBlock.radius(sol.getBlockState()) * SolCorona.reach();
-        return AABB.ofSize(SolBlock.centre(sol.getBlockPos()), 0.0, 0.0, 0.0).inflate(reach);
+        return new AABB(SolBlock.centre(sol.getBlockPos()), SolBlock.centre(sol.getBlockPos())).inflate(reach);
     }
 
+    //? if >=1.17 {
     @Override
     public int getViewDistance() {
-        return 256;
+        return VIEW;
     }
+    //?}
 
     @Override
     public void render(SolBlockEntity sol, float partial, PoseStack pose,

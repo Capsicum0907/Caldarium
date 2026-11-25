@@ -206,8 +206,7 @@ public class MachineScreen extends AbstractContainerScreen<MachineMenu> {
                         //?} else
                         //new ArrayList<>(getTooltipFromItem(hoveredSlot.getItem()));
                 lines.add(line);
-                canvas.tooltip(font, lines,
-                        hoveredSlot.getItem().getTooltipImage(), mouseX, mouseY);
+                canvas.tooltip(font, lines, hoveredSlot.getItem(), mouseX, mouseY);
                 return;
             }
         }

@@ -25,6 +25,25 @@ stonecutter parameters {
         replace("intoSun(event.getLevel(), event.getEntity(),", "intoSun(event.getWorld(), event.getPlayer(),")
         replace("event.getLevel() instanceof net.minecraft.world.level.Level level", "event.getWorld() instanceof net.minecraft.world.level.Level level")
     }
+    replacements.string(eval(node.metadata.version, "<1.17")) {
+        replace("List.of(", "com.google.common.collect.ImmutableList.of(")
+        replace("List.copyOf(", "com.google.common.collect.ImmutableList.copyOf(")
+        replace("Map.entry(", "new java.util.AbstractMap.SimpleImmutableEntry<>(")
+        replace("Mth.TWO_PI", "((float) (Math.PI * 2.0))")
+        replace("Mth.PI", "((float) Math.PI)")
+        replace("Shapes.create(", "Shapes.box(")
+        replace(".getEyePosition()", ".getEyePosition(1.0F)")
+        replace("addRenderableWidget(", "addButton(")
+        replace("Block.UPDATE_ALL", "io.github.capsicum0907.caldarium.Caldarium.UPDATE_ALL")
+        replace("VertexFormat.Mode.QUADS", "org.lwjgl.opengl.GL11.GL_QUADS")
+        replace(".setShaderState(RenderStateShard.RENDERTYPE_LIGHTNING_SHADER)", ".setShadeModelState(RenderStateShard.SMOOTH_SHADE)")
+        replace("LightTexture.FULL_BRIGHT", "LightTexture.pack(15, 15)")
+    }
+    replacements.string(node.metadata.project.endsWith("-forge") && eval(node.metadata.version, "<1.17")) {
+        replace("import net.minecraftforge.common.extensions.IForgeMenuType;", "import net.minecraftforge.common.extensions.IForgeContainerType;")
+        replace("IForgeMenuType.create(", "IForgeContainerType.create(")
+        replace("net.minecraftforge.network.NetworkHooks.", "net.minecraftforge.fml.network.NetworkHooks.")
+    }
     replacements.string(eval(node.metadata.version, "<1.19")) {
         replace("Component.translatable(", "new net.minecraft.network.chat.TranslatableComponent(")
     }

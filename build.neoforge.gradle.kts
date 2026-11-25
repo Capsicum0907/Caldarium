@@ -101,6 +101,7 @@ sourceSets.main {
     java {
         exclude("**/caldarium/fabric/**")
         exclude("**/caldarium/mixin/fabric/**")
+        exclude("**/caldarium/mixin/legacy/**")
     }
     resources {
         srcDir(rootProject.file("src/generated/resources"))

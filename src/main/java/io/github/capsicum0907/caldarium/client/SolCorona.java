@@ -17,7 +17,7 @@ import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
-//? if !fabric
+//? if !fabric && >=1.17
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 
 public final class SolCorona {
@@ -64,9 +64,13 @@ public final class SolCorona {
 
     private static final List<Pending> PENDING = new ArrayList<>();
 
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     private record Pending(Vec3 centre, float radius, float blaze, float time, long seed) {
     }
 
+    //? if <1.17
+    /*@com.github.bsideup.jabel.Desugar*/
     public record Limb(Vec3 plane, Vec3 across, Vec3 upward, double edge, double inner, double outer) {
         public static Limb of(Vec3 toCamera, float radius) {
             double distance = toCamera.length();
@@ -101,13 +105,17 @@ public final class SolCorona {
         PENDING.add(new Pending(centre, radius, blaze, time, seed));
     }
 
-    //? if !fabric {
+    //? if !fabric && >=1.17 {
     public static void draw(RenderLevelStageEvent event) {
         if (event.getStage() == RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             drawQueued(event.getPoseStack(), event.getCamera().getPosition());
         }
     }
-    //?}
+    //?} else if forge {
+    /*public static void draw(net.minecraftforge.client.event.RenderWorldLastEvent event) {
+        drawQueued(event.getMatrixStack(), Minecraft.getInstance().gameRenderer.getMainCamera().getPosition());
+    }
+    *///?}
 
     public static void drawQueued(PoseStack stack, Vec3 camera) {
         if (PENDING.isEmpty()) {

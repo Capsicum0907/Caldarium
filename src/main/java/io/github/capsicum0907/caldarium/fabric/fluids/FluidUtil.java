@@ -1,5 +1,6 @@
 package io.github.capsicum0907.caldarium.fabric.fluids;
 
+//? if >=1.17 {
 import java.util.Optional;
 
 import net.fabricmc.fabric.api.transfer.v1.context.ContainerItemContext;
@@ -48,3 +49,53 @@ public final class FluidUtil {
         *///?}
     }
 }
+//?} else {
+/*import java.util.Optional;
+
+import io.github.capsicum0907.caldarium.GeneratorBlockEntity;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+
+public final class FluidUtil {
+    private static final int BUCKET = 1000;
+
+    private FluidUtil() {
+    }
+
+    public static Optional<Fluid> getFluidHandler(ItemStack stack) {
+        return stack.getItem() instanceof BucketItem bucket && bucket.content != Fluids.EMPTY
+                ? Optional.of(bucket.content) : Optional.empty();
+    }
+
+    public static boolean interactWithFluidHandler(Player player, InteractionHand hand, Level level, BlockPos pos,
+            Direction side) {
+        Optional<Fluid> fluid = getFluidHandler(player.getItemInHand(hand));
+        if (!fluid.isPresent() || !(level.getBlockEntity(pos) instanceof GeneratorBlockEntity generator)
+                || generator.tank() == null) {
+            return false;
+        }
+        FluidStack bucketful = new FluidStack(fluid.get(), BUCKET);
+        if (generator.tank().fill(bucketful,
+                io.github.capsicum0907.caldarium.fabric.fluids.capability.templates.FluidTank.FluidAction.SIMULATE) < BUCKET) {
+            return false;
+        }
+        if (!level.isClientSide()) {
+            generator.tank().fill(bucketful,
+                    io.github.capsicum0907.caldarium.fabric.fluids.capability.templates.FluidTank.FluidAction.EXECUTE);
+            if (!player.abilities.instabuild) {
+                player.setItemInHand(hand, new ItemStack(Items.BUCKET));
+            }
+        }
+        return true;
+    }
+}
+*///?}

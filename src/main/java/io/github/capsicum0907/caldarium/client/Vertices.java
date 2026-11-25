@@ -30,8 +30,10 @@ public final class Vertices {
         //? if >=1.21 {
         into.addVertex(matrix, x, y, z).setColor(argb).setUv(u, v).setOverlay(overlay).setLight(light)
                 .setNormal(normalX, normalY, normalZ);
-        //?} else
-        //into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normalX, normalY, normalZ).endVertex();
+        //?} else if >=1.17 {
+        /*into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normalX, normalY, normalZ).endVertex();
+        *///?} else
+        /*into.vertex(matrix, x, y, z).color(argb >> 16 & 0xFF, argb >> 8 & 0xFF, argb & 0xFF, argb >>> 24).uv(u, v).overlayCoords(overlay).uv2(light).normal(normalX, normalY, normalZ).endVertex();*/
     }
 
     public static void lit(VertexConsumer into, Matrix4f matrix, PoseStack.Pose normals, float x, float y,
@@ -40,7 +42,9 @@ public final class Vertices {
         //? if >=1.21 {
         into.addVertex(matrix, x, y, z).setColor(argb).setUv(u, v).setOverlay(overlay).setLight(light)
                 .setNormal(normals, normalX, normalY, normalZ);
-        //?} else
-        //into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normals.normal(), normalX, normalY, normalZ).endVertex();
+        //?} else if >=1.17 {
+        /*into.vertex(matrix, x, y, z).color(argb).uv(u, v).overlayCoords(overlay).uv2(light).normal(normals.normal(), normalX, normalY, normalZ).endVertex();
+        *///?} else
+        /*into.vertex(matrix, x, y, z).color(argb >> 16 & 0xFF, argb >> 8 & 0xFF, argb & 0xFF, argb >>> 24).uv(u, v).overlayCoords(overlay).uv2(light).normal(normals.normal(), normalX, normalY, normalZ).endVertex();*/
     }
 }

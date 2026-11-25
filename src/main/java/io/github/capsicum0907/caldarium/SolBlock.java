@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+//? if >=1.17
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -79,7 +80,7 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     public static AABB bounds(BlockState state, BlockPos pos) {
-        return AABB.ofSize(centre(pos), 0.0, 0.0, 0.0).inflate(radius(state));
+        return new AABB(centre(pos), centre(pos)).inflate(radius(state));
     }
 
     public static BlockHitResult hit(BlockState state, BlockPos pos, Vec3 from, Vec3 to) {
@@ -218,7 +219,10 @@ public class SolBlock extends BaseEntityBlock {
 
     private static BlockPos ground(Level level, Vec3 centre, float radius, int reach, int x, int z) {
         double far = radius + reach;
+        //? if >=1.17 {
         int lowest = Math.max(level.getMinBuildHeight(), (int) Math.floor(centre.y - far));
+        //?} else
+        /*int lowest = Math.max(0, (int) Math.floor(centre.y - far));*/
         int highest = Math.min(level.getMaxBuildHeight() - 1, (int) Math.ceil(centre.y + far));
         double shell = radius + GLOW_OUTSIDE;
         double across = Math.hypot(x + 0.5 - centre.x, z + 0.5 - centre.z);
@@ -228,14 +232,14 @@ public class SolBlock extends BaseEntityBlock {
         int found = Integer.MIN_VALUE;
         if (!solid(level, at)) {
             for (int y = start; y > lowest; y--) {
-                if (solid(level, at.setY(y - 1))) {
+                if (solid(level, at.set(x, y - 1, z))) {
                     found = y;
                     break;
                 }
             }
         } else {
             for (int y = start + 1; y <= highest; y++) {
-                if (!solid(level, at.setY(y))) {
+                if (!solid(level, at.set(x, y, z))) {
                     found = y;
                     break;
                 }
@@ -245,7 +249,7 @@ public class SolBlock extends BaseEntityBlock {
             return null;
         }
         for (int y = found; y <= Math.min(highest, found + CLEARING); y++) {
-            BlockState there = level.getBlockState(at.setY(y));
+            BlockState there = level.getBlockState(at.set(x, y, z));
             if (there.isAir() || there.getBlock() instanceof SolGlowBlock) {
                 return at.immutable();
             }
@@ -412,10 +416,17 @@ public class SolBlock extends BaseEntityBlock {
     }
 
     @Override
+    //? if >=1.17 {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new SolBlockEntity(pos, state);
     }
+    //?} else {
+    /*public BlockEntity newBlockEntity(net.minecraft.world.level.BlockGetter level) {
+        return new SolBlockEntity();
+    }
+    *///?}
 
+    //? if >=1.17 {
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state,
             net.minecraft.world.level.block.entity.BlockEntityType<T> type) {
@@ -423,6 +434,7 @@ public class SolBlock extends BaseEntityBlock {
                 : createTickerHelper(type, CaldariumRegistry.SOL_ENTITY.get(),
                         SolBlockEntity::serverTick);
     }
+    //?}
 
     @Override
     //? if >=1.20.5 {
