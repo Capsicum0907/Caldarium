@@ -53,7 +53,8 @@ Each pair has its own jar, named `caldarium-<loader>-<minecraft>-<version>.jar`.
 
 Fabric has no Forge Energy. There the blocks speak Team Reborn Energy, the energy API that Tech
 Reborn, Modern Industrialization and Applied Energistics 2 use, and it is bundled inside the jar:
-nothing else needs installing. One FE in these documents is one unit of Team Reborn Energy.
+nothing else needs installing. In game the unit is shown as E, as Tech Reborn shows it; one FE in
+these documents is one E.
 
 On Fabric, right-clicking towards a sun with a block in hand does nothing at all, where on
 Forge and NeoForge the block that was clicked can still be used.

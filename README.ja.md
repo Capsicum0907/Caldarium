@@ -53,7 +53,8 @@ Forge Energy（FE）の発電機・蓄電器・充電台・ケーブルを追加
 
 Fabric には Forge Energy がありません。Fabric では、Tech Reborn・Modern Industrialization・
 Applied Energistics 2 と同じ電力の仕組みである Team Reborn Energy で動きます。jar に入っているので、
-ほかに入れるものはありません。この資料の 1 FE は、Team Reborn Energy の 1 にあたります。
+ほかに入れるものはありません。ゲーム内の単位は Tech Reborn と同じ E で表示します。この資料の 1 FE は
+1 E にあたります。
 
 Fabric では、ブロックを持って太陽のほうを右クリックしても何も起きません。Forge と NeoForge では、
 クリックしたブロックを使う操作はそのまま行えます。

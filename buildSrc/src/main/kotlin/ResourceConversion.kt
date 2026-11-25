@@ -27,6 +27,7 @@ class ResourceConversion(
     private val dataDrivenDamage = Targets.atLeast(minecraft, "1.19.4")
     private val hasCopper = Targets.atLeast(minecraft, "1.17")
     private val copperTag = if (loader == "fabric") "c:copper_ingots" else "forge:ingots/copper"
+    private val energyUnit = ENERGY_UNITS[loader] ?: SOURCE_ENERGY_UNIT
 
     fun keeps(path: String): Boolean {
         val parts = path.split('/')
@@ -57,6 +58,7 @@ class ResourceConversion(
         if (parts[0] == "assets" && folder == "models" && renderTypesInCode) modelLayers(root.asJsonObject)
         if (parts[0] == "assets" && folder == "blockstates" && oneLayerPerBlock) splitComposites(root.asJsonObject)
         if (parts[0] == "assets" && folder == "lang" && fabricTabKeys) fabricTabNames(root.asJsonObject)
+        if (parts[0] == "assets" && folder == "lang" && energyUnit != SOURCE_ENERGY_UNIT) renameEnergyUnit(root.asJsonObject)
         val tagged = if (parts[0] == "data" && folder == "recipe" && fabricLegacyTags) fabricTags(root) else root
         if (parts[0] == "data" && folder == "recipe" && fabricHasNoCommonTags) check(!tagged.toString().replace("\"$copperTag\"", "").contains("\"c:")) {
             "$path still names a c: tag, which nothing defines on Fabric $minecraft"
@@ -337,6 +339,14 @@ class ResourceConversion(
         else -> element
     }
 
+    private fun renameEnergyUnit(lang: JsonObject) {
+        val unit = Regex("\\b$SOURCE_ENERGY_UNIT\\b")
+        for ((key, value) in lang.entrySet().toList()) {
+            val text = (value as? JsonPrimitive)?.takeIf { it.isString }?.asString ?: continue
+            if (unit.containsMatchIn(text)) lang.addProperty(key, unit.replace(text, energyUnit))
+        }
+    }
+
     private fun fabricTabNames(lang: JsonObject) {
         val tabs = lang.entrySet().filter { (key, _) -> key.startsWith("itemGroup.") && key.count { it == '.' } == 1 }
         for ((key, value) in tabs) {
@@ -368,6 +378,8 @@ class ResourceConversion(
         private val BEFORE_COPPER = mapOf("minecraft:lightning_rod" to "minecraft:iron_bars")
 
         private const val COMPOSITE = "neoforge:composite"
+        private const val SOURCE_ENERGY_UNIT = "FE"
+        private val ENERGY_UNITS = mapOf("fabric" to "E")
 
         private const val BLOCK_PARENT = "minecraft:block/block"
 
