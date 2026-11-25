@@ -57,6 +57,11 @@ abstract class ConvertResources : DefaultTask() {
                 snbt.writeText(Snbt.fromNbt(file))
             }
         }
+        for ((relative, text) in conversion.extraFiles()) {
+            val target = to.resolve(relative)
+            target.parentFile.mkdirs()
+            target.writeText(text)
+        }
         if (conversion.itemLayersInCode) {
             conversion.itemLayers().entries
                 .groupBy { it.key.substringBefore(':') }

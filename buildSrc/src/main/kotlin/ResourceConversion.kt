@@ -25,6 +25,8 @@ class ResourceConversion(
     val renderTypesInCode = !(loader == "neoforge" || (loader == "forge" && Targets.atLeast(minecraft, "1.19")))
 
     private val dataDrivenDamage = Targets.atLeast(minecraft, "1.19.4")
+    private val hasCopper = Targets.atLeast(minecraft, "1.17")
+    private val copperTag = if (loader == "fabric") "c:copper_ingots" else "forge:ingots/copper"
 
     fun keeps(path: String): Boolean {
         val parts = path.split('/')
@@ -46,6 +48,7 @@ class ResourceConversion(
         val root = JsonParser.parseString(text)
         val parts = path.split('/')
         val folder = if (parts.size > 2) parts[2] else ""
+        if (parts[0] == "data" && (folder == "recipe" || folder == "advancement") && !hasCopper) copperFromTag(root)
         if (parts[0] == "data" && folder == "recipe" && recipeResultIsItem) recipeResult(root)
         if (parts[0] == "data" && folder == "advancement" && itemPredicateIsList) itemPredicates(root)
         if (parts[0] == "assets" && folder == "models" && itemLayersInCode && parts.getOrNull(3) == "item") {
@@ -55,7 +58,7 @@ class ResourceConversion(
         if (parts[0] == "assets" && folder == "blockstates" && oneLayerPerBlock) splitComposites(root.asJsonObject)
         if (parts[0] == "assets" && folder == "lang" && fabricTabKeys) fabricTabNames(root.asJsonObject)
         val tagged = if (parts[0] == "data" && folder == "recipe" && fabricLegacyTags) fabricTags(root) else root
-        if (parts[0] == "data" && folder == "recipe" && fabricHasNoCommonTags) check(!tagged.toString().contains("\"c:")) {
+        if (parts[0] == "data" && folder == "recipe" && fabricHasNoCommonTags) check(!tagged.toString().replace("\"$copperTag\"", "").contains("\"c:")) {
             "$path still names a c: tag, which nothing defines on Fabric $minecraft"
         }
         val converted = when {
@@ -277,6 +280,37 @@ class ResourceConversion(
         }
     }
 
+    fun extraFiles(): Map<String, String> {
+        if (hasCopper) return emptyMap()
+        val (namespace, path) = copperTag.split(':')
+        val tag = JsonObject().apply {
+            addProperty("replace", false)
+            add("values", JsonArray())
+        }
+        return mapOf("data/$namespace/tags/items/$path.json" to GSON.toJson(tag))
+    }
+
+    private fun copperFromTag(element: JsonElement) {
+        when (element) {
+            is JsonObject -> {
+                val item = (element.get("item") as? JsonPrimitive)?.asString
+                val items = (element.get("items") as? JsonPrimitive)?.asString
+                if (element.size() == 1 && items in BEFORE_COPPER) {
+                    element.addProperty("items", BEFORE_COPPER.getValue(items!!))
+                } else if (element.size() == 1 && item in COPPER_MADE) {
+                    element.remove("item")
+                    element.addProperty("tag", copperTag)
+                } else if (element.size() == 1 && item in BEFORE_COPPER) {
+                    element.addProperty("item", BEFORE_COPPER.getValue(item!!))
+                } else {
+                    element.entrySet().forEach { copperFromTag(it.value) }
+                }
+            }
+            is JsonArray -> element.forEach { copperFromTag(it) }
+            else -> Unit
+        }
+    }
+
     private fun fabricTags(element: JsonElement): JsonElement = when (element) {
         is JsonObject -> {
             val tag = (element.get("tag") as? JsonPrimitive)?.asString
@@ -330,6 +364,8 @@ class ResourceConversion(
 
     companion object {
         private val GSON = GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create()
+        private val COPPER_MADE = setOf("minecraft:copper_ingot")
+        private val BEFORE_COPPER = mapOf("minecraft:lightning_rod" to "minecraft:iron_bars")
 
         private const val COMPOSITE = "neoforge:composite"
 
